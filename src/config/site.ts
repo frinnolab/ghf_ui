@@ -1,37 +1,37 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Vite + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "GHF Foundation",
+  description: "",
   navItems: [
     {
       label: "Home",
       href: "/",
     },
     {
-      label: "Uwezo",
-      href: "/uwezo",
-    },
-    {
       label: "Blog",
       href: "/blog",
-    },
-    {
-      label: "Careers",
-      href: "/careers",
     },
     {
       label: "About",
       href: "/about",
     },
-    {
-      label: "Docs",
-      href: "/docs",
-    },
-    {
-      label: "Pricing",
-      href: "/pricing",
-    },
+    // {
+    //   label: "Uwezo",
+    //   href: "/uwezo",
+    // },
+    // {
+    //   label: "Careers",
+    //   href: "/careers",
+    // },
+    // {
+    //   label: "Docs",
+    //   href: "/docs",
+    // },
+    // {
+    //   label: "Pricing",
+    //   href: "/pricing",
+    // },
   ],
   navMenuItems: [
     {
@@ -51,27 +51,43 @@ export const siteConfig = {
       href: "/team",
     },
     {
-      label: "Calendar",
-      href: "/calendar",
-    },
-    {
       label: "Settings",
       href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
     },
     {
       label: "Logout",
       href: "/logout",
     },
+    // {
+    //   label: "Calendar",
+    //   href: "/calendar",
+    // },
+    // {
+    //   label: "Help & Feedback",
+    //   href: "/help-feedback",
+    // },
   ],
   links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui-docs-v2.vercel.app",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
+    email: "greathopefoundation@gmail.com",
+    postoffice: "P.O.BOX 2466 DSM",
+    contacts: "+255 764 977 365, +255 783 672 512",
+    X: "Greathopetz",
+    youtube: "GREAT HOPE FOUNDATION",
+    linkedin: "Great Hope Foundation",
+    instagram: "@greathopetz",
+    facebook: "GREAT HOPE FOUNDATION – GHF",
   },
+  
+  footerTexts:{
+    footerImage:'/assets/logos/GHFLOGO.jpg',
+    address:{
+      country:"Tanzania",
+      city:"Dar es salaam",
+      postoffice: "P.O.BOX 2466 DSM",
+    },
+    contact:{
+      email: "greathopefoundation@gmail.com",
+      contacts:["+255 764 977 365,","+255 783 672 512"]
+    }
+  }
 };
