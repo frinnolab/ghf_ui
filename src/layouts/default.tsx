@@ -13,6 +13,8 @@ export default function DefaultLayout({
       <Navbar />
       {/* <main className="container mx-auto max-w-7xl px-0 flex-grow pt-16"> */}
       <main className="w-full px-0 flex-grow pt-16">{children}</main>
+      {/* FOOTER */}
+
       <footer className="container flex flex-col gap-5  items-center justify-between p-3 md:pt-20">
         <div className="w-full flex items-center justify-between">
           <Link
@@ -27,12 +29,11 @@ export default function DefaultLayout({
               src={config?.footerTexts?.footerImage}
               width={300}
             />
-
           </Link>
           <div className="flex flex-col space-y-5"></div>
 
           <div className="flex flex-col space-y-10">
-            <h1 className=" text-2xl ">Address</h1>
+            <h1 className=" text-2xl ">Get Intouch with us</h1>
 
             <ul className="space-y-3 text-lg">
               <li>{config?.footerTexts?.contact?.email}</li>
@@ -48,14 +49,11 @@ export default function DefaultLayout({
             isExternal
             className="flex items-center gap-1 text-current"
             href="#"
-            
           >
             <span className="text-default-600">Developed by</span>
             <p className="text-primary">PBM Technologies</p>
           </Link>
         </div>
-
-        {/* FOOTER */}
 
         {/* FOOTER END */}
       </footer>

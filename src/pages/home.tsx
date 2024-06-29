@@ -125,7 +125,7 @@ export default function HomePage() {
 
         {/* Donors Section */}
         <div className="w-full flex flex-col justify-center items-center p-10 h-screen">
-          <h1 className=" text-5xl ">Donors/Partner</h1>
+          <h1 className=" text-5xl ">Partners & Donors</h1>
         </div>
         {/* Donors Section End*/}
 
