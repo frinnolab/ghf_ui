@@ -13,7 +13,7 @@ export default function DefaultLayout({
       <Navbar />
       {/* <main className="container mx-auto max-w-7xl px-0 flex-grow pt-16"> */}
       <main className="w-full px-0 flex-grow pt-16">{children}</main>
-      <footer className="container flex flex-col gap-5  items-center justify-between p-3">
+      <footer className="container flex flex-col gap-5  items-center justify-between p-3 md:pt-20">
         <div className="w-full flex items-center justify-between">
           <Link
             className="flex justify-start items-center gap-1"

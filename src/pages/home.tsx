@@ -124,14 +124,14 @@ export default function HomePage() {
         {/* Who we're Section End*/}
 
         {/* Donors Section */}
-        <div className="w-full bg-blue-400 p-10">
-          <h1>Donors/Partner</h1>
+        <div className="w-full flex flex-col justify-center items-center p-10 h-screen">
+          <h1 className=" text-5xl ">Donors/Partner</h1>
         </div>
         {/* Donors Section End*/}
 
         {/* Contact Section */}
-        <div className="w-full bg-pink-400 z-30 p-10">
-          <h1>Contact</h1>
+        <div className="w-full flex flex-col justify-center items-center p-10 h-screen bg-purple-500">
+          <h1 className=" text-5xl ">Contact</h1>
         </div>
         {/* Contact Section End*/}
 
