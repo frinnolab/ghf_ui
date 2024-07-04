@@ -1,6 +1,8 @@
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
+import { Image } from "@nextui-org/react";
 import { useRef } from "react";
+import { GoHome } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
@@ -11,9 +13,9 @@ export default function RegisterPage() {
   const passRef = useRef<HTMLInputElement>(null);
   const copassRef = useRef<HTMLInputElement>(null);
 
-  const onRegister = ()=>{
+  const onRegister = () => {
     alert(emailRef?.current?.value);
-  }
+  };
   return (
     <div className="w-full flex flex-col md:gap-10 items-center bg-slate-0 h-screen p-5">
       <div className="w-full">
@@ -24,21 +26,25 @@ export default function RegisterPage() {
             navigate("/");
           }}
         >
-          Back Home
+          Back Home <GoHome size={16} />
         </Button>
       </div>
 
-      <section className="w-full flex flex-col md:flex-row items-center justify-center gap-10 p-5">
+      <section className="w-full flex flex-col md:flex-row items-center justify-center gap-10 p-5 font-semibold">
         {/* Login Form */}
-        <div className="w-full gap-5 flex flex-col px-5">
-          <h1 className=" text-2xl ">Welcome!</h1>
+        <div className="w-full gap-5 flex flex-col px-10">
+          <h1 className=" text-3xl ">Welcome!</h1>
           <h3 className=" text-medium">Register in to continue</h3>
 
           {/* Email */}
 
           <div className="w-full space-y-3">
             <label htmlFor="firstname">Firstname</label>
-            <Input type="text" ref={fnameRef} placeholder="Enter your Firstname" />
+            <Input
+              type="text"
+              ref={fnameRef}
+              placeholder="Enter your Firstname"
+            />
           </div>
           {/* Email */}
 
@@ -51,19 +57,31 @@ export default function RegisterPage() {
 
           <div className="w-full space-y-3">
             <label htmlFor="password">Password</label>
-            <Input type="password" ref={passRef} placeholder="Enter your password" />
+            <Input
+              type="password"
+              ref={passRef}
+              placeholder="Enter your password"
+            />
           </div>
 
           <div className="w-full space-y-3">
             <label htmlFor="copassword">Confirm password</label>
-            <Input type="password" ref={copassRef} placeholder="Confirm your password" />
+            <Input
+              type="password"
+              ref={copassRef}
+              placeholder="Confirm your password"
+            />
           </div>
 
           {/* CTO */}
 
           <div className="w-full space-y-3">
             <label htmlFor=""></label>
-            <Button className="w-full bg-orange-400" variant="flat" onClick={onRegister}>
+            <Button
+              className="w-full bg-orange-400"
+              variant="flat"
+              onClick={onRegister}
+            >
               Register
             </Button>
           </div>
@@ -84,10 +102,10 @@ export default function RegisterPage() {
           </div>
         </div>
         {/* Login Form End */}
-
-        <img width={900}  
+        <Image
+          isZoomed
+          width={2000}
           src="/assets/images/auth/register_img.JPG"
-          className="rounded-lg shadow-2xl"
         />
         {/* Login Image End */}
       </section>

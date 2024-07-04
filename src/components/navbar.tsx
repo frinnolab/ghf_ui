@@ -24,6 +24,7 @@ import {
   SearchIcon,
 } from "@/components/icons";
 import { useNavigate } from "react-router-dom";
+import { GoArrowRight } from "react-icons/go";
 // import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
@@ -136,7 +137,7 @@ export const Navbar = () => {
               navigate("/login");
             }}
           >
-            Login
+            Login <GoArrowRight/>
           </Button>
         </NavbarItem>
       </NavbarContent>
@@ -152,13 +153,13 @@ export const Navbar = () => {
       <NavbarMenu>
         {/* {searchInput} */}
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {siteConfig.dashNavMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={
                   index === 2
                     ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
+                    : index === siteConfig.dashNavMenuItems.length - 1
                       ? "danger"
                       : "foreground"
                 }

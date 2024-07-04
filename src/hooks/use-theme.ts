@@ -1,4 +1,3 @@
-// originally written by @imoaazahmed
 
 import { useEffect, useMemo, useState } from "react";
 

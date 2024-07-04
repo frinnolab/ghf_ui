@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
@@ -33,31 +35,39 @@ export const siteConfig = {
     //   href: "/pricing",
     // },
   ],
-  navMenuItems: [
-    {
-      label: "Profile",
-      href: "/profile",
-    },
+  dashNavMenuItems: [
     {
       label: "Dashboard",
       href: "/dashboard",
     },
     {
-      label: "Projects",
-      href: "/projects",
+      label: "Blogs",
+      href: "/dashboard/blogs",
     },
     {
-      label: "Team",
-      href: "/team",
+      label: "Projects",
+      href: "/dashboard/projects",
+    },
+    // {
+    //   label: "Programs",
+    //   href: "/dashboard/programs",
+    // },
+    {
+      label: "Profiles",
+      href: "/dashboard/profiles",
+    },
+    {
+      label: "Profile",
+      href: "/dashboard/profile",
     },
     {
       label: "Settings",
-      href: "/settings",
+      href: "/dashboard/settings",
     },
-    {
-      label: "Logout",
-      href: "/logout",
-    },
+    // {
+    //   label: "Logout",
+    //   href: "/dashboard/logout",
+    // },
     // {
     //   label: "Calendar",
     //   href: "/calendar",
