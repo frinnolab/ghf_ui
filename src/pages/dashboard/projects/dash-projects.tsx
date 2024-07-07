@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
+import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 export type Project = {
   projectId?: string;
@@ -52,7 +52,7 @@ export default function DashProjectsListPage() {
   ];
   const actionTypes = ["detail", "edit", "delete"];
   const [projects, setProjects] = useState<Project[]>([]);
-  const [projectStatus] = useState<ProjectStatus[]>(() => {
+  const [] = useState<ProjectStatus[]>(() => {
     return [
       {
         key: projectStatusEnum.Completed,

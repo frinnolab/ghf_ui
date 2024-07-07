@@ -97,9 +97,7 @@ export default function DashBlogCreate() {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then((res: AxiosResponse) => {
-          //setSelectedImage(null);
-          //console.log(res.data);
+        .then(() => {
           nav("/dashboard/blogs");
         })
         .catch((err: AxiosError) => {

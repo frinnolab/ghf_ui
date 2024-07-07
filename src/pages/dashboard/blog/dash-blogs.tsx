@@ -94,8 +94,7 @@ export default function DashBlogsListPage() {
         "Authorization":`Bearer ${authed?.token}`
       }
     })
-    .then((res:AxiosResponse)=>{
-      alert("Deleted blog");
+    .then(()=>{
 
       window.location.reload();
     }).catch((err:AxiosError)=>{
