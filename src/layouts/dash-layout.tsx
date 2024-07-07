@@ -62,7 +62,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <Tab title={t.label} key={t.href} href={t.href}></Tab>
             ))}
           </Tabs>
-          <main className="rounded-xl bg-default-50">{children}</main>
+          <main className="rounded-2xl bg-default-50 shadow">{children}</main>
         </div>
 
         {/* Dash Footer */}

@@ -56,7 +56,7 @@ export default function DashProfilePage() {
       <div className="w-full flex flex-col">
         <div className="w-full flex justify-between gap-5">
           {/* Profile Info */}
-          <div className="w-full rounded-xl p-3 border flex flex-col">
+          <div className="w-full rounded-xl p-3  flex flex-col">
             <div className=" space-y-3 ">
               <h1 className=" text-2xl ">Manage Profile</h1>
               <h1 className=" text-small ">Update your personal information</h1>

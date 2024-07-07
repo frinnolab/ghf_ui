@@ -1,45 +1,115 @@
 import useAuthedProfile from "@/hooks/use-auth";
 import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
-import { Divider, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
+import {
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
+} from "@nextui-org/react";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
 export type Project = {
+  projectId?: string;
+  thumbnailUrl?: string;
   title?: string;
   description?: string;
   regionsReached?: number;
   districtsReached?: number;
   schoolsReached?: number;
   studentsReached?: number;
+  status?: number;
   dateStart?: string;
   dateEnd?: string;
   publisherId?: string;
 };
 
+export enum projectStatusEnum {
+  Completed = 0,
+  Ongoing,
+}
+
+export type ProjectStatus = {
+  key?: number;
+  value?: string;
+};
+
 export default function DashProjectsListPage() {
-    const columns = ["Title", "Description", "Regions Reached","Districts Reached", "Schools Reached","Students Reached", "Actions"];
+  const columns = [
+    "Title",
+    "Description",
+    "Regions Reached",
+    "Districts Reached",
+    "Schools Reached",
+    "Students Reached",
+    "Actions",
+  ];
   const actionTypes = ["detail", "edit", "delete"];
-  const [projects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectStatus] = useState<ProjectStatus[]>(() => {
+    return [
+      {
+        key: projectStatusEnum.Completed,
+        value: "Completed",
+      },
+      {
+        key: projectStatusEnum.Ongoing,
+        value: "Ongoing",
+      },
+    ];
+  });
+  const nav = useNavigate();
 
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
 
   useEffect(() => {
+    
     axios
       .get(`${api}/projects`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: `Bearer ${authed?.token}`,
         },
       })
       .then((res: AxiosResponse) => {
         console.log(res.data);
+
+        const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
+          const data: Project = {
+            projectId: `${p?.projectId}`,
+            title: `${p?.title}`,
+            description: `${p?.description}`,
+            status: Number(`${p?.status}`),
+            regionsReached: Number(`${p?.regionsReached}`),
+            districtsReached: Number(`${p?.districtsReached}`),
+            schoolsReached: Number(`${p?.schoolsReached}`),
+            studentsReached: Number(`${p?.studentsReached}`),
+            thumbnailUrl: `${p?.thumbnailUrl ?? ""}`,
+            publisherId: `${p?.publisherId ?? ""}`,
+          };
+
+          console.log(data);
+          
+          return [data];
+        });
+
+        setProjects(dataList);
+
       });
   }, []);
 
   const handleSelectedRow = (p: Project) => {
-    console.log(p);
+    nav(`/dashboard/projects/${p?.projectId}`, {
+      state: p?.projectId,
+    });
   };
 
   const handleAction = (p: Project, action: string) => {
@@ -62,7 +132,15 @@ export default function DashProjectsListPage() {
         <div className="w-full flex justify-between ">
           <h1 className=" text-2xl ">Manage Projects</h1>
 
-          <Button variant="solid" color="primary">
+          <Button
+            variant="solid"
+            color="primary"
+            onClick={() => {
+              nav("/dashboard/projects/create", {
+                state: null,
+              });
+            }}
+          >
             Add{" "}
             <span>
               <GoPlus size={20} />
@@ -86,6 +164,18 @@ export default function DashProjectsListPage() {
                 <TableCell onClick={() => handleSelectedRow(project)}>
                   {project?.description}
                 </TableCell>
+                <TableCell onClick={() => handleSelectedRow(project)}>
+                  {project?.regionsReached}
+                </TableCell>
+                <TableCell onClick={() => handleSelectedRow(project)}>
+                  {project?.districtsReached}
+                </TableCell>
+                <TableCell onClick={() => handleSelectedRow(project)}>
+                  {project?.schoolsReached}
+                </TableCell>
+                <TableCell onClick={() => handleSelectedRow(project)}>
+                  {project?.studentsReached}
+                </TableCell>
                 <TableCell>
                   <div className="relative flex items-center gap-2">
                     <Tooltip content="Detail">
@@ -96,13 +186,13 @@ export default function DashProjectsListPage() {
                       </span>
                     </Tooltip>
 
-                    <Tooltip content="Edit">
+                    {/* <Tooltip content="Edit">
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <GoPencil
                           onClick={() => handleAction(project, actionTypes[1])}
                         />
                       </span>
-                    </Tooltip>
+                    </Tooltip> */}
 
                     <Tooltip color="danger" content="Delete">
                       <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">

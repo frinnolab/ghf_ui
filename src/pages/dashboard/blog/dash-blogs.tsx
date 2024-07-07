@@ -1,12 +1,7 @@
 import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import { useEffect, useState } from "react";
-import {
-  GoEye,
-  GoPencil,
-  GoPlus,
-  GoTrash,
-} from "react-icons/go";
+import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import {
   Divider,
   Table,
@@ -18,11 +13,13 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import useAuthedProfile from "@/hooks/use-auth";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthRole } from "@/types";
 
 export type Blog = {
   blogId?: string;
+  thumbnailUrl?: string;
   title?: string;
   description?: string;
   authorId?: string;
@@ -30,16 +27,7 @@ export type Blog = {
 export default function DashBlogsListPage() {
   const columns = ["Title", "Description", "Actions"];
   const actionTypes = ["detail", "edit", "delete"];
-  const [blogs] = useState<Blog[]>([
-    {
-      blogId:"adadadadadadadadaf",
-      title:"Test blog"
-    },
-    {
-      blogId:"adadadadadadadadaf",
-      title:"Test blog 2"
-    }
-  ]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
@@ -51,57 +39,79 @@ export default function DashBlogsListPage() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "Authorization":`Bearer ${authed?.token}`
+          Authorization: `Bearer ${authed?.token}`,
         },
       })
       .then((res: AxiosResponse) => {
+        const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
+          const data: Blog = {
+            blogId: `${b.blogId}`,
+            authorId: `${b.authorId}`,
+            title: `${b.title}`,
+            description: `${b.description}`,
+            thumbnailUrl: `${b.thumbnailUrl}`,
+          };
+          return [data];
+        });
+
+        setBlogs(datas);
+
         console.log(res.data);
       });
   }, []);
 
   const handleSelectedRow = (p: Blog) => {
     console.log(p);
-    nav(`/dashboard/blogs/${p.blogId}`,{
-      state:p.blogId
+    nav(`/dashboard/blogs/${p.blogId}`, {
+      state: p.blogId,
     });
   };
 
   const handleAction = (p: Blog, action: string) => {
     switch (action) {
       case actionTypes[0]:
+        //Detail
         handleSelectedRow(p);
-        alert(`Detail ${p.title}`);
         break;
       case actionTypes[1]:
-        alert(`Edit ${p.title}`);
+        handleSelectedRow(p);
+        //Detail
         break;
       case actionTypes[2]:
-        alert(`Delete ${p.title}`);
+        handleDelete(p);
         break;
     }
   };
 
-  const handleCreate=()=>{
-    nav('/dashboard/blogs/create', {
-      state:null
-    }) ;
+  const handleDelete = (blog:Blog)=>{
+    if(authed?.role == AuthRole.User){
+      alert(HttpStatusCode.Unauthorized)
+    }
+
+    axios.delete(`${api}/blogs/${blog?.blogId}`,{
+      headers:{
+        "Accept":"application/json",
+        "Authorization":`Bearer ${authed?.token}`
+      }
+    })
+    .then((res:AxiosResponse)=>{
+      alert("Deleted blog");
+
+      window.location.reload();
+    }).catch((err:AxiosError)=>{
+      console.log(err.response?.data ?? err.response?.statusText);
+      
+    })
   }
+
+  const handleCreate = () => {
+    nav("/dashboard/blogs/create", {
+      state: null,
+    });
+  };
 
   return (
     <DashboardLayout>
-      {/* <div
-        className={`shadow-2xl bg-red-500 absolute w-[90%] md:w-[50%] 
-        rounded-l-2xl right-0 z-30 ${!isPanelOpen ? "hidden animate-appearance-out" : "animate-appearance-in"} transition-left  `}
-      >
-        <div className="flex justify-end p-5">
-          <GoXCircleFill size={20} onClick={handleOpenPanel} />
-        </div>
-        <Divider />
-
-        <div className="p-5"> 
-          <h1>Panel</h1>
-        </div>
-      </div> */}
       <div className="w-full font-semibold space-y-3 p-5">
         {/* Main Actions */}
         <div className="w-full flex justify-between ">
@@ -140,14 +150,6 @@ export default function DashBlogsListPage() {
                         />
                       </span>
                     </Tooltip>
-
-                    {/* <Tooltip content="Edit">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoPencil
-                          onClick={() => handleAction(blog, actionTypes[1])}
-                        />
-                      </span>
-                    </Tooltip> */}
 
                     <Tooltip color="danger" content="Delete">
                       <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">

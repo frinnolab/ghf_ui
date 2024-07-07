@@ -16,6 +16,7 @@ import DashSettingsPage from "./pages/dashboard/settings/dash-settings";
 import DashBlogsListPage from "./pages/dashboard/blog/dash-blogs";
 import DashProjectsListPage from "./pages/dashboard/projects/dash-projects";
 import DashBlogCreate from "./pages/dashboard/blog/dash-blog-create";
+import DashProjectPage from "./pages/dashboard/projects/dash-project-view";
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
       {/* <Route element={<DashProgramsListPage />} path="/dashboard/programs"/> */}
       <Route element={<DashProfilesListPage />} path="/dashboard/profiles"/>
       <Route element={<DashProjectsListPage />} path="/dashboard/projects"/>
+      <Route element={<DashProjectPage />} path="/dashboard/projects/:id"/>
+      
+      <Route element={<DashProjectPage />} path="/dashboard/projects/create"/>
       <Route element={<DashBlogsListPage />} path="/dashboard/blogs"/>
       <Route element={<DashBlogCreate />} path="/dashboard/blogs/create"/>
       <Route element={<DashBlogCreate />} path="/dashboard/blogs/:id"/>

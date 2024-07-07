@@ -1,8 +1,9 @@
+import useAuthedProfile from "@/hooks/use-auth";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { Image } from "@nextui-org/react";
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GoHome } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -25,6 +26,14 @@ export default function LoginPage() {
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
+
+  const authed = useAuthedProfile();
+
+  useEffect(() => {
+    if(authed){
+      navigate('/dashboard');
+    }
+  }, []);
 
   const handleLogin = () => {
     if (emailRef?.current?.value === "") {
@@ -155,7 +164,7 @@ export default function LoginPage() {
         {/* <div className="w-full bg-yellow-0 p-3">
         </div> */}
         {/* <p>image</p> */}
-        <Image isZoomed width={2000} src="/assets/images/auth/login_img.jpg"/>
+        <Image isZoomed width={2000} src="/assets/images/auth/login_img.jpg" />
         {/* <img
           width={900}
           src="/assets/images/auth/login_img.jpg"

@@ -1,11 +1,19 @@
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { Image } from "@nextui-org/react";
+import axios, { AxiosResponse, HttpStatusCode, AxiosError } from "axios";
 import { useRef } from "react";
 import { GoHome } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
+type registerRequest = {
+  firstname?: string;
+  email?: string;
+  password?: string;
+};
+
 export default function RegisterPage() {
+  const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
   //Form Refs
   const fnameRef = useRef<HTMLInputElement>(null);
@@ -15,6 +23,42 @@ export default function RegisterPage() {
 
   const onRegister = () => {
     alert(emailRef?.current?.value);
+
+    if (emailRef?.current?.value === "") {
+      alert(`Email is required!.`);
+    }
+
+    if (passRef?.current?.value === "") {
+      alert(`Password is required!.`);
+    }
+
+    const data: registerRequest = {
+      firstname: fnameRef?.current?.value,
+      email: emailRef?.current?.value,
+      password: passRef?.current?.value,
+    };
+
+    axios
+    .post(`${api}/auth/register`, data, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res: AxiosResponse) => {
+      if (res.status === HttpStatusCode.Ok) {
+        console.log(res.data);
+
+        setTimeout(() => {
+          alert(`Registered in: ${res?.data?.email}, Login to continue.`);
+        }, 3000);
+
+        navigate("/login");
+      }
+    })
+    .catch((e: AxiosError) => {
+      alert(`${e.response?.data}`);
+    });
   };
   return (
     <div className="w-full flex flex-col md:gap-10 items-center bg-slate-0 h-screen p-5">
