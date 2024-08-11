@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
 import { useState } from "react";
-import useAuthedProfile from "@/hooks/use-auth";
+//import useAuthedProfile from "@/hooks/use-auth";
 type Program = {
   name?: string;
   description?: string;
@@ -20,7 +20,7 @@ type Program = {
 export default function DashProgramsListPage() {
   const columns = ["Email", "Firstname", "Actions"];
   const actionTypes = ["detail", "edit", "delete"];
-  const authed = useAuthedProfile();
+  //const authed = useAuthedProfile();
   const [programs] = useState<Program[]>([
     {
       name: "test0-program",

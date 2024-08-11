@@ -1,5 +1,3 @@
-import { ReactElement } from "react";
-
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
@@ -11,6 +9,10 @@ export const siteConfig = {
       href: "/",
     },
     {
+      label: "Uwezo",
+      href: "/uwezo",
+    },
+    {
       label: "Blog",
       href: "/blog",
     },
@@ -18,10 +20,10 @@ export const siteConfig = {
       label: "About",
       href: "/about",
     },
-    // {
-    //   label: "Uwezo",
-    //   href: "/uwezo",
-    // },
+    {
+      label: "sappy",
+      href: "/sappy",
+    },
     // {
     //   label: "Careers",
     //   href: "/careers",
@@ -48,6 +50,10 @@ export const siteConfig = {
       label: "Projects",
       href: "/dashboard/projects",
     },
+    {
+      label: "Impacts",
+      href: "/dashboard/impacts",
+    },
     // {
     //   label: "Programs",
     //   href: "/dashboard/programs",
@@ -56,8 +62,17 @@ export const siteConfig = {
       label: "Profiles",
       href: "/dashboard/profiles",
     },
+
     {
-      label: "Profile",
+      label: "Donors/Partners",
+      href: "/dashboard/partners",
+    },
+    {
+      label: "Teams",
+      href: "/dashboard/teams",
+    },
+    {
+      label: "My Profile",
       href: "/dashboard/profile",
     },
     {
@@ -89,7 +104,7 @@ export const siteConfig = {
   },
   
   footerTexts:{
-    footerImage:'/assets/logos/GHFLOGO.jpg',
+    footerImage:'/assets/logos/GHF_LOGO.png',
     address:{
       country:"Tanzania",
       city:"Dar es salaam",

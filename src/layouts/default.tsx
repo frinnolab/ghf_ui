@@ -3,6 +3,13 @@ import { Link } from "@nextui-org/link";
 import { Navbar } from "@/components/navbar";
 
 import { siteConfig as config } from "@/config/site";
+import {
+  FaMailBulk,
+  FaMapMarkedAlt,
+  FaMapPin,
+  FaPhoneAlt,
+} from "react-icons/fa";
+import { FaSignsPost } from "react-icons/fa6";
 export default function DefaultLayout({
   children,
 }: {
@@ -12,7 +19,7 @@ export default function DefaultLayout({
     <div className="w-full relative flex flex-col h-screen">
       <Navbar />
       {/* <main className="container mx-auto max-w-7xl px-0 flex-grow pt-16"> */}
-      <main className="w-full px-0 flex-grow pt-16">{children}</main>
+      <main className="w-full px-0 flex-grow pt-16 bg-default-50">{children}</main>
       {/* FOOTER */}
 
       <footer className="container flex flex-col gap-5  items-center justify-between p-3 md:pt-20">
@@ -36,11 +43,24 @@ export default function DefaultLayout({
             <h1 className=" text-2xl ">Get Intouch with us</h1>
 
             <ul className="space-y-3 text-lg">
-              <li>{config?.footerTexts?.contact?.email}</li>
-              <li>{config?.footerTexts?.contact?.contacts}</li>
-              <li>{config?.footerTexts?.address?.postoffice}</li>
-              <li>{config?.footerTexts?.address?.city}</li>
-              <li>{config?.footerTexts?.address?.country}</li>
+              <li className="flex items-center gap-5">
+                <FaMailBulk /> {config?.footerTexts?.contact?.email}
+              </li>
+              <li className="flex items-center gap-5">
+                <FaPhoneAlt />
+                {config?.footerTexts?.contact?.contacts}
+              </li>
+              <li className="flex items-center gap-5">
+                {" "}
+                <FaSignsPost /> {config?.footerTexts?.address?.postoffice}
+              </li>
+              <li className="flex items-center gap-5">
+                {" "}
+                <FaMapPin /> {config?.footerTexts?.address?.city}
+              </li>
+              <li className="flex items-center gap-5">
+                <FaMapMarkedAlt /> {config?.footerTexts?.address?.country}
+              </li>
             </ul>
           </div>
         </div>

@@ -80,11 +80,9 @@ export default function DashProjectPage() {
             dateStart: `${res.data["dateStart"]}`,
             dateEnd: `${res.data["dateEnd"]}`,
             publisherId: `${res.data["publisherId"]}`,
-            status: Number(`${res?.data['status']}`) ,
-            thumbnailUrl: `${res.data["thumbnailUrl"]}`
+            status: Number(`${res?.data["status"]}`),
+            thumbnailUrl: `${res.data["thumbnailUrl"]}`,
           };
-
-          
 
           const statusVal = projectStatus.find(
             (p) => p?.key === Number(data?.status)
@@ -164,42 +162,57 @@ export default function DashProjectPage() {
       data.append("_method", `PUT`);
       data.append("publisherProfileId", `${authed?.profileId}`);
       data.append("title", `${titleRef?.current?.value ?? project?.title}`);
-      data.append("description", `${descRef?.current?.value ?? project?.description}`);
+      data.append(
+        "description",
+        `${descRef?.current?.value ?? project?.description}`
+      );
       data.append(
         "status",
         `${selectedStatus?.key === undefined ? projectStatus[1].key : selectedStatus?.key}`
       );
-      data.append("regionsReached", `${regionsRef?.current?.value ?? project?.regionsReached}`);
-      data.append("districtsReached", `${districtsRef?.current?.value ?? project?.districtsReached}`);
-      data.append("schoolsReached", `${schoolsRef?.current?.value ?? project?.schoolsReached}`);
-      data.append("studentsReached", `${studentsRef?.current?.value ?? project?.studentsReached}`);
+      data.append(
+        "regionsReached",
+        `${regionsRef?.current?.value ?? project?.regionsReached}`
+      );
+      data.append(
+        "districtsReached",
+        `${districtsRef?.current?.value ?? project?.districtsReached}`
+      );
+      data.append(
+        "schoolsReached",
+        `${schoolsRef?.current?.value ?? project?.schoolsReached}`
+      );
+      data.append(
+        "studentsReached",
+        `${studentsRef?.current?.value ?? project?.studentsReached}`
+      );
 
       if (selectedImage) {
         data.append("image", selectedImage);
       }
 
-        data.forEach((d) => {
-          console.log(d);
-        }); 
+      data.forEach((d) => {
+        console.log(d);
+      });
 
-        axios
-          .post(`${api}/projects/${project?.projectId}`, data, {
-            headers: {
-              Authorization: `Bearer ${authed?.token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((res: AxiosResponse) => {
-            console.log(res.data);
+      axios
+        .post(`${api}/projects/${project?.projectId}`, data, {
+          headers: {
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
 
-            window.location.reload();
-            //nav("/dashboard/projects");
-            //setSelectedImage(null);
-          })
-          .catch((err: AxiosError) => {
-            //setSelectedImage(null);
-            console.log(err.response);
-          });
+          window.location.reload();
+          //nav("/dashboard/projects");
+          //setSelectedImage(null);
+        })
+        .catch((err: AxiosError) => {
+          //setSelectedImage(null);
+          console.log(err.response);
+        });
     }
   };
 
@@ -221,6 +234,7 @@ export default function DashProjectPage() {
       <Divider />
 
       <div className="w-full flex flex-col p-5 gap-5">
+        
         <div className={` flex justify-end items-center gap-5 `}>
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
@@ -341,7 +355,7 @@ export default function DashProjectPage() {
                 <Select
                   label="Select Project Status"
                   className="max-w-xs"
-                  defaultSelectedKeys={`${ selectedStatus?.key ?? projectStatus[1].key}`}
+                  defaultSelectedKeys={`${selectedStatus?.key ?? projectStatus[1].key}`}
                   onChange={(e) => {
                     changeStatus(e);
                   }}

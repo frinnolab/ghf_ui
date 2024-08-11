@@ -28,37 +28,44 @@ export default function DashBlogsListPage() {
   const columns = ["Title", "Description", "Actions"];
   const actionTypes = ["detail", "edit", "delete"];
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [isBlogs, setIsBlogs] = useState<boolean>(false);
 
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
   const nav = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`${api}/blogs`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authed?.token}`,
-        },
-      })
-      .then((res: AxiosResponse) => {
-        const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
-          const data: Blog = {
-            blogId: `${b.blogId}`,
-            authorId: `${b.authorId}`,
-            title: `${b.title}`,
-            description: `${b.description}`,
-            thumbnailUrl: `${b.thumbnailUrl}`,
-          };
-          return [data];
+    if (!isBlogs) {
+      axios
+        .get(`${api}/blogs`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then((res: AxiosResponse) => {
+          const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
+            const data: Blog = {
+              blogId: `${b.blogId}`,
+              authorId: `${b.authorId}`,
+              title: `${b.title}`,
+              description: `${b.description}`,
+              thumbnailUrl: `${b.thumbnailUrl}`,
+            };
+            return [data];
+          });
+
+          setBlogs(datas);
+          setIsBlogs(true);
+
+          console.log(res.data);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
         });
-
-        setBlogs(datas);
-
-        console.log(res.data);
-      });
-  }, []);
+    }
+  }, [blogs]);
 
   const handleSelectedRow = (p: Blog) => {
     console.log(p);
@@ -83,25 +90,25 @@ export default function DashBlogsListPage() {
     }
   };
 
-  const handleDelete = (blog:Blog)=>{
-    if(authed?.role == AuthRole.User){
-      alert(HttpStatusCode.Unauthorized)
+  const handleDelete = (blog: Blog) => {
+    if (authed?.role == AuthRole.User) {
+      alert(HttpStatusCode.Unauthorized);
     }
 
-    axios.delete(`${api}/blogs/${blog?.blogId}`,{
-      headers:{
-        "Accept":"application/json",
-        "Authorization":`Bearer ${authed?.token}`
-      }
-    })
-    .then(()=>{
-
-      window.location.reload();
-    }).catch((err:AxiosError)=>{
-      console.log(err.response?.data ?? err.response?.statusText);
-      
-    })
-  }
+    axios
+      .delete(`${api}/blogs/${blog?.blogId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response?.data ?? err.response?.statusText);
+      });
+  };
 
   const handleCreate = () => {
     nav("/dashboard/blogs/create", {

@@ -1,8 +1,10 @@
 import { siteConfig as config } from "@/config/site";
 import useAuthedProfile from "@/hooks/use-auth";
 import { loginResponse } from "@/pages/auth/login";
+import { Button } from "@nextui-org/button";
 import { Tab, Tabs } from "@nextui-org/react";
 import { createContext, ReactNode, useEffect } from "react";
+import { BiLogOutCircle } from "react-icons/bi";
 import { GoHome } from "react-icons/go";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -12,25 +14,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const route = useLocation();
   const nav = useNavigate();
   const authedProfile = useAuthedProfile();
-//   const [authedProfile] = useState<loginResponse | null>(() => {
-//     if (window.sessionStorage.length > 0) {
-//       const data = JSON.parse(`${window.sessionStorage.getItem("profile")}`);
-//       return {
-//         profileId: `${data["profileId"]}`,
-//         email: `${data["email"]}`,
-//         token: `${data["token"]}`,
-//         role: Number(`${data["role"]}`),
-//       };
-//     }
-//     return null;
-//   });
 
-  useEffect(()=>{
-    if(!authedProfile){
-        window.sessionStorage.clear();
-        nav('/login');
+
+
+  const logOut = () => {
+    if (!authedProfile) {
+      window.sessionStorage.clear();
+      nav("/login");
     }
-  },[authedProfile])
+
+  };
+
+  useEffect(() => {
+    logOut();
+  }, [authedProfile]);
   return (
     <AuthContext.Provider value={authedProfile}>
       <div className="w-full flex flex-col justify-between cursor-default overflow-hidden relative">
@@ -38,7 +35,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <Link className="flex items-center gap-1" to={"/"}>
             Back Home <GoHome size={20} />
           </Link>
-          <p className="font-semibold">Nav {route.pathname}</p>
+
+          <Button
+            color="danger"
+            onClick={() => {
+              if (authedProfile) {
+                window.sessionStorage.clear();
+                nav("/login");
+              }
+            }}
+          >
+            <BiLogOutCircle size={20} />
+          </Button>
         </div>
 
         <div className="w-full  flex flex-col space-y-3 p-10">
@@ -66,7 +74,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Dash Footer */}
-        <div>
+        <div className="hidden">
           <p>Footer</p>
         </div>
         {/* Dash Footer End */}

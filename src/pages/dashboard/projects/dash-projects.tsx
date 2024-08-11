@@ -70,7 +70,6 @@ export default function DashProjectsListPage() {
   const authed = useAuthedProfile();
 
   useEffect(() => {
-    
     axios
       .get(`${api}/projects`, {
         headers: {
@@ -97,14 +96,13 @@ export default function DashProjectsListPage() {
           };
 
           console.log(data);
-          
+
           return [data];
         });
 
         setProjects(dataList);
-
       });
-  }, []);
+  }, [projects]);
 
   const handleSelectedRow = (p: Project) => {
     nav(`/dashboard/projects/${p?.projectId}`, {
@@ -115,16 +113,19 @@ export default function DashProjectsListPage() {
   const handleAction = (p: Project, action: string) => {
     switch (action) {
       case actionTypes[0]:
-        alert(`Detail ${p.title}`);
+        //alert(`Detail ${p.title}`);
+        handleSelectedRow(p);
         break;
       case actionTypes[1]:
-        alert(`Edit ${p.title}`);
+        //alert(`Edit ${p.title}`);
+        handleSelectedRow(p);
         break;
       case actionTypes[2]:
         alert(`Delete ${p.title}`);
         break;
     }
   };
+
   return (
     <DashboardLayout>
       <div className="w-full font-semibold space-y-3 p-5">

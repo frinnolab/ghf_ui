@@ -1,12 +1,138 @@
 import DefaultLayout from "@/layouts/default";
 import { Button } from "@nextui-org/button";
-import { useRef, useState } from "react";
+import { Link } from "@nextui-org/link";
+import { Image } from "@nextui-org/react";
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { useEffect, useRef, useState } from "react";
+import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
+import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
+import { GoArrowUpRight } from "react-icons/go";
+import { SummaryInfo } from "./dashboard/summary/dash-summary";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/all";
+export type Partner = {
+  label?: string;
+  logo?: string;
+};
 
-/* eslint-disable prettier/prettier */
 export default function HomePage() {
+  const mainSectionRef = useRef(null);
   const headerTextsRef = useRef(null);
+  const headTxtCardRef = useRef<HTMLDivElement | null>(null);
   const introVideoRef = useRef<HTMLVideoElement>(null);
+  const sumRegRef = useRef<HTMLHeadingElement | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(true);
+  const api = `${import.meta.env.VITE_API_URL}`;
+  const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
+  const tl = gsap.timeline();
+  gsap.registerPlugin(ScrollTrigger);
+
+  const panels = gsap.utils.toArray(".panel");
+
+  const [partners] = useState<Partner[]>([
+    {
+      label: "PREMIUM AGENCY",
+      logo: `assets/logos/PA.jpg`,
+    },
+    {
+      label: "KARIMJEE FOUNDATION",
+      logo: `assets/logos/KM.png`,
+    },
+    {
+      label: "Segal",
+      logo: `assets/logos/SEG.jpeg`,
+    },
+    {
+      label: "EFM",
+      logo: `assets/logos/EFM.jpeg`,
+    },
+  ]);
+
+  // const goToPanel = (panel:any) => {
+  //   gsap.to(window, {
+  //     scrollTo: {
+  //       y: panel * innerHeight,
+  //       autoKill: false,
+  //     },
+  //     duration: 0.85,
+  //     ease: "Power3.easeInOut",
+  //   });
+  // };
+
+  useEffect(() => {
+    if (summaryInfo === null) {
+      axios
+        .get(`${api}/settings/summaryinfo`)
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+
+          setSummarInfo(() => {
+            return {
+              regions: {
+                label: "Total Regions",
+                value: `${res?.data["totalRegions"] ?? 0}`,
+              },
+              districts: {
+                label: "Total Districts",
+                value: `${res?.data["totalDistricts"] ?? 0}`,
+              },
+              schools: {
+                label: "Total Schools",
+                value: `${res?.data["totalSchools"]}`,
+              },
+              students: {
+                label: "Total Students",
+                value: `${res?.data["totalStudents"]}`,
+              },
+              projects: {
+                label: "Total Projects",
+                value: `${res?.data["totalProjects"]}`,
+              },
+            };
+          });
+
+          //setSummaries(res?.data);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+        });
+    }
+  }, [summaryInfo]);
+
+  useGSAP(() => {
+    mainFx();
+    headCardFx();
+    sumRegFx();
+  }, [headTxtCardRef]);
+
+  //#region Fx Actions
+  const mainFx = () => {
+    tl.to(mainSectionRef.current, {
+      scrollTrigger: {
+        trigger: mainSectionRef.current,
+        scrub: 1,
+      },
+    });
+  };
+
+  const headCardFx = () =>
+    tl.fromTo(
+      headTxtCardRef.current,
+      {
+        opacity: 0,
+      },
+      {
+        delay: 1.2,
+        duration: 1.3,
+        opacity: 1,
+      }
+    );
+
+  const sumRegFx = () => {
+    tl.to(sumRegRef.current, {});
+  };
+  //#endregion
 
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
@@ -20,73 +146,116 @@ export default function HomePage() {
 
   return (
     <DefaultLayout>
-      <section className="w-full flex flex-col items-center justify-center">
-        <div className="h-screen w-full flex flex-col justify-center">
+      <section
+        ref={mainSectionRef}
+        className="w-full flex flex-col items-center justify-center bg-default-100"
+      >
+        {/* Hero Section */}
+        <div className="h-screen w-full flex flex-col justify-center panel">
           {/* Header Text */}
           <div
             ref={headerTextsRef}
             className="w-full flex flex-col gap-5 z-30 absolute text-end p-10"
           >
-            <div className=" text-primary flex flex-col space-y-5 font-semibold">
-              <h1 className=" text-2xl md:text-6xl font-semibold">
-                WE LIVE TO EMPOWER
-              </h1>
-              <h1 className=" text-2xl md:text-6xl font-semibold">DEVELOP</h1>
-              <h1 className=" text-2xl md:text-6xl font-semibold">
-                AND INSPIRE YOUNG GENERATION
-              </h1>
-              <h1 className=" text-2xl md:text-6xl font-semibold">
-                TO ACQUIRE ENTREPRENEURSHIP
-              </h1>
-              <h1 className=" text-2xl md:text-6xl font-semibold">
-                AND 21ST CENTURY SKILLS
-              </h1>
+            <div className="w-full flex justify-between">
+              <div></div>
+              <div
+                ref={headTxtCardRef}
+                className="flex flex-col space-y-5 font-semibold p-5 rounded-2xl"
+              >
+                <h1 className=" text-2xl md:text-5xl font-semibold">
+                  WE LIVE TO EMPOWER
+                </h1>
+                <h1 className=" text-2xl md:text-5xl font-semibold">DEVELOP</h1>
+                <h1 className=" text-2xl md:text-5xl font-semibold">
+                  AND INSPIRE YOUNG GENERATION
+                </h1>
+                <h1 className=" text-2xl md:text-5xl font-semibold">
+                  TO ACQUIRE ENTREPRENEURSHIP
+                </h1>
+                <h1 className=" text-2xl md:text-5xl font-semibold">
+                  AND 21ST CENTURY SKILLS
+                </h1>
+              </div>
             </div>
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[8.5%] filter saturate-[50%]">
-            <img alt="Header img" src="/assets/images/_MBX0174crp.jpg" />
+          <div className="w-full absolute">
+            <Image
+              radius="none"
+              alt="Header img"
+              src="/assets/images/static/MAIN_PAGE.jpg"
+            />
+            {/* <img alt="Header img" src="/assets/images/UCT_024_86_2.jpg" /> */}
           </div>
         </div>
 
         {/* Who We're */}
-        <div className="w-full flex flex-col space-y-5 px-10 font-semibold">
-          <h1 className="text-6xl py-5">Who we are</h1>
+        <div className="w-full flex flex-col space-y-5 px-10 font-semibold cursor-default z-50 panel">
+          <div className=" bg-default-200 rounded-2xl p-10 ">
+            <h1 className="text-4xl py-3">Who we are</h1>
 
-          <p className="text-2xl text-justify">
-            Great Hope Foundation (GHF) is a local Non - Governmental
-            Organization, legally registered in Tanzania, with a registration
-            number of 3976 in 2010. Since its initiation, the NGO has been
-            working to develop platforms that capacitate young people with both
-            entrepreneurial and 21st Century Skills. We believe in bringing the
-            best out of young people, in a way that benefits them and the
-            community around them. We aim at being an organization that
-            enlightens young people potential, giving them hope and courage to
-            bring the very best out of themselves.
-          </p>
-          {/* <div className="w-full flex justify-center">
-            <video
-              style={{
-                borderRadius: "20px",
-              }}
-              width={900}
-              src="assets/videos/sample_videoP.mp4"
-              autoPlay
-              controls
-            />
-          </div> */}
+            <p className="text-2xl text-justify">
+              Great Hope Foundation (GHF) is a local Non - Governmental
+              Organization, legally registered in Tanzania, with a registration
+              number of 3976 in 2010. Since its initiation, the NGO has been
+              working to develop platforms that capacitate young people with
+              both entrepreneurial and 21st Century Skills. We believe in
+              bringing the best out of young people, in a way that benefits them
+              and the community around them. We aim at being an organization
+              that enlightens young people potential, giving them hope and
+              courage to bring the very best out of themselves.
+            </p>
+          </div>
         </div>
         {/* Who We're End */}
 
         {/* Data Summary Section */}
-        <div className="w-full flex flex-col justify-center items-center p-10 h-screen">
-          <h1 className=" text-5xl ">Data Summary</h1>
+        <div className="w-full flex flex-col justify-center gap-5 items-center h-screen p-5 cursor-default panel">
+          {/* <h1 className=" text-5xl ">Data Summary</h1> */}
+          <div className="w-full flex  justify-between gap-10 p-5">
+            {/* Regions */}
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+              <FaMapMarkedAlt className="text-green-500" size={30} />
+              <h1 className=" text-6xl" ref={sumRegRef}>
+                {summaryInfo?.regions?.value ?? 0}
+              </h1>
+              <h1 className=" text-2xl ">Regions Reached</h1>
+            </div>
+
+            {/* Districts */}
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+              <FaMapPin className="text-red-500" size={30} />
+              <h1 className=" text-6xl ">
+                {summaryInfo?.districts?.value ?? 0}
+              </h1>
+              <h1 className=" text-2xl ">Districts Reached</h1>
+            </div>
+          </div>
+
+          <div className="w-full flex justify-between gap-10 p-5  ">
+            {/* Schools */}
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+              <FaUniversity className="text-blue-500" size={30} />
+              <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1>
+              <h1 className=" text-2xl ">Schools Reached</h1>
+            </div>
+
+            {/* Studentes */}
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+              <FaPeopleGroup className="text-orange-500" size={30} />
+              <h1 className=" text-6xl ">
+                {summaryInfo?.students?.value ?? 0}
+              </h1>
+              <h1 className=" text-2xl ">Students Impacted</h1>
+            </div>
+          </div>
         </div>
         {/* Data Summary Section End*/}
 
         {/* Vision Section */}
-        <div className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-10 bg-orange-500 h-screen">
+        <div className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-10 bg-orange-500 h-screen panel">
           <div className="flex flex-col w-full space-y-5">
             {/* Our vision */}
             <div className="w-full flex flex-col space-y-5">
@@ -128,38 +297,59 @@ export default function HomePage() {
               muted
               // controls
             />
-            <div className=" w-full flex justify-end ">
-              <Button variant="flat" className=" px-10 py-5 " onClick={playInftro}>
-                {isPaused ? 'Play' :'Pause'}
+            <div className=" w-full flex justify-end items-center gap-3 ">
+              <p className=" italic text-small ">A word from our founder</p>
+              <Button
+                variant="flat"
+                className=" px-10 py-5 "
+                onClick={playInftro}
+              >
+                {isPaused ? "Play" : "Pause"}
               </Button>
             </div>
           </div>
         </div>
-        {/* Who we're Section End*/}
+        {/* Vision Section End*/}
 
         {/* Donors Section */}
-        <div className="w-full flex flex-col justify-center items-center p-10 h-screen">
-          <h1 className=" text-5xl ">Partners & Donors</h1>
+        <div className="w-full flex flex-col justify-center items-center p-10 h-screen bg-default-50 panel">
+          <h1 className=" text-5xl ">Our Partners & Donors</h1>
+
+          <div className="w-full flex justify-between items-center gap-5 p-5">
+            {partners.map((p: Partner, i) => (
+              <div key={i} className=" p-10 rounded-2xl text-center ">
+                <h1 className=" text-2xl hidden ">{p?.label}</h1>
+
+                <Image
+                  width={350}
+                  height={350}
+                  className={``}
+                  src={`${p?.logo}`}
+                />
+              </div>
+            ))}
+          </div>
+          <div></div>
         </div>
         {/* Donors Section End*/}
 
         {/* Contact Section */}
-        <div className="w-full flex flex-col justify-center items-center p-10 h-screen">
-          <h1 className=" text-5xl ">Contact</h1>
+        <div className="w-full flex flex-col justify-center text-center items-center gap-10 p-10 panel">
+          <h1 className=" text-5xl ">Current Projects</h1>
+
+          <p className=" text-balance text-2xl hidden ">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor
+            asperiores veritatis doloremque expedita consequatur maxime.
+          </p>
+          <h1 className=" text-9xl text-orange-500 ">
+            {summaryInfo?.projects?.value ?? 0}
+          </h1>
+
+          <Link href="/uwezo">
+            View Projects <GoArrowUpRight />{" "}
+          </Link>
         </div>
         {/* Contact Section End*/}
-
-        {/* What we do Section */}
-        {/* <div className="w-full bg-purple-400 z-30 p-10">
-          <h1>Our Programs</h1>
-        </div> */}
-        {/* What we do Section End*/}
-
-        {/* Intro Video Section */}
-        {/* <div className="w-full bg-green-400 z-30 p-10">
-          <h1>Intro video</h1>
-        </div> */}
-        {/* Intro Video Section End*/}
       </section>
     </DefaultLayout>
   );

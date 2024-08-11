@@ -9,3 +9,8 @@ export enum AuthRole {
   "Admin" = 1,
   "User" = 0
 }
+
+export enum PartnerType {
+  "DONOR" = 1,
+  "PARTNER" = 0
+}

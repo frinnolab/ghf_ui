@@ -18,6 +18,7 @@ import { AuthRole } from "@/types";
 
 export type Profile = {
   profileId?: string;
+  avatarUrl?: string;
   email?: string;
   firstname?: string;
   lastname?: string;

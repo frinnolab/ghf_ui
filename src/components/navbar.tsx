@@ -1,7 +1,5 @@
 import { Button } from "@nextui-org/button";
-import { Kbd } from "@nextui-org/kbd";
 import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
 import {
   Navbar as NextUINavbar,
   NavbarBrand,
@@ -16,39 +14,32 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-} from "@/components/icons";
 import { useNavigate } from "react-router-dom";
 import { GoArrowRight } from "react-icons/go";
 // import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["enter"]}>
-          Enter
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
+  // const searchInput = (
+  //   <Input
+  //     aria-label="Search"
+  //     classNames={{
+  //       inputWrapper: "bg-default-100",
+  //       input: "text-sm",
+  //     }}
+  //     endContent={
+  //       <Kbd className="hidden lg:inline-block" keys={["enter"]}>
+  //         Enter
+  //       </Kbd>
+  //     }
+  //     labelPlacement="outside"
+  //     placeholder="Search..."
+  //     startContent={
+  //       <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+  //     }
+  //     type="search"
+  //   />
+  // );
 
   return (
     <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
@@ -63,7 +54,7 @@ export const Navbar = () => {
 
             <img
               alt="logo of ghf"
-              src="/assets/logos/GHFLOGO.jpg"
+              src="/assets/logos/GHF_LOGO.png"
               width={150}
             />
 
