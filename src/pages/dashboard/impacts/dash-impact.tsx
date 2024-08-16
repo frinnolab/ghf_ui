@@ -1,10 +1,11 @@
 import useAuthedProfile from "@/hooks/use-auth";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Impact, ImpactAsset } from "./dash-impacts-list";
 import { Button } from "@nextui-org/button";
+import { Image } from "@nextui-org/react";
 import { Divider, Input, Switch, Textarea } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoPencil } from "react-icons/go";
+import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
 export default function DashImpactView() {
@@ -18,6 +19,7 @@ export default function DashImpactView() {
   const studentGirlsRef = useRef<HTMLInputElement>(null);
   const studentBoysRef = useRef<HTMLInputElement>(null);
   const [studentsTotal, setStudentsTotal] = useState<number>(0);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const authed = useAuthedProfile();
   const nav = useNavigate();
@@ -32,7 +34,6 @@ export default function DashImpactView() {
   });
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
-  const [totalImpactAssets, setTotalImpactAssets] = useState<number>(0);
 
   const handleBack = () => nav("/dashboard/impacts");
 
@@ -75,10 +76,7 @@ export default function DashImpactView() {
           console.log(res);
 
           setIsEdit(false);
-
-          nav(`/dashboard/impacts/${res?.data["impactId"]}`, {
-            state: res?.data["impactId"],
-          });
+          nav(`/dashboard/impacts`);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -90,44 +88,138 @@ export default function DashImpactView() {
     if (impact) {
       const data: Impact = {
         impactId: impact?.impactId,
-        title: `${titleRef?.current?.value ?? impact?.title}`,
-        description: `${descriptionRef?.current?.value ?? impact?.description}`,
-        schoolRegion: `${schoolRegionRef?.current?.value ?? impact?.schoolRegion}`,
-        schoolDistrict: `${schoolDistrictRef?.current?.value ?? impact?.schoolDistrict}`,
-        schoolName: `${schoolNameRef?.current?.value ?? impact?.schoolName}`,
+        title: `${titleRef?.current?.value === "" ? impact?.title : titleRef?.current?.value}`,
+        description: `${descriptionRef?.current?.value === "" ? impact?.description : descriptionRef?.current?.value}`,
+        schoolRegion: `${schoolRegionRef?.current?.value === "" ? impact?.schoolRegion : schoolRegionRef?.current?.value}`,
+        schoolDistrict: `${schoolDistrictRef?.current?.value === "" ? impact?.schoolDistrict : schoolDistrictRef?.current?.value}`,
+        schoolName: `${schoolNameRef?.current?.value === "" ? impact?.schoolName : schoolNameRef?.current?.value}`,
         studentBoys:
-          Number(studentBoysRef?.current?.value) ?? impact?.studentBoys ?? 0,
-        studentGirls: Number(studentGirlsRef?.current?.value) ?? 0,
-        studentsTotal: Number(studentGirlsRef?.current?.value ?? 0),
+          impact?.studentBoys ?? Number(studentBoysRef?.current?.value),
+        studentGirls:
+          Number(studentGirlsRef?.current?.value) ?? impact?.studentGirls,
       };
 
-      console.log(data);
+      axios
+        .put(`${api}/impacts/${impact?.impactId}`, data, {
+          headers: {
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+          method: "put",
+        })
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
 
-      //   setStudentsTotal(
-      //     Number(studentGirlsRef?.current?.value) +
-      //       Number(studentBoysRef?.current?.value)
-      //   );
+          setIsEdit(false);
+          nav(`/dashboard/impacts`);
 
-      //   axios
-      //     .post(`${api}/impacts/${impact?.impactId}`, data, {
-      //       headers: {
-      //         Authorization: `Bearer ${authed?.token}`,
-      //         "Content-Type": "multipart/form-data",
-      //       },
-      //     })
-      //     .then((res: AxiosResponse) => {
-      //       console.log(res.data);
+          //window.location.reload();
+        })
+        .catch((err: AxiosError) => {
+          setIsEdit(false);
+          //setSelectedImage(null);
+          console.log(err);
+        });
+    }
+  };
 
-      //       window.location.reload();
+  const handleAssetUpload = () => {
+    const asset = new FormData();
 
-      //       setIsEdit(false);
-      //       //nav("/dashboard/projects");
-      //       //setSelectedImage(null);
-      //     })
-      //     .catch((err: AxiosError) => {
-      //       //setSelectedImage(null);
-      //       console.log(err.response);
-      //     });
+    if (impactId) {
+      if (selectedImage === null) {
+        alert("No file chosen");
+      } else {
+        asset.append("_method", "POST");
+        asset.append("impactId", `${impact?.impactId}`);
+        if (selectedImage) {
+          asset.append("image", selectedImage);
+        }
+
+        asset.forEach((d) => {
+          console.log(d);
+        });
+
+        axios
+          .post(`${api}/impacts/assets/${impact?.impactId}`, asset, {
+            headers: {
+              Authorization: `Bearer ${authed?.token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res: AxiosResponse) => {
+            console.log(res.data);
+
+            const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
+              (d: any) => {
+                const data: ImpactAsset = {
+                  assetUrl: d?.assetUrl,
+                  impactAssetId: d?.assetId,
+                  impactId: d?.impactId,
+                };
+
+                return [data];
+              }
+            );
+
+            setImpactAssets([...datas]);
+            setSelectedImage(null);
+            window.location.reload();
+          })
+          .catch((err: AxiosError) => {
+            console.log(err?.response);
+
+            setSelectedImage(null);
+
+            //alert(`${err?.response?.data}`);
+
+            window.location.reload();
+          });
+      }
+    } else {
+      alert("Create Impact before adding asset.");
+    }
+  };
+
+  const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
+  const removeSelectedImage = () => {
+    if (!isEdit) {
+      alert("Enable Edit mode to remove Asset(S)");
+    } else {
+      setSelectedImage(null);
+      window.location.reload();
+    }
+  };
+
+  const removeImpactAsset = (impactAssetId: string) => {
+    if (!isEdit) {
+      alert("Enable Edit mode to remove Asset(S)");
+    } else {
+      alert(`Delete asset-${impactAssetId}`);
+
+      axios
+        .delete(`${api}/impacts/assest/${impactAssetId}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+
+          window.location.reload();
+        });
     }
   };
 
@@ -138,14 +230,14 @@ export default function DashImpactView() {
         .then((res: AxiosResponse) => {
           const data: Impact = {
             impactId: `${res?.data["impactId"]}`,
-            title: `${res?.data["title"]}`,
-            schoolName: `${res?.data["schoolName"]}`,
-            schoolDistrict: `${res?.data["schoolDistrict"]}`,
-            schoolRegion: `${res?.data["schoolRegion"]}`,
+            title: res?.data["title"],
+            schoolName: res?.data["schoolName"],
+            schoolDistrict: res?.data["schoolDistrict"],
+            schoolRegion: res?.data["schoolRegion"],
             studentBoys: Number(`${res?.data["studentBoys"]}`),
             studentGirls: Number(`${res?.data["studentGirls"]}`),
             studentsTotal: Number(`${res?.data["studentsTotal"]}`),
-            description: `${res?.data["description"]}`,
+            description: res?.data["description"],
           };
 
           setImpact(data);
@@ -155,6 +247,36 @@ export default function DashImpactView() {
         });
     }
   }, [impactId]);
+
+  //fetch assets
+  useEffect(() => {
+    if (impact) {
+      axios
+        .get(`${api}/impacts/assets/${impactId}`)
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+
+          const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: ImpactAsset = {
+                assetUrl: d?.assetUrl,
+                impactAssetId: d?.assetId,
+                impactId: d?.impactId,
+              };
+
+              return [data];
+            }
+          );
+
+          setImpactAssets([...datas]);
+
+          console.log(impactAssets);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
+    }
+  }, [impact]);
 
   return (
     <div className="w-full">
@@ -168,12 +290,14 @@ export default function DashImpactView() {
 
       <div className="w-full flex flex-col p-5 gap-5">
         <div className={`w-full flex justify-between items-center gap-5 `}>
-          <h1
-            className={` ${impactId === null ? "hidden" : ""} text-start text-xl`}
-          >
-            {" "}
-            Total Students {impact?.studentsTotal ?? studentsTotal}
-          </h1>
+          <div>
+            <h1
+              className={` ${impactId === null ? "hidden" : ""} text-start text-xl`}
+            >
+              {" "}
+              Total Students {impact?.studentsTotal ?? studentsTotal}
+            </h1>
+          </div>
 
           <div className={` self-end flex justify-between items-center gap-5`}>
             <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
@@ -296,28 +420,69 @@ export default function DashImpactView() {
           {/* From End */}
 
           {/* Asets */}
-          <div className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-10">
+          <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
             <div className={`w-full flex justify-between items-center`}>
-              <h1>Impact Images ({totalImpactAssets})</h1>
+              {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
+              <div className="p-2 flex items-center">
+                <input
+                  disabled={!isEdit ? true : false}
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => {
+                    onChangePic(e);
+                  }}
+                />
+
+                <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
+                  <GoTrash
+                    size={20}
+                    className=" text-danger-500"
+                    onClick={removeSelectedImage}
+                  />
+                </span>
+              </div>
 
               <Button
                 color={`${impact === null ? "default" : "primary"}`}
                 disabled={impact === null}
-                // disabled={impact === null}
                 onClick={() => {
                   if (!isEdit) {
                     alert("Enable Edit mode to Add Asset(S)");
                   } else {
-                    alert("Add Asset");
+                    handleAssetUpload();
                   }
                 }}
               >
-                {impactAssets === null ? "Add Asset(S)" : "Update Asset(S)"}
+                {"Add Asset"}
               </Button>
             </div>
 
-            <div className={`w-full bg-red-500 overflow-y-scroll h-[50vh] p-5`}>
-              <p>Asset Images</p>
+            <div className={`w-full overflow-y-scroll h-[50vh] p-2`}>
+              {impactAssets === null || impactAssets?.length === 0 ? (
+                <>
+                  <p className=" text-center ">No Asset</p>
+                </>
+              ) : (
+                <div className={`w-full flex gap-3`}>
+                  {impactAssets?.flatMap((d: ImpactAsset) => (
+                    <div
+                      key={d?.impactAssetId}
+                      className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                    >
+                      <Image width={150} height={150} src={d?.assetUrl} />
+                      <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                        <GoTrash
+                          size={20}
+                          className=" text-danger-500"
+                          onClick={() => {
+                            removeImpactAsset(`${d?.impactAssetId}`);
+                          }}
+                        />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Image  */}

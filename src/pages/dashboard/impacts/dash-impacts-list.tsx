@@ -30,8 +30,6 @@ export type Impact = {
 export type ImpactAsset = {
   impactId?: string;
   impactAssetId?: string;
-  title?: string;
-  description?: string;
   assetUrl?: string;
 };
 const DashImpactsListPage = () => {
@@ -58,8 +56,22 @@ const DashImpactsListPage = () => {
         break;
       case actionTypes[2]:
         alert(`Delete ${p.title}`);
+        handleDelete(p);
         break;
     }
+  };
+
+  const handleDelete = (i: Impact) => {
+    axios
+      .delete(`${api}/impacts/${i?.impactId}`,{
+        method:"DELETE"
+      })
+      .then((res: AxiosResponse) => {
+        window.location.reload();
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -74,8 +86,8 @@ const DashImpactsListPage = () => {
 
             const resData: Impact = {
               impactId: `${d?.impactId}`,
-              title: `${d?.title}`,
-              schoolName: `${d?.schoolName}`,
+              title: d?.title ,
+              schoolName: d?.schoolName,
               studentsTotal: Number(d?.studentsTotal),
             };
             return [resData];
