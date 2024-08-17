@@ -88,22 +88,27 @@ export default function DashImpactView() {
     if (impact) {
       const data: Impact = {
         impactId: impact?.impactId,
-        title: `${titleRef?.current?.value === "" ? impact?.title : titleRef?.current?.value}`,
-        description: `${descriptionRef?.current?.value === "" ? impact?.description : descriptionRef?.current?.value}`,
-        schoolRegion: `${schoolRegionRef?.current?.value === "" ? impact?.schoolRegion : schoolRegionRef?.current?.value}`,
-        schoolDistrict: `${schoolDistrictRef?.current?.value === "" ? impact?.schoolDistrict : schoolDistrictRef?.current?.value}`,
-        schoolName: `${schoolNameRef?.current?.value === "" ? impact?.schoolName : schoolNameRef?.current?.value}`,
+        title: titleRef?.current?.value === null ? impact?.title : titleRef?.current?.value,
+        description: descriptionRef?.current?.value === null ? impact?.description : descriptionRef?.current?.value,
+        schoolRegion: schoolRegionRef?.current?.value === null ? impact?.schoolRegion : schoolRegionRef?.current?.value,
+        schoolDistrict: schoolDistrictRef?.current?.value === null ? impact?.schoolDistrict : schoolDistrictRef?.current?.value,
+        schoolName: schoolNameRef?.current?.value === null ? impact?.schoolName : schoolNameRef?.current?.value,
         studentBoys:
           impact?.studentBoys ?? Number(studentBoysRef?.current?.value),
         studentGirls:
           Number(studentGirlsRef?.current?.value) ?? impact?.studentGirls,
       };
 
+      
+      console.log(data);
+      
+
       axios
         .put(`${api}/impacts/${impact?.impactId}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
-            "Content-Type": "multipart/form-data",
+            "Accept":"application/json",
+            "Content-Type": "application/json",
           },
           method: "put",
         })
@@ -203,7 +208,7 @@ export default function DashImpactView() {
       alert(`Delete asset-${impactAssetId}`);
 
       axios
-        .delete(`${api}/impacts/assest/${impactAssetId}`, {
+        .delete(`${api}/impacts/assets/${impactAssetId}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -329,7 +334,7 @@ export default function DashImpactView() {
                 disabled={!isEdit ? true : false}
                 type="text"
                 ref={titleRef}
-                placeholder={`${impact?.title ?? "Enter Title"}`}
+                placeholder={impact?.title ?? "Enter Title"}
               />
             </div>
 
@@ -469,7 +474,7 @@ export default function DashImpactView() {
                       key={d?.impactAssetId}
                       className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
                     >
-                      <Image width={150} height={150} src={d?.assetUrl} />
+                      <Image width={150} src={d?.assetUrl} />
                       <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
                         <GoTrash
                           size={20}
