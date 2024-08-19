@@ -23,11 +23,19 @@ import axios, { AxiosResponse, AxiosError, HttpStatusCode } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import { Profile } from "../profiles/dash-profiles-list";
 
 export type Team = {
   teamId?: string;
   name?: string;
   totalMembers?: string;
+};
+
+export type TeamMember = {
+  teamId?: string;
+  member?: Profile;
+  memberId?: string;
+  teamPosition?: string;
 };
 
 export default function DashboardTeamsPage() {
