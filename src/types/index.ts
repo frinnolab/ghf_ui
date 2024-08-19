@@ -12,5 +12,6 @@ export enum AuthRole {
 
 export enum PartnerType {
   "DONOR" = 1,
-  "PARTNER" = 0
+  "PARTNER" = 0,
+  "COLLABORATOR" = 2
 }

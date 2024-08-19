@@ -38,8 +38,6 @@ export default function DashImpactView() {
   const handleBack = () => nav("/dashboard/impacts");
 
   const handleSave = () => {
-    alert("Save");
-
     if (impact === null) {
       //Save
 
@@ -88,26 +86,44 @@ export default function DashImpactView() {
     if (impact) {
       const data: Impact = {
         impactId: impact?.impactId,
-        title: titleRef?.current?.value === null ? impact?.title : titleRef?.current?.value,
-        description: descriptionRef?.current?.value === null ? impact?.description : descriptionRef?.current?.value,
-        schoolRegion: schoolRegionRef?.current?.value === null ? impact?.schoolRegion : schoolRegionRef?.current?.value,
-        schoolDistrict: schoolDistrictRef?.current?.value === null ? impact?.schoolDistrict : schoolDistrictRef?.current?.value,
-        schoolName: schoolNameRef?.current?.value === null ? impact?.schoolName : schoolNameRef?.current?.value,
-        studentBoys:
-          impact?.studentBoys ?? Number(studentBoysRef?.current?.value),
-        studentGirls:
-          Number(studentGirlsRef?.current?.value) ?? impact?.studentGirls,
+        title:
+          titleRef?.current?.value === null
+            ? impact?.title
+            : titleRef?.current?.value,
+        description:
+          descriptionRef?.current?.value === null
+            ? impact?.description
+            : descriptionRef?.current?.value,
+        schoolRegion:
+          schoolRegionRef?.current?.value === null
+            ? impact?.schoolRegion
+            : schoolRegionRef?.current?.value,
+        schoolDistrict:
+          schoolDistrictRef?.current?.value === null
+            ? impact?.schoolDistrict
+            : schoolDistrictRef?.current?.value,
+        schoolName:
+          schoolNameRef?.current?.value === null
+            ? impact?.schoolName
+            : schoolNameRef?.current?.value,
+        studentBoys: Number(
+          studentBoysRef?.current?.value === null
+            ? impact?.studentBoys ?? 0
+            : studentBoysRef?.current?.value
+        ),
+        studentGirls: Number(
+          studentGirlsRef?.current?.value === null
+            ? impact?.studentGirls ?? 0
+            : studentGirlsRef?.current?.value
+        ),
       };
 
-      
-      console.log(data);
-      
 
       axios
         .put(`${api}/impacts/${impact?.impactId}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
-            "Accept":"application/json",
+            Accept: "application/json",
             "Content-Type": "application/json",
           },
           method: "put",
@@ -141,9 +157,6 @@ export default function DashImpactView() {
           asset.append("image", selectedImage);
         }
 
-        asset.forEach((d) => {
-          console.log(d);
-        });
 
         axios
           .post(`${api}/impacts/assets/${impact?.impactId}`, asset, {
@@ -205,7 +218,6 @@ export default function DashImpactView() {
     if (!isEdit) {
       alert("Enable Edit mode to remove Asset(S)");
     } else {
-      alert(`Delete asset-${impactAssetId}`);
 
       axios
         .delete(`${api}/impacts/assets/${impactAssetId}`, {
@@ -259,8 +271,6 @@ export default function DashImpactView() {
       axios
         .get(`${api}/impacts/assets/${impactId}`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
-
           const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: ImpactAsset = {
@@ -274,8 +284,6 @@ export default function DashImpactView() {
           );
 
           setImpactAssets([...datas]);
-
-          console.log(impactAssets);
         })
         .catch((err: AxiosError) => {
           console.log(err);

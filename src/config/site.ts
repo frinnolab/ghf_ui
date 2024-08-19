@@ -64,7 +64,7 @@ export const siteConfig = {
     },
 
     {
-      label: "Donors/Partners",
+      label: "Partners",
       href: "/dashboard/partners",
     },
     {

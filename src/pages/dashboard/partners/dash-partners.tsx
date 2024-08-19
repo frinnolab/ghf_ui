@@ -76,25 +76,25 @@ export default function DashboardPartnersPage() {
     });
   };
 
-    const handleDelete = (p:Partner)=>{
-    if(authed?.role == AuthRole.User){
-      alert(HttpStatusCode.Unauthorized)
+  const handleDelete = (p: Partner) => {
+    if (authed?.role == AuthRole.User) {
+      alert(HttpStatusCode.Unauthorized);
     }
 
-    axios.delete(`${api}/partners/${p?.partnerId}`,{
-      headers:{
-        "Accept":"application/json",
-        "Authorization":`Bearer ${authed?.token}`
-      }
-    })
-    .then(()=>{
-
-      window.location.reload();
-    }).catch((err:AxiosError)=>{
-      console.log(err.response?.data ?? err.response?.statusText);
-      
-    })
-  }
+    axios
+      .delete(`${api}/partners/${p?.partnerId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response?.data ?? err.response?.statusText);
+      });
+  };
 
   const handleAction = (p: Partner, action: string) => {
     switch (action) {
@@ -102,7 +102,7 @@ export default function DashboardPartnersPage() {
         handleSelectedRow(p);
         break;
       case actionTypes[1]:
-//        alert(`Edit ${p.name}`);
+        //        alert(`Edit ${p.name}`);
         handleSelectedRow(p);
 
         break;
@@ -118,6 +118,8 @@ export default function DashboardPartnersPage() {
         return "DONOR";
       case PartnerType.PARTNER:
         return "PARTNER";
+      case PartnerType.COLLABORATOR:
+        return "COLLABORATOR";
     }
   };
 
@@ -147,8 +149,8 @@ export default function DashboardPartnersPage() {
 
         <Table fullWidth isStriped removeWrapper>
           <TableHeader>
-            {columns.map((column, i) => (
-              <TableColumn key={i}>{column}</TableColumn>
+            {columns.map((column) => (
+              <TableColumn key={column}>{column}</TableColumn>
             ))}
           </TableHeader>
 

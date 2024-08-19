@@ -41,6 +41,10 @@ export default function DashboardPartnerPage() {
         key: `${PartnerType.DONOR}`,
         label: `DONOR`,
       },
+      {
+        key: `${PartnerType.COLLABORATOR}`,
+        label: `COLLABORATOR`,
+      },
     ];
   });
   const [partner, setPartner] = useState<Partner | null>(null);
@@ -64,6 +68,8 @@ export default function DashboardPartnerPage() {
     switch (key) {
       case PartnerType.DONOR:
         return "DONOR";
+      case PartnerType.COLLABORATOR:
+        return "COLLABORATOR";
       default:
         return "PARTNER";
     }
@@ -77,19 +83,24 @@ export default function DashboardPartnerPage() {
 
   const removeSelectedImage = () => {
     setSelectedImage(null);
+    window.location.reload();
   };
 
   const handleSave = () => {
-    console.log("Save");
-
     const data = new FormData();
 
     if (partner === null) {
       //Save
       data.append("_method", `POST`);
       data.append("profileId", `${authed?.profileId}`);
-      data.append("name", `${titleRef?.current?.value === undefined ? '' : titleRef?.current?.value}`);
-      data.append("description", `${descRef?.current?.value === undefined ? '' : descRef?.current?.value}`);
+      data.append(
+        "name",
+        `${titleRef?.current?.value === undefined ? "" : titleRef?.current?.value}`
+      );
+      data.append(
+        "description",
+        `${descRef?.current?.value === undefined ? "" : descRef?.current?.value}`
+      );
       data.append(
         "type",
         `${selectedStatus?.key === undefined ? partnersListTypes[0].key : selectedStatus?.key}`
@@ -98,21 +109,26 @@ export default function DashboardPartnerPage() {
         data.append("image", selectedImage);
       }
 
-      axios
-        .post(`${api}/partners`, data, {
-          headers: {
-            Authorization: `Bearer ${authed?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res: AxiosResponse) => {
-          //setSelectedImage(null);
-          console.log(res.data);
-          nav("/dashboard/partners");
-        })
-        .catch((err: AxiosError) => {
-          console.log(err.response);
-        });
+      data.forEach((d)=>{
+        console.log(d);
+        
+      })
+
+      // axios
+      //   .post(`${api}/partners`, data, {
+      //     headers: {
+      //       Authorization: `Bearer ${authed?.token}`,
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   })
+      //   .then((res: AxiosResponse) => {
+      //     //setSelectedImage(null);
+      //     console.log(res.data);
+      //     nav("/dashboard/partners");
+      //   })
+      //   .catch((err: AxiosError) => {
+      //     console.log(err.response);
+      //   });
     }
   };
 
@@ -125,12 +141,18 @@ export default function DashboardPartnerPage() {
       //Save
       data.append("_method", `PUT`);
       data.append("profileId", `${authed?.profileId}`);
-      data.append("name", `${titleRef?.current?.value === '' || titleRef?.current?.value === undefined ? partner?.name : titleRef?.current?.value}`);
-      data.append("description", `${descRef?.current?.value === '' || descRef?.current?.value === undefined ? partner?.description : descRef?.current?.value}`);
-        data.append(
-          "type",
-          `${selectedStatus?.key === undefined ? partnersListTypes[0].key : selectedStatus?.key}`
-        );
+      data.append(
+        "name",
+        `${titleRef?.current?.value === "" || titleRef?.current?.value === undefined ? partner?.name : titleRef?.current?.value}`
+      );
+      data.append(
+        "description",
+        `${descRef?.current?.value === "" || descRef?.current?.value === undefined ? partner?.description : descRef?.current?.value}`
+      );
+      data.append(
+        "type",
+        `${selectedStatus?.key === undefined ? partnersListTypes[0].key : selectedStatus?.key}`
+      );
 
       if (selectedImage) {
         data.append("image", selectedImage);
@@ -171,12 +193,11 @@ export default function DashboardPartnerPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          
           console.log(res.data);
           const data: Partner = {
             partnerId: `${res.data["partnerId"]}`,
-            name: `${res.data["name"] ?? ''}`,
-            description: `${res.data["description"] ?? ''}`,
+            name: `${res.data["name"] ?? ""}`,
+            description: `${res.data["description"] ?? ""}`,
             logoUrl: `${res.data["logoUrl"]}`,
           };
 
@@ -196,7 +217,7 @@ export default function DashboardPartnerPage() {
         >
           <GoArrowLeft size={20} />
         </Button>
-        <h1 className=" text-2xl ">{`${route?.state === null ? "Create Project" : ` ${isEdit ? " Edit" : "View"} Partner`}`}</h1>
+        <h1 className=" text-2xl ">{`${route?.state === null ? "Create" : ` ${isEdit ? " Edit" : "View"} Partner`}`}</h1>
       </div>
       <Divider />
 
@@ -221,35 +242,35 @@ export default function DashboardPartnerPage() {
         </div>
 
         {/* Content */}
-        <div className="w-full rounded-2xl bg-default-50 shadow flex p-5 justify-between">
-          {/* <h1>Dash Donor/Partner View</h1> */}
+        <div className="w-full rounded-2xl bg-slate-200 shadow flex p-5 justify-between">
           {/* Form */}
           <div className="w-[50%] flex flex-col gap-5 p-5 min-h-[70vh]">
             <div className="w-full space-y-3">
-              <label htmlFor="pName">Partner or Donor name</label>
+              <label htmlFor="pName" className={`text-xl`}>Name</label>
               <Input
                 disabled={!isEdit ? true : false}
                 type="text"
                 ref={titleRef}
-                placeholder={`${partner?.name?.toUpperCase() ?? "Enter Partner/Donor Name"}`}
+                placeholder={`${partner?.name?.toUpperCase() ?? "Enter Partner/Donor/Collaborator name"}`}
               />
             </div>
-            
+
             <div className="w-full space-y-3">
-              <label htmlFor="pDesc">Description</label>
+              <label htmlFor="pDesc" className={`text-xl`}>Description</label>
               <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
                 ref={descRef}
-                placeholder={`${partner?.description?.toUpperCase() ?? "Enter Partner/Donor Description"}`}
+                placeholder={`${partner?.description?.toUpperCase() ?? "Enter Partner/Donor/Collablator description"}`}
               />
             </div>
 
             {/* Editor */}
             <div className="w-full space-y-3 flex flex-col">
-              <label htmlFor="pType">Select Partner or Donor</label>
+              <label htmlFor="pType" className={`text-xl`}>Select Partner Type</label>
 
               <Select
+                disabled={!isEdit ? true : false}
                 label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
                 className="max-w-xs"
                 defaultSelectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
@@ -257,9 +278,9 @@ export default function DashboardPartnerPage() {
                   changeStatus(e);
                 }}
               >
-                {partnersListTypes.map((animal) => (
-                  <SelectItem key={`${animal.key}`}>
-                    {typeName(Number(animal.key))}
+                {partnersListTypes.map((p) => (
+                  <SelectItem key={`${p.key}`}>
+                    {typeName(Number(p.key))}
                   </SelectItem>
                 ))}
               </Select>
@@ -285,7 +306,8 @@ export default function DashboardPartnerPage() {
           {/* Form End */}
 
           {/* Image Section */}
-          <div className="w-[30%] relative rounded-2xl p-5 flex flex-col justify-end">
+          <div className="w-[30%] relative rounded-2xl p-5 flex flex-col gap-3 justify-end">
+            <h1 className={` text-xl `}>Logo</h1>
             {selectedImage ? (
               <div className="w-full flex items-center justify-end min-h-[50vh]">
                 <Image

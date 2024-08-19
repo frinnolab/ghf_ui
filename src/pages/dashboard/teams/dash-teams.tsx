@@ -52,6 +52,9 @@ export default function DashboardTeamsPage() {
         "profileId": `${authed?.profileId}`,
         "name": `${teamNameRef?.current?.value}`,
       };
+
+      console.log(data);
+      
       axios
         .post(`${api}/teams`, data, {
           headers: {
@@ -140,7 +143,7 @@ export default function DashboardTeamsPage() {
           });
 
           setIsTeams(true);
-          setTeams(datas);
+          setTeams([...datas]);
 
           console.log(res.data);
         })
@@ -168,16 +171,19 @@ export default function DashboardTeamsPage() {
         {/* Table */}
         <Table fullWidth isStriped removeWrapper>
           <TableHeader>
-            {columns.map((column, i) => (
-              <TableColumn key={i}>{column}</TableColumn>
+            {columns.map((column) => (
+              <TableColumn key={column}>{column}</TableColumn>
             ))}
           </TableHeader>
 
           <TableBody emptyContent="No Teams at the moment" items={teams}>
-            {teams.map((team, i) => (
-              <TableRow className="w-full" key={i}>
+            {teams.map((team) => (
+              <TableRow className="w-full" key={team?.teamId}>
                 <TableCell onClick={() => handleSelectedRow(team)}>
                   {team?.name}
+                </TableCell>
+                <TableCell onClick={() => handleSelectedRow(team)}>
+                  {team?.totalMembers}
                 </TableCell>
                 <TableCell>
                   <div className="relative flex items-center gap-2">
