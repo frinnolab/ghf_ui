@@ -114,21 +114,21 @@ export default function DashboardPartnerPage() {
         
       })
 
-      // axios
-      //   .post(`${api}/partners`, data, {
-      //     headers: {
-      //       Authorization: `Bearer ${authed?.token}`,
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //   })
-      //   .then((res: AxiosResponse) => {
-      //     //setSelectedImage(null);
-      //     console.log(res.data);
-      //     nav("/dashboard/partners");
-      //   })
-      //   .catch((err: AxiosError) => {
-      //     console.log(err.response);
-      //   });
+      axios
+        .post(`${api}/partners`, data, {
+          headers: {
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          //setSelectedImage(null);
+          console.log(res.data);
+          nav("/dashboard/partners");
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+        });
     }
   };
 

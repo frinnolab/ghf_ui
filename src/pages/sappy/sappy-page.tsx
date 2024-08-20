@@ -58,18 +58,18 @@ const SappyPage = () => {
       ease: "power2.in",
     });
 
-  const sect1Fx = () =>
-    tl.to(cont1Ref.current, {
-    //   scrollTrigger: {
-    //     trigger: cont1Ref.current,
-    //     markers: true,
-    //     start: "bottom center",
-    //     end: "bottom 60%",
-    //     toggleActions:"play none none reverse",
-    //     pinSpacing:false
-    //   },
-    //   backgroundColor: "brown",
-    });
+  // const sect1Fx = () =>
+  //   tl.to(cont1Ref.current, {
+  //   //   scrollTrigger: {
+  //   //     trigger: cont1Ref.current,
+  //   //     markers: true,
+  //   //     start: "bottom center",
+  //   //     end: "bottom 60%",
+  //   //     toggleActions:"play none none reverse",
+  //   //     pinSpacing:false
+  //   //   },
+  //   //   backgroundColor: "brown",
+  //   });
 
   //#endregion
 

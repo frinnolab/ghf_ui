@@ -63,11 +63,13 @@ const DashImpactsListPage = () => {
 
   const handleDelete = (i: Impact) => {
     axios
-      .delete(`${api}/impacts/${i?.impactId}`,{
-        method:"DELETE"
+      .delete(`${api}/impacts/${i?.impactId}`, {
+        method: "DELETE",
       })
       .then((res: AxiosResponse) => {
-        window.location.reload();
+        if (res?.data) {
+          window.location.reload();
+        }
       })
       .catch((err: AxiosError) => {
         console.log(err);
@@ -86,7 +88,7 @@ const DashImpactsListPage = () => {
 
             const resData: Impact = {
               impactId: `${d?.impactId}`,
-              title: d?.title ,
+              title: d?.title,
               schoolName: d?.schoolName,
               studentsTotal: Number(d?.studentsTotal),
             };

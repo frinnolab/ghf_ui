@@ -152,7 +152,7 @@ export default function DashSettingsPage() {
 function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  //const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
   const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -166,7 +166,7 @@ function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
   };
 
   const removeSelectedVideo = () => {
-    setSelectedVideo(null);
+    //setSelectedVideo(null);
     window.location.reload();
   };
   return (

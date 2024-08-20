@@ -8,9 +8,7 @@ import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
-import { gsap } from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/all";
+import { motion } from "framer-motion";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -25,10 +23,6 @@ export default function HomePage() {
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
-  const tl = gsap.timeline();
-  gsap.registerPlugin(ScrollTrigger);
-
-  const panels = gsap.utils.toArray(".panel");
 
   const [partners] = useState<Partner[]>([
     {
@@ -48,17 +42,6 @@ export default function HomePage() {
       logo: `assets/logos/EFM.jpeg`,
     },
   ]);
-
-  // const goToPanel = (panel:any) => {
-  //   gsap.to(window, {
-  //     scrollTo: {
-  //       y: panel * innerHeight,
-  //       autoKill: false,
-  //     },
-  //     duration: 0.85,
-  //     ease: "Power3.easeInOut",
-  //   });
-  // };
 
   useEffect(() => {
     if (summaryInfo === null) {
@@ -100,40 +83,6 @@ export default function HomePage() {
     }
   }, [summaryInfo]);
 
-  useGSAP(() => {
-    mainFx();
-    headCardFx();
-    sumRegFx();
-  }, [headTxtCardRef]);
-
-  //#region Fx Actions
-  const mainFx = () => {
-    tl.to(mainSectionRef.current, {
-      scrollTrigger: {
-        trigger: mainSectionRef.current,
-        scrub: 1,
-      },
-    });
-  };
-
-  const headCardFx = () =>
-    tl.fromTo(
-      headTxtCardRef.current,
-      {
-        opacity: 0,
-      },
-      {
-        delay: 1.2,
-        duration: 1.3,
-        opacity: 1,
-      }
-    );
-
-  const sumRegFx = () => {
-    tl.to(sumRegRef.current, {});
-  };
-  //#endregion
-
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
@@ -146,12 +95,12 @@ export default function HomePage() {
 
   return (
     <DefaultLayout>
-      <section
+      <div
         ref={mainSectionRef}
-        className="w-full flex flex-col items-center justify-center bg-default-100"
+        className="w-full flex flex-col items-center justify-center bg-default-50"
       >
         {/* Hero Section */}
-        <div className="h-screen w-full flex flex-col justify-center panel">
+        <div className="h-screen w-full flex flex-col justify-center panel panel-main">
           {/* Header Text */}
           <div
             ref={headerTextsRef}
@@ -161,19 +110,19 @@ export default function HomePage() {
               <div></div>
               <div
                 ref={headTxtCardRef}
-                className="flex flex-col space-y-5 font-semibold p-5 rounded-2xl"
+                className="flex flex-col space-y-5 font-semibold p-5 rounded-2xl bg-default-50/40"
               >
-                <h1 className=" text-2xl md:text-5xl font-semibold">
+                <h1 className=" text-xl md:text-3xl font-semibold">
                   WE LIVE TO EMPOWER
                 </h1>
-                <h1 className=" text-2xl md:text-5xl font-semibold">DEVELOP</h1>
-                <h1 className=" text-2xl md:text-5xl font-semibold">
+                <h1 className=" text-xl md:text-3xl font-semibold">DEVELOP</h1>
+                <h1 className=" text-xl md:text-3xl font-semibold">
                   AND INSPIRE YOUNG GENERATION
                 </h1>
-                <h1 className=" text-2xl md:text-5xl font-semibold">
+                <h1 className=" text-xl md:text-3xl font-semibold">
                   TO ACQUIRE ENTREPRENEURSHIP
                 </h1>
-                <h1 className=" text-2xl md:text-5xl font-semibold">
+                <h1 className=" text-xl md:text-3xl font-semibold">
                   AND 21ST CENTURY SKILLS
                 </h1>
               </div>
@@ -192,11 +141,13 @@ export default function HomePage() {
         </div>
 
         {/* Who We're */}
-        <div className="w-full flex flex-col space-y-5 px-10 font-semibold cursor-default z-50 panel">
+        <motion.div
+          className="w-full flex flex-col space-y-5 px-20 font-semibold cursor-default z-50 panel panel-intro"
+        >
           <div className=" bg-default-200 rounded-2xl p-10 ">
-            <h1 className="text-4xl py-3">Who we are</h1>
+            <h1 className="text-3xl py-3">Who we are</h1>
 
-            <p className="text-2xl text-justify">
+            <p className="text-xl text-justify">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -208,13 +159,13 @@ export default function HomePage() {
               courage to bring the very best out of themselves.
             </p>
           </div>
-        </div>
+        </motion.div>
         {/* Who We're End */}
 
         {/* Data Summary Section */}
-        <div className="w-full flex flex-col justify-center gap-5 items-center h-screen p-5 cursor-default panel">
+        <div className="w-full flex flex-col justify-center items-center h-screen p-5 cursor-default panel panel-sum">
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
-          <div className="w-full flex  justify-between gap-10 p-5">
+          <div className="w-full flex  justify-between gap-10 p-10">
             {/* Regions */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaMapMarkedAlt className="text-green-500" size={30} />
@@ -234,7 +185,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="w-full flex justify-between gap-10 p-5  ">
+          <div className="w-full flex  justify-between gap-10 p-10">
             {/* Schools */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaUniversity className="text-blue-500" size={30} />
@@ -259,9 +210,9 @@ export default function HomePage() {
           <div className="flex flex-col w-full space-y-5">
             {/* Our vision */}
             <div className="w-full flex flex-col space-y-5">
-              <h1 className="text-6xl py-5 font-semibold">Our vision</h1>
+              <h1 className="text-5xl py-5 font-semibold">Our vision</h1>
 
-              <p className="text-2xl text-balance">
+              <p className="text-xl text-balance">
                 Great Hope Foundation envisions to build an empowered, developed
                 and responsible young generation that contribute significantly
                 to the social, economic and political development of the
@@ -274,9 +225,9 @@ export default function HomePage() {
 
             {/* Our Mission */}
             <div className="w-full flex flex-col space-y-5">
-              <h1 className="text-6xl py-5 font-semibold">Our Mission</h1>
+              <h1 className="text-5xl py-5 font-semibold">Our Mission</h1>
 
-              <p className="text-2xl text-balance">
+              <p className="text-xl text-balance">
                 Great Hope Foundation mission is to develop and implement
                 programs innovatively, that assist young people to acquire
                 appropriate skills that can help them thrive in the labor market
@@ -312,7 +263,9 @@ export default function HomePage() {
         {/* Vision Section End*/}
 
         {/* Donors Section */}
-        <div className="w-full flex flex-col justify-center items-center p-10 h-screen bg-default-50 panel">
+        <motion.div
+          className="w-full flex flex-col justify-center items-center p-10 h-screen panel"
+        >
           <h1 className=" text-5xl ">Our Partners & Donors</h1>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
@@ -330,7 +283,7 @@ export default function HomePage() {
             ))}
           </div>
           <div></div>
-        </div>
+        </motion.div>
         {/* Donors Section End*/}
 
         {/* Contact Section */}
@@ -350,7 +303,7 @@ export default function HomePage() {
           </Link>
         </div>
         {/* Contact Section End*/}
-      </section>
+      </div>
     </DefaultLayout>
   );
 }

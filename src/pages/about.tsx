@@ -1,18 +1,56 @@
 import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import { Divider } from "@nextui-org/react";
+import { Avatar, Divider } from "@nextui-org/react";
+import { TeamMember } from "./dashboard/teams/dash-teams";
+import { GoPersonFill } from "react-icons/go";
+import { useEffect, useState } from "react";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 export default function DocsPage() {
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [hasMembers, setHasMembers] = useState<boolean>(false);
+  const api = `${import.meta.env.VITE_API_URL}`;
+
+  useEffect(() => {
+    if (!hasMembers) {
+      axios
+        .get(`${api}/teams/members/main`)
+        .then((res: AxiosResponse) => {
+          console.log(res?.data);
+
+          const datas: TeamMember[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: TeamMember = {
+                memberId: d?.memberId,
+                member: d?.member,
+                teamId: d?.teamId,
+                teamPosition: d?.teamPosition,
+              };
+
+              return [data];
+            }
+          );
+
+          setMembers([...datas]);
+          setHasMembers(true);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+          setHasMembers(false);
+        });
+    }
+  }, [hasMembers]);
+
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:p-10">
-        <div className="w-full flex flex-col items-center gap-5 min-h-[50vh] ">
-          <div className="inline-block max-w-lg text-center justify-center">
+        <div className="w-full flex flex-col items-center gap-5 min-h-[75dvh]">
+          <div className="inline-block max-w-lg text-center justify-center p-3">
             <h1 className={title()}>About Us</h1>
           </div>
           {/* Bio */}
-          <div className="bg-default-200 rounded-2xl p-10">
-            <p className="text-2xl text-justify">
+          <div className="bg-default-200 rounded-2xl p-5">
+            <p className="text-2xl text-justify p-5">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -26,18 +64,76 @@ export default function DocsPage() {
           </div>
         </div>
 
-        <Divider/>
+        <Divider />
 
         {/* Team */}
-        <div className="w-full flex flex-col h-screen">
-          <h1 className="text-4xl">Team</h1>
-          {/* <Divider/> */}
+        <div className="w-full flex flex-col p-5">
+          <div className={`text-center`}>
+            <h1 className={title()}>Our Team</h1>
 
-          <p>
-            Coming Soon
-          </p>
+            {members?.length === 0 ? (
+              <>
+                <h1 className={`text-center`}>
+                  No team Currently please check back soon
+                </h1>
+              </>
+            ) : (
+              <>
+                <div className={`p-5 w-full flex flex-wrap gap-2`}>
+                  {members?.flatMap((m) => (
+                    <TeamCard key={m?.teamId} member={m} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          {/* <Divider/> */}
         </div>
       </section>
     </DefaultLayout>
+  );
+}
+
+function TeamCard({ member }: { member: TeamMember }) {
+  return (
+    <div
+      className={`flex justify-between gap-3 p-5 rounded-3xl text-end border-2 w-[30dvw]`}
+    >
+      <div>
+        <Avatar
+          size="lg"
+          src={
+            member?.member?.avatarUrl !== "" ? member?.member?.avatarUrl : ""
+          }
+          defaultValue={`${(<GoPersonFill />)}`}
+        />
+      </div>
+      {/* <Image src={`${member?.member?.avatarUrl ?? <GoPersonFill />}`} /> */}
+
+      <div>
+        <div className="">
+          <label className="text-small text-slate-500" htmlFor="pname">
+            Name
+          </label>
+          <h1>
+            {member?.member?.firstname} {member?.member?.lastname}
+          </h1>
+        </div>
+
+        <div className="">
+          <label className="text-small text-slate-500" htmlFor="pname">
+            Email
+          </label>
+          <h1>{member?.member?.email}</h1>
+        </div>
+
+        <div className="">
+          <label className="text-small text-slate-500" htmlFor="pos">
+            Position
+          </label>
+          <h1>{member?.teamPosition}</h1>
+        </div>
+      </div>
+    </div>
   );
 }
