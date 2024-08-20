@@ -49,7 +49,7 @@ export default function DocsPage() {
             <h1 className={title()}>About Us</h1>
           </div>
           {/* Bio */}
-          <div className="bg-default-200 rounded-2xl p-5">
+          <div className="bg-default-200 rounded-3xl p-5">
             <p className="text-2xl text-justify p-5">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration

@@ -144,7 +144,7 @@ export default function HomePage() {
         <motion.div
           className="w-full flex flex-col space-y-5 px-20 font-semibold cursor-default z-50 panel panel-intro"
         >
-          <div className=" bg-default-200 rounded-2xl p-10 ">
+          <div className=" bg-default-200 rounded-3xl p-10 ">
             <h1 className="text-3xl py-3">Who we are</h1>
 
             <p className="text-xl text-justify">
