@@ -57,7 +57,8 @@ export default function UwezoPage() {
   }, [projects]);
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <section className="flex flex-col items-center justify-center py-2 md:py-3">
+
         <div className="h-screen w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-10">
@@ -73,7 +74,7 @@ export default function UwezoPage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[8%] filter saturate-[50%]">
+          <div className="w-full absolute top-[8.5%] filter saturate-[50%]">
             <Image
               radius="none"
               alt="Header img"
@@ -82,24 +83,23 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col px-10 gap-5 ">
-          <h1 className=" text-3xl  font-semibold ">OUR PROJECTS</h1>
+        <div className="w-full flex flex-col px-20  gap-5">
+          <h1 className=" text-3xl  font-semibold">OUR PROJECTS</h1>
 
-          <div className="w-full flex flex-col p-10">
+          <div className="w-full flex flex-col">
             {projects?.length === 0 ? (
               <>
                 <h1 className=" text-2xl ">No Projects at the momment</h1>
               </>
             ) : (
-              <div className="w-full flex flex-col gap-10">
+              <div className="w-full flex flex-col gap-14">
                 {projects?.flatMap((p: Project, i) => (
                   <div
                     key={i}
-                    className="w-full  rounded-3xl flex flex-col shadow bg-default-200"
+                    className="w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
                   >
                     <Image
-                       className={` w-screen h-[60vh] object-cover`}
-                      isZoomed
+                       className={` w-screen h-[50dvh] object-cover`}
                       src={
                         p?.thumbnailUrl !== ''
                           ? p?.thumbnailUrl
@@ -109,7 +109,7 @@ export default function UwezoPage() {
 
                     {/* Content */}
                     <div className="p-5 w-full flex flex-col gap-5">
-                      <h1 className=" text-3xl font-semibold ">
+                      <h1 className=" text-2xl font-semibold ">
                         {p?.title?.toLocaleUpperCase()}
                       </h1>
                       <p className="text-xl">{p?.description}</p>

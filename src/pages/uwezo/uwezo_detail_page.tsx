@@ -38,10 +38,10 @@ export default function UwezoDetailPage() {
             projectId: `${res.data["projectId"]}`,
             title: `${res.data["title"]}`,
             description: `${res.data["description"]}`,
-            regionsReached: Number(`${res.data["regionsReached"]}` ?? 0),
-            districtsReached: Number(`${res.data["districtsReached"]}` ?? 0),
-            schoolsReached: Number(`${res.data["schoolsReached"]}` ?? 0),
-            studentsReached: Number(`${res.data["studentsReached"]}` ?? 0),
+            regionsReached: Number(res.data["regionsReached"] ?? 0),
+            districtsReached: Number(res.data["districtsReached"] ?? 0),
+            schoolsReached: Number(res.data["schoolsReached"] ?? 0),
+            studentsReached: Number(res.data["studentsReached"] ?? 0),
             dateStart: `${res.data["dateStart"]}`,
             dateEnd: `${res.data["dateEnd"]}`,
             publisherId: `${res.data["publisherId"]}`,
@@ -77,18 +77,18 @@ export default function UwezoDetailPage() {
 
       <Divider />
       <div className="w-full flex flex-col">
-        <div className=" h-screen w-full flex gap-10 justify-between p-10">
+        <div className=" w-full flex gap-10 justify-between p-10">
           
-          <div className=" w-full space-y-5 ">
-            <h1 className=" text-4xl font-semibold ">
+          <div className=" w-full space-y-3 ">
+            <h1 className=" text-3xl font-semibold ">
               {project?.title?.toUpperCase() ?? ""}
             </h1>
 
             {/* Impact */}
-            <div className=" space-y-5 w-full">
-              <h1 className=" text-3xl ">IMPACT</h1>
+            <div className=" space-y-3 w-full">
+              <h1 className=" text-2xl ">IMPACT</h1>
 
-              <div className="w-full text-2xl p-5 bg-default-200 rounded-2xl ">
+              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1>Regions Reached:</h1>
 
                 <span className="flex items-center gap-5 text-4xl text-green-500">
@@ -97,7 +97,7 @@ export default function UwezoDetailPage() {
                 </span>
               </div>
 
-              <div className="w-full text-2xl p-5 bg-default-200 rounded-2xl ">
+              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1>Districts Reached:</h1>
 
                 <span className="flex items-center gap-5 text-4xl text-red-500">
@@ -106,7 +106,7 @@ export default function UwezoDetailPage() {
                 </span>
               </div>
 
-              <div className=" text-2xl p-5 bg-default-200 rounded-2xl">
+              <div className=" text-xl p-5 bg-default-200 rounded-2xl">
                 <h1>Schools Reached:</h1>
 
                 <span className="flex items-center gap-5 text-4xl text-blue-500">
@@ -115,7 +115,7 @@ export default function UwezoDetailPage() {
                 </span>
               </div>
 
-              <div className=" text-2xl p-5 bg-default-200 rounded-2xl ">
+              <div className=" text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1>Students Reached:</h1>
 
                 <span className="flex items-center gap-5 text-4xl text-orange-500">
@@ -129,7 +129,6 @@ export default function UwezoDetailPage() {
           <div className="w-full">
             <Image
               className={` w-[50vw] object-cover`}
-              isZoomed
               src={
                 project?.thumbnailUrl !== ""
                   ? project?.thumbnailUrl
@@ -143,10 +142,10 @@ export default function UwezoDetailPage() {
 
         <div className="w-full flex flex-col gap-5 p-10">
           {/* Description */}
-          <div className=" space-y-5 ">
-            <h1 className=" text-3xl ">Description</h1>
+          <div className=" space-y-3">
+            <h1 className=" text-2xl ">Description</h1>
             <Divider />
-            <p className=" text-2xl text-balance p-5 bg-default-200 rounded-2xl ">
+            <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
               {project?.description}
             </p>
           </div>
