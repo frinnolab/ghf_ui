@@ -110,7 +110,7 @@ export default function HomePage() {
               <div></div>
               <div
                 ref={headTxtCardRef}
-                className="flex flex-col space-y-5 font-semibold p-5 rounded-2xl bg-default-50/40"
+                className="flex flex-col space-y-3 font-semibold p-5 shadow-md rounded-3xl bg-default-50/40"
               >
                 <h1 className=" text-xl md:text-3xl font-semibold">
                   WE LIVE TO EMPOWER

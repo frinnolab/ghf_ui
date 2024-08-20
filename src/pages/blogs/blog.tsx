@@ -28,22 +28,18 @@ export default function BlogPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          
-          console.log(res.data);
-
           const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
             const data: Blog = {
-              blogId: `${b.blogId}`,
-              authorId: `${b.authorId}`,
-              title: `${b.title}`,
-              description: `${b.description}`,
-              thumbnailUrl: `${b.thumbnailUrl ?? ''}`,
+              blogId: b?.blogId,
+              authorId: b?.authorId,
+              title: b?.title ?? "",
+              description: b?.description ?? "",
+              thumbnailUrl: b?.thumbnailUrl ?? "",
             };
             return [data];
           });
 
           console.log(datas);
-          
 
           setBlogs(datas);
         })
@@ -60,28 +56,36 @@ export default function BlogPage() {
         </div>
 
         <div className="w-full flex flex-col px-20 gap-5 ">
-          <h1 className=" text-3xl  font-semibold ">Blog News</h1>
+          <h1 className=" text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}
 
           <div className="w-full flex flex-col gap-5">
             {blogs?.length === 0 ? (
               <>
-                <h1 className=" text-2xl ">No Blogs at the momment!.</h1>
+                <h1 className=" text-2xl text-center ">
+                  No Blogs at the momment!. Please check back soon
+                </h1>
               </>
             ) : (
               <div className="w-full flex flex-wrap justify-between gap-5 ">
-                {blogs?.flatMap((b: Blog, i) => (
-                  <div key={i}  className="w-[30%] flex flex-col justify-between border rounded-2xl ">
+                {blogs?.flatMap((b: Blog) => (
+                  <div
+                    key={b?.blogId}
+                    className="w-[30%] flex flex-col justify-between border rounded-2xl "
+                  >
                     <div className="w-full">
                       <Image
-                        isZoomed
                         className="w-screen h-[30vh] object-cover"
-                        src={`${b?.thumbnailUrl !== ''  ? b?.thumbnailUrl :  "assets/logos/GHFLOGO.jpg"}`}
+                        src={
+                          b?.thumbnailUrl !== ""
+                            ? b?.thumbnailUrl
+                            : "assets/logos/GHFLOGO.jpg"
+                        }
                       />
                     </div>
                     <div className="p-5">
-                      <h1 className="text-3xl font-semibold">{b?.title}</h1>
+                      <h1 className="text-2xl font-semibold">{b?.title}</h1>
 
                       <p>{b?.description}</p>
                     </div>

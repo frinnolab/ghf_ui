@@ -18,7 +18,7 @@ export default function UwezoPage() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     if (projects === null) {
       axios
         .get(`${api}/projects`, {
@@ -58,7 +58,6 @@ export default function UwezoPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center py-2 md:py-3">
-
         <div className="h-screen w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-10">
@@ -86,7 +85,7 @@ export default function UwezoPage() {
         <div className="w-full flex flex-col px-20  gap-5">
           <h1 className=" text-3xl  font-semibold">OUR PROJECTS</h1>
 
-          <div className="w-full flex flex-col">
+          <div className="w-full flex flex-col gap-5">
             {projects?.length === 0 ? (
               <>
                 <h1 className=" text-2xl ">No Projects at the momment</h1>
@@ -99,9 +98,9 @@ export default function UwezoPage() {
                     className="w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
                   >
                     <Image
-                       className={` w-screen h-[50dvh] object-cover`}
+                      className={` w-screen h-[50dvh] object-cover`}
                       src={
-                        p?.thumbnailUrl !== ''
+                        p?.thumbnailUrl !== ""
                           ? p?.thumbnailUrl
                           : "assets/logos/GHFLOGO.jpg"
                       }
@@ -117,7 +116,7 @@ export default function UwezoPage() {
                         <Button
                           variant="light"
                           color="primary"
-                          className="flex items-center"
+                          className="flex items-center border border-primary-400 hover:border-transparent"
                           onClick={() => {
                             toDetail(p);
                           }}
@@ -128,6 +127,8 @@ export default function UwezoPage() {
                     </div>
                   </div>
                 ))}
+
+                <div></div>
               </div>
             )}
           </div>
