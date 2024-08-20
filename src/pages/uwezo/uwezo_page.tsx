@@ -98,7 +98,7 @@ export default function UwezoPage() {
                     className="w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
                   >
                     <Image
-                      className={` w-screen h-[50dvh] object-cover`}
+                      className={` w-screen h-[60dvh] object-cover`}
                       src={
                         p?.thumbnailUrl !== ""
                           ? p?.thumbnailUrl
@@ -128,7 +128,9 @@ export default function UwezoPage() {
                   </div>
                 ))}
 
-                <div></div>
+                <div>
+                  {/* Pagination */}
+                </div>
               </div>
             )}
           </div>
