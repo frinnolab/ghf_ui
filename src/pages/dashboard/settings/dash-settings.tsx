@@ -12,6 +12,8 @@ export type CompanyInfo = {
   companyAddress?: string;
   companyEmail?: string;
   companyMobile?: string;
+  companyMobileTelephone?: string;
+  companyMobileAltenate?: string;
   companyBiography?: string;
   companyMission?: string;
   companyVision?: string;
@@ -22,12 +24,63 @@ export type CompanyInfo = {
 export default function DashSettingsPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   //const fnameRef = useRef<HTMLInputElement>(null);
-  const lnameRef = useRef<HTMLInputElement>(null);
   const compnameRef = useRef<HTMLInputElement>(null);
-  const whoisRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const mobiRef = useRef<HTMLInputElement>(null);
+  const mobi2Ref = useRef<HTMLInputElement>(null);
+  const mobi3Ref = useRef<HTMLInputElement>(null);
+  const bioRef = useRef<HTMLTextAreaElement>(null);
   const visionRef = useRef<HTMLTextAreaElement>(null);
   const missionRef = useRef<HTMLTextAreaElement>(null);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
+
+  const saveCompanyInfo = () => {
+    if (companyInfo === null) {
+      alert("Save");
+    } else {
+      const data: CompanyInfo = {
+        companyName:
+          companyInfo?.companyName === null
+            ? compnameRef?.current?.value
+            : companyInfo?.companyName,
+        companyAddress:
+          companyInfo?.companyAddress === null
+            ? addressRef?.current?.value
+            : companyInfo?.companyAddress,
+        companyEmail:
+          companyInfo?.companyEmail === null
+            ? emailRef?.current?.value
+            : companyInfo?.companyEmail,
+        companyMobile:
+          companyInfo?.companyMobile === null
+            ? mobiRef?.current?.value
+            : companyInfo?.companyMobile,
+        companyMobileAltenate:
+          companyInfo?.companyMobileAltenate === null
+            ? mobi2Ref?.current?.value
+            : companyInfo?.companyMobileAltenate,
+        companyMobileTelephone:
+          companyInfo?.companyMobileTelephone === null
+            ? mobi3Ref?.current?.value
+            : companyInfo?.companyMobileTelephone,
+        companyBiography:
+          companyInfo?.companyBiography === null
+            ? bioRef?.current?.value
+            : companyInfo?.companyBiography,
+        companyMission:
+          companyInfo?.companyMission === null
+            ? missionRef?.current?.value
+            : companyInfo?.companyMission,
+        companyVision:
+          companyInfo?.companyVision === null
+            ? visionRef?.current?.value
+            : companyInfo?.companyVision,
+      };
+
+      console.log(data);
+    }
+  };
 
   useEffect(() => {
     if (companyInfo === null) {
@@ -40,6 +93,7 @@ export default function DashSettingsPage() {
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
+          setCompanyInfo(null);
         });
     }
   }, [companyInfo]);
@@ -52,16 +106,16 @@ export default function DashSettingsPage() {
 
         <div className="w-full flex justify-between ">
           <div className="w-full flex flex-col gap-5 h-[50vh] p-3 overflow-y-scroll">
-            <h1>Company Info</h1>
+            <h1 className="text-xl">Company Info</h1>
 
-            {/* Fname & Lname */}
+            {/* Name */}
             <div className="flex gap-10">
               <div className="w-full space-y-3">
                 <label htmlFor="compname">Company name</label>
                 <Input
                   type="text"
                   ref={compnameRef}
-                  placeholder={`${companyInfo?.companyName ?? "Enter Company name"}`}
+                  placeholder={companyInfo?.companyName ?? "Enter Company name"}
                 />
               </div>
 
@@ -69,22 +123,24 @@ export default function DashSettingsPage() {
                 <label htmlFor="address">Address</label>
                 <Input
                   type="text"
-                  ref={whoisRef}
-                  placeholder={`${companyInfo?.companyAddress ?? "Enter Address"}`}
+                  ref={addressRef}
+                  placeholder={companyInfo?.companyAddress ?? "Enter Address"}
                 />
               </div>
             </div>
             <Divider />
 
             <h1>Contact Info</h1>
-            {/* Fname & Lname */}
+            {/*  */}
             <div className="flex gap-10">
               <div className="w-full space-y-3">
                 <label htmlFor="cemail">Email</label>
                 <Input
                   type="email"
-                  ref={lnameRef}
-                  placeholder={`${companyInfo?.companyEmail ?? "Enter Company Email"}`}
+                  ref={emailRef}
+                  placeholder={
+                    companyInfo?.companyEmail ?? "Enter Company Email"
+                  }
                 />
               </div>
 
@@ -92,8 +148,35 @@ export default function DashSettingsPage() {
                 <label htmlFor="vision">Mobile</label>
                 <Input
                   type="text"
-                  ref={lnameRef}
-                  placeholder={`${companyInfo?.companyMobile ?? "Enter Company mobile"}`}
+                  ref={mobiRef}
+                  placeholder={
+                    companyInfo?.companyMobile ?? "Enter Company mobile"
+                  }
+                />
+              </div>
+            </div>
+            {/* Altenate Mobiles */}
+            <div className="flex gap-10">
+              <div className="w-full space-y-3">
+                <label htmlFor="mobi2">Telephone</label>
+                <Input
+                  type="text"
+                  ref={mobi2Ref}
+                  placeholder={
+                    companyInfo?.companyMobileTelephone ??
+                    "Enter Telephone mobile"
+                  }
+                />
+              </div>
+              <div className="w-full space-y-3">
+                <label htmlFor="mobi3">Altenate Mobile</label>
+                <Input
+                  type="text"
+                  ref={mobi3Ref}
+                  placeholder={
+                    companyInfo?.companyMobileAltenate ??
+                    "Enter Altenate mobile"
+                  }
                 />
               </div>
             </div>
@@ -102,7 +185,7 @@ export default function DashSettingsPage() {
             <div className="w-full space-y-3">
               <label htmlFor="bio">Biography</label>
               <Textarea
-                ref={missionRef}
+                ref={bioRef}
                 placeholder={`${"Enter Biography info"}`}
               ></Textarea>
             </div>
@@ -126,22 +209,16 @@ export default function DashSettingsPage() {
                 placeholder={`${companyInfo?.companyVision ?? "Enter Vision Info"}`}
               ></Textarea>
             </div>
-
-            <Divider />
-            <div className="w-full flex flex-col">
-              <h1>Intro Video</h1>
-            </div>
-            <Divider />
             <div>
               {/* <h1>Actions</h1> */}
-              <Button variant="solid" color="primary">
+              <Button variant="solid" color="primary" onClick={saveCompanyInfo}>
                 Save
               </Button>
             </div>
           </div>
 
           <div className="w-full flex flex-col p-5">
-            <CompanyLogoUi company={companyInfo ?? null} />
+            <CompanyAssetsUi company={companyInfo} />
           </div>
         </div>
       </div>
@@ -149,14 +226,20 @@ export default function DashSettingsPage() {
   );
 }
 
-function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
+function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  //const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
   const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedImage(e.target.files[0]);
+    }
+  };
+
+  const onChangeVideo = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedVideo(e.target.files[0]);
     }
   };
 
@@ -166,7 +249,7 @@ function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
   };
 
   const removeSelectedVideo = () => {
-    //setSelectedVideo(null);
+    setSelectedVideo(null);
     window.location.reload();
   };
   return (
@@ -181,22 +264,26 @@ function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
         {/* Image Asset */}
         <div className={`w-full border rounded-xl p-2`}>
           <h1>Main Logo</h1>
+
           {selectedImage ? (
-            <>
+            <div className={`w-full flex items-center justify-center`}>
               <Image
-                className={`h-[25vh] object-cover`}
+                className={`h-[25vh] object-cover self-center`}
                 isZoomed
                 src={URL.createObjectURL(selectedImage)}
               />
-            </>
+            </div>
           ) : (
-            <>
+            <div className={`w-full flex items-center justify-center`}>
               <Image
-                className={`h-[25vh] object-cover`}
-                isZoomed
-                src={`${company?.logoUrl !== "" ? company?.logoUrl : siteConfig.footerTexts.footerImage}`}
+                className={`h-[25vh] object-cover self-center`}
+                src={
+                  company?.logoUrl === null
+                    ? siteConfig.staticAssets.staticLogo
+                    : company?.logoUrl
+                }
               />
-            </>
+            </div>
           )}
 
           <div className="p-3 flex items-center">
@@ -225,20 +312,26 @@ function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
         <div className={`w-full border rounded-xl p-2`}>
           <h1>Main Video</h1>
 
-          {selectedImage ? (
+          {selectedVideo ? (
             <>
-              <Image
+              <video
                 className={`h-[25vh] object-cover`}
-                isZoomed
-                src={URL.createObjectURL(selectedImage)}
+                autoPlay={false}
+                controls
+                src={URL.createObjectURL(selectedVideo)}
               />
             </>
           ) : (
             <>
-              <Image
+              <video
+                autoPlay={false}
+                controls
                 className={`h-[25vh] object-cover`}
-                isZoomed
-                src={`${company?.logoUrl !== "" ? company?.logoUrl : siteConfig.footerTexts.footerImage}`}
+                src={
+                  company?.introVideoUrl === null
+                    ? siteConfig.staticAssets.staticIntroVideo
+                    : company?.introVideoUrl
+                }
               />
             </>
           )}
@@ -249,7 +342,7 @@ function CompanyLogoUi({ company }: { company: CompanyInfo | null }) {
               ref={thumbRef}
               type="file"
               onChange={(e) => {
-                onChangePic(e);
+                onChangeVideo(e);
               }}
             />
 

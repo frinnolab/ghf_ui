@@ -92,6 +92,10 @@ export const siteConfig = {
     //   href: "/help-feedback",
     // },
   ],
+  staticAssets:{
+    staticLogo:'/assets/images/static/ghf_default.png',
+    staticIntroVideo:'/assets/videos/sample_videoP.mp4'
+  },
   links: {
     email: "greathopefoundation@gmail.com",
     postoffice: "P.O.BOX 2466 DSM",

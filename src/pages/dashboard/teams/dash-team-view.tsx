@@ -267,7 +267,7 @@ export default function DashboardTeamPage() {
                 defaultItems={members}
                 endContent={
                   <GoX
-                    className=" cursor-pointer "
+                    className=" cursor-pointer hover:bg-default-400 text-danger-400 p-1 rounded-full text-2xl"
                     onClick={() => {
                       setSelectedMember(null);
                       setMembers([]);
@@ -284,7 +284,6 @@ export default function DashboardTeamPage() {
 
                   if (member) {
                     onMemberChange(member);
-
                     setValue(`${member?.value?.email}`);
                   }
                 }}
@@ -292,7 +291,7 @@ export default function DashboardTeamPage() {
                 allowsEmptyCollection={false}
               >
                 {(item) => (
-                  <AutocompleteItem key={`${item.key}`}>
+                  <AutocompleteItem key={item.key}>
                     {/* {item?.value?.email} */}
                     <div className={`flex flex-col gap-1`}>
                       <label className=" text-xs" htmlFor="email">
@@ -317,7 +316,7 @@ export default function DashboardTeamPage() {
                   <label htmlFor="fName">Firstname</label>
                   <Input
                     disabled
-                    placeholder={`${selectedMember ? selectedMember?.firstname : "Member firstname"}`}
+                    placeholder={selectedMember ? selectedMember?.firstname : "Member firstname"}
                   />
                 </div>
 
@@ -325,7 +324,7 @@ export default function DashboardTeamPage() {
                   <label htmlFor="lName">Lastname</label>
                   <Input
                     disabled
-                    placeholder={`${selectedMember ? selectedMember?.lastname : "Member lastname"}`}
+                    placeholder={selectedMember ? selectedMember?.lastname : "Member lastname"}
                   />
                 </div>
 
@@ -333,7 +332,7 @@ export default function DashboardTeamPage() {
                   <label htmlFor="pName">Position</label>
                   <Input
                     disabled
-                    placeholder={`${selectedMember ? selectedMember?.position : "Member position"}`}
+                    placeholder={selectedMember ? selectedMember?.position : "Member position"}
                   />
                 </div>
 
@@ -384,13 +383,13 @@ export default function DashboardTeamPage() {
                 {tmembers.map((team) => (
                   <TableRow className="w-full" key={team?.teamId}>
                     <TableCell onClick={() => handleSelectedRow(team)}>
-                      {team?.member?.firstname}
+                      <p>{team?.member?.firstname}</p>
                     </TableCell>
                     <TableCell onClick={() => handleSelectedRow(team)}>
-                      {team?.member?.position}
+                      <p>{team?.member?.position}</p>
                     </TableCell>
                     <TableCell onClick={() => handleSelectedRow(team)}>
-                      {team?.teamPosition}
+                      <p>{team?.teamPosition}</p>
                     </TableCell>
                     <TableCell>
                       <div className="relative flex items-center gap-2">

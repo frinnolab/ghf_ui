@@ -9,6 +9,7 @@ import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { motion } from "framer-motion";
+import { siteConfig } from "@/config/site";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -243,7 +244,7 @@ export default function HomePage() {
                 borderRadius: "20px",
               }}
               width={1000}
-              src="assets/videos/sample_videoP.mp4"
+              src = {siteConfig.staticAssets.staticIntroVideo}
               onClick={playInftro}
               muted
               // controls
