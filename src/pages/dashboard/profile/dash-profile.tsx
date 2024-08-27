@@ -35,13 +35,13 @@ export default function DashProfilePage() {
           console.log(res.data);
 
           const data: Profile = {
-            profileId: `${res.data?.profileId}`,
-            firstname: `${res.data?.firstname ?? ""}`,
-            lastname: `${res.data?.lastname ?? ""}`,
-            email: `${res.data?.email ?? ""}`,
+            profileId: res.data?.profileId,
+            firstname: res.data?.firstname ?? "",
+            lastname: res.data?.lastname ?? "",
+            email: res.data?.email ?? "",
             role: Number(res.data.roleType) ?? AuthRole.User,
-            avatarUrl: `${res.data?.avatarUrl ?? ""}`,
-            position: `${res.data?.position ?? ""}`,
+            avatarUrl: res.data?.avatarUrl ?? "",
+            position: res.data?.position ?? "",
           };
           setProfile(data);
         });

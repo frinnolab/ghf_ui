@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import useAuthedProfile from "@/hooks/use-auth";
 import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import { Divider, Image, Input, Textarea } from "@nextui-org/react";
@@ -23,6 +24,7 @@ export type CompanyInfo = {
 
 export default function DashSettingsPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
+  const authed = useAuthedProfile();
   //const fnameRef = useRef<HTMLInputElement>(null);
   const compnameRef = useRef<HTMLInputElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
@@ -37,7 +39,7 @@ export default function DashSettingsPage() {
 
   const saveCompanyInfo = () => {
     if (companyInfo === null) {
-      alert("Save");
+      alert("Add/Update company info");
     } else {
       const data: CompanyInfo = {
         companyName:
@@ -79,6 +81,20 @@ export default function DashSettingsPage() {
       };
 
       console.log(data);
+
+      axios.put(`${api}/settings/companyinfo`, data,{
+        "headers":{
+          "Accept":"application/json",
+          "Authorization":`Bearer ${authed?.token}`,
+          "Content-Type":"application/jspn"
+        }
+      }).then((res:AxiosResponse)=>{
+        if(res){
+          console.log(res?.data);
+        }
+      }).catch((err:AxiosError)=>{
+        console.log(err);
+      })
     }
   };
 
@@ -230,6 +246,8 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const api = `${import.meta.env.VITE_API_URL}`;
+  const authed = useAuthedProfile();
 
   const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -252,15 +270,57 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
     setSelectedVideo(null);
     window.location.reload();
   };
+
+  const handleAsetUploads = () => {
+    if (company === null) {
+      alert("Add Company info to upload asset(s)");
+    } else {
+      const data = new FormData();
+
+      if (selectedImage) {
+        data.append("imageAsset", selectedImage);
+      }
+
+      if (selectedVideo) {
+        data.append("videoAsset", selectedVideo);
+      }
+
+      data.append('_METHOD', "PUT");
+
+      axios.post(`${api}/settings/${authed?.profileId}/companyassets`,data,{
+        "headers":{
+          "Authorization":`Bearer ${authed?.token}`,
+          "Content-Type":"multipart/form-data"
+        }
+      }).then((res:AxiosResponse)=>{
+        if(res){
+          window.location.reload();
+        }
+      }).catch((err:AxiosError)=>{
+        if(err){
+          window.location.reload();
+        }
+      })
+    }
+  };
   return (
-    <div className="flex flex-col items-center rounded-xl p-3 h-[40dvh] gap-5">
-      <div>
+    <div className="flex flex-col items-center rounded-xl  h-[40dvh] gap-5">
+      <div className={`w-full flex items-center justify-between`}>
         <h1>Manage Assets</h1>
+
+        <Button
+          disabled={selectedImage || selectedVideo ? false : true}
+          variant="solid"
+          color={selectedImage || selectedVideo ? "primary" : "default"}
+          onClick={handleAsetUploads}
+        >
+          Upload Asset(s)
+        </Button>
       </div>
       <Divider />
 
       {/* Assets */}
-      <div className={`w-full flex justify-between gap-2`}>
+      <div className={`w-full flex justify-between gap-5`}>
         {/* Image Asset */}
         <div className={`w-full border rounded-xl p-2`}>
           <h1>Main Logo</h1>
@@ -317,6 +377,7 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
               <video
                 className={`h-[25vh] object-cover`}
                 autoPlay={false}
+                muted
                 controls
                 src={URL.createObjectURL(selectedVideo)}
               />
@@ -325,6 +386,7 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
             <>
               <video
                 autoPlay={false}
+                muted
                 controls
                 className={`h-[25vh] object-cover`}
                 src={
