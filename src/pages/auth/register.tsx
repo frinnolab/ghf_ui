@@ -39,29 +39,29 @@ export default function RegisterPage() {
     };
 
     axios
-    .post(`${api}/auth/register`, data, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res: AxiosResponse) => {
-      if (res.status === HttpStatusCode.Ok) {
-        console.log(res.data);
+      .post(`${api}/auth/register`, data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res.status === HttpStatusCode.Ok) {
+          console.log(res.data);
 
-        setTimeout(() => {
-          alert(`Registered in: ${res?.data?.email}, Login to continue.`);
-        }, 3000);
+          setTimeout(() => {
+            alert(`Registered in: ${res?.data?.email}, Login to continue.`);
+          }, 3000);
 
-        navigate("/login");
-      }
-    })
-    .catch((e: AxiosError) => {
-      alert(`${e.response?.data}`);
-    });
+          navigate("/login");
+        }
+      })
+      .catch((e: AxiosError) => {
+        alert(`${e.response?.data}`);
+      });
   };
   return (
-    <div className="w-full flex flex-col md:gap-10 items-center bg-slate-0 h-screen p-5">
+    <div className="w-full flex flex-col items-center p-5">
       <div className="w-full">
         <Button
           className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
@@ -74,9 +74,9 @@ export default function RegisterPage() {
         </Button>
       </div>
 
-      <section className="w-full flex flex-col md:flex-row items-center justify-center gap-10 p-5 font-semibold">
+      <section className="w-full flex items-center justify-between gap-5 font-semibold px-5">
         {/* Login Form */}
-        <div className="w-full gap-5 flex flex-col px-10">
+        <div className="w-full gap-5 flex flex-col p-5">
           <h1 className=" text-3xl ">Welcome!</h1>
           <h3 className=" text-medium">Register in to continue</h3>
 
@@ -146,11 +146,10 @@ export default function RegisterPage() {
           </div>
         </div>
         {/* Login Form End */}
-        <Image
-          isZoomed
-          width={2000}
-          src="/assets/images/auth/register_img.JPG"
-        />
+
+        <Image width={2000} isZoomed src="/assets/images/auth/_MBX0174.jpg" />
+        {/* <div className="w-full gap-5 flex flex-col justify-center p-5">
+        </div> */}
         {/* Login Image End */}
       </section>
     </div>

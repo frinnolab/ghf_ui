@@ -41,60 +41,80 @@ export default function DashSettingsPage() {
     if (companyInfo === null) {
       alert("Add/Update company info");
     } else {
-      const data: CompanyInfo = {
-        companyName:
+      const data = {
+        "id":`${companyInfo?.id}`,
+        "companyName":
           companyInfo?.companyName === null
             ? compnameRef?.current?.value
             : companyInfo?.companyName,
-        companyAddress:
+        "companyAddress":
           companyInfo?.companyAddress === null
             ? addressRef?.current?.value
             : companyInfo?.companyAddress,
-        companyEmail:
+        "companyEmail":
           companyInfo?.companyEmail === null
             ? emailRef?.current?.value
             : companyInfo?.companyEmail,
-        companyMobile:
+        "companyMobile":
           companyInfo?.companyMobile === null
             ? mobiRef?.current?.value
             : companyInfo?.companyMobile,
-        companyMobileAltenate:
+        "companyMobileAltenate":
           companyInfo?.companyMobileAltenate === null
             ? mobi2Ref?.current?.value
             : companyInfo?.companyMobileAltenate,
-        companyMobileTelephone:
+        "companyMobileTelephone":
           companyInfo?.companyMobileTelephone === null
             ? mobi3Ref?.current?.value
             : companyInfo?.companyMobileTelephone,
-        companyBiography:
+        "companyBiography":
           companyInfo?.companyBiography === null
             ? bioRef?.current?.value
             : companyInfo?.companyBiography,
-        companyMission:
+        "companyMission":
           companyInfo?.companyMission === null
             ? missionRef?.current?.value
             : companyInfo?.companyMission,
-        companyVision:
+        "companyVision":
           companyInfo?.companyVision === null
             ? visionRef?.current?.value
             : companyInfo?.companyVision,
       };
 
+      //#region 
+      // {
+      //   companyName: 'GREAT HOPE FOUNDATION',
+      //   companyAddress: 'P.O.BOX 2466 DSM',
+      //   companyEmail: 'greathopefoundation@gmail.com',
+      //   companyMobile: '',
+      //   companyMobileAltenate: '',
+      //   companyMobileTelephone: '02214245141',
+      //   companyBiography: 'Test Biography info',
+      //   companyMission: 'Test Mission info',
+      //   companyVision: ''
+      // }
+      //#endregion
+      
       console.log(data);
 
-      axios.put(`${api}/settings/companyinfo`, data,{
-        "headers":{
-          "Accept":"application/json",
-          "Authorization":`Bearer ${authed?.token}`,
-          "Content-Type":"application/jspn"
-        }
-      }).then((res:AxiosResponse)=>{
-        if(res){
-          console.log(res?.data);
-        }
-      }).catch((err:AxiosError)=>{
-        console.log(err);
-      })
+      axios
+        .put(`${api}/settings/${authed?.profileId}/companyinfo`, data, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Type": "application/jspn",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            console.log(res?.data);
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+          window.location.reload();
+        });
     }
   };
 
@@ -285,22 +305,25 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
         data.append("videoAsset", selectedVideo);
       }
 
-      data.append('_METHOD', "PUT");
+      data.append("_METHOD", "PUT");
 
-      axios.post(`${api}/settings/${authed?.profileId}/companyassets`,data,{
-        "headers":{
-          "Authorization":`Bearer ${authed?.token}`,
-          "Content-Type":"multipart/form-data"
-        }
-      }).then((res:AxiosResponse)=>{
-        if(res){
-          window.location.reload();
-        }
-      }).catch((err:AxiosError)=>{
-        if(err){
-          window.location.reload();
-        }
-      })
+      axios
+        .post(`${api}/settings/${authed?.profileId}/companyassets`, data, {
+          headers: {
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          if (err) {
+            window.location.reload();
+          }
+        });
     }
   };
   return (
