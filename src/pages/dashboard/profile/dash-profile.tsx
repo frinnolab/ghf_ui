@@ -7,20 +7,24 @@ import { Profile } from "../profiles/dash-profiles-list";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { AuthRole } from "@/types";
 import { GoTrash } from "react-icons/go";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 export default function DashProfilePage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const fnameRef = useRef<HTMLInputElement>(null);
-  const lnameRef = useRef<HTMLInputElement>(null);
   const posnRef = useRef<HTMLInputElement>(null);
-  const mobiRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
   const coPassRef = useRef<HTMLInputElement>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  //Form State
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Profile>();
 
   useEffect(() => {
     if (profile === null) {
@@ -46,7 +50,7 @@ export default function DashProfilePage() {
           setProfile(data);
         });
     }
-  }, []);
+  }, [profile]);
 
   const roleName = (role: number) => {
     switch (role) {
@@ -59,16 +63,25 @@ export default function DashProfilePage() {
     }
   };
 
-  const handleProfileUpdate = () => {
+  const onSubmit: SubmitHandler<Profile> = (d) => {
+    //console.log(watch("firstname"));
+
+    //console.log(d);
+
+    handleProfileUpdate(d);
+  };
+
+  const handleProfileUpdate = (d: Profile) => {
     const data = new FormData();
 
     data.append("_method", `PUT`);
     data.append("profileId", `${profile?.profileId}`);
-    data.append("email", `${emailRef?.current?.value}`);
-    data.append("firstname", `${fnameRef?.current?.value}`);
-    data.append("lastname", `${lnameRef?.current?.value}`);
-    data.append("mobile", `${mobiRef?.current?.value}`);
-    data.append("position", `${posnRef?.current?.value}`);
+    data.append("email", `${d?.email ?? profile?.email}`);
+    data.append("firstname", `${d?.firstname ?? profile?.firstname}`);
+    data.append("lastname", `${d?.lastname ?? profile?.lastname}`);
+    data.append("mobile", `${d?.mobile ?? profile?.mobile}`);
+    data.append("position", `${d?.position ?? profile?.position}`);
+    data.append("role", `${d?.role ?? profile?.role}`);
 
     if (selectedImage) {
       data.append("avatar", selectedImage);
@@ -81,8 +94,11 @@ export default function DashProfilePage() {
         data.append("password", `${posnRef?.current?.value}`);
       }
     }
+    //console.log(profile);
 
-    //  console.log(data.get('avatar'));
+    data.forEach((d) => {
+      console.log(d?.valueOf());
+    });
 
     //Update Profile
     axios
@@ -101,6 +117,7 @@ export default function DashProfilePage() {
         console.log(err.response);
       });
   };
+
   const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedImage(e.target.files[0]);
@@ -109,6 +126,7 @@ export default function DashProfilePage() {
 
   const removeSelectedImage = () => {
     setSelectedImage(null);
+    window.location.reload();
   };
 
   return (
@@ -126,15 +144,19 @@ export default function DashProfilePage() {
             {/* Personal Info */}
             <div className="w-full flex justify-between">
               {/* Form */}
-              <div className=" w-full overflow-y-auto h-[80%] px-5">
+              <form
+                className=" w-full flex flex-col overflow-y-auto h-[85%] px-5"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 {/* Fname & Lname */}
                 <div className="flex gap-10">
                   <div className="w-full space-y-3">
                     <label htmlFor="Firstname">Firstname</label>
                     <Input
                       type="text"
-                      ref={fnameRef}
-                      placeholder={`${profile?.firstname ?? "Enter firstname"}`}
+                      defaultValue=""
+                      {...register("firstname")}
+                      placeholder={`${profile?.firstname ?? "Enter lastname"}`}
                     />
                   </div>
 
@@ -142,7 +164,8 @@ export default function DashProfilePage() {
                     <label htmlFor="Lastname">Lastname</label>
                     <Input
                       type="text"
-                      ref={lnameRef}
+                      defaultValue={`${profile?.lastname ?? ""}`}
+                      {...register("lastname")}
                       placeholder={`${profile?.lastname ?? "Enter lastname"}`}
                     />
                   </div>
@@ -150,20 +173,27 @@ export default function DashProfilePage() {
 
                 {/* Email & position */}
                 <div className="flex gap-10">
-                  <div className="w-full space-y-3">
+                  <div className="w-full space-y-3 flex flex-col">
                     <label htmlFor="email">Email</label>
                     <Input
                       type="email"
-                      ref={emailRef}
+                      defaultValue={`${profile?.email ?? ""}`}
+                      {...register("email", { required: true })}
                       placeholder={`${profile?.email ?? "Enter email"}`}
                     />
+                    {errors.email && (
+                      <span className="text-danger">
+                        Email field is required
+                      </span>
+                    )}
                   </div>
 
                   <div className="w-full space-y-3">
                     <label htmlFor="position">Position</label>
                     <Input
                       type="text"
-                      ref={posnRef}
+                      defaultValue={`${profile?.position ?? ""}`}
+                      {...register("position")}
                       placeholder={`${profile?.position ?? "Enter Position"}`}
                     />
                   </div>
@@ -175,7 +205,6 @@ export default function DashProfilePage() {
                     <Input
                       disabled
                       type="text"
-                      ref={posnRef}
                       placeholder={`${roleName(Number(profile?.role ?? 0)) ?? "Enter Role"}`}
                     />
                   </div>
@@ -183,7 +212,8 @@ export default function DashProfilePage() {
                     <label htmlFor="mobile">Mobile</label>
                     <Input
                       type="text"
-                      ref={mobiRef}
+                      defaultValue={`${profile?.mobile ?? ""}`}
+                      {...register("mobile")}
                       placeholder={`${profile?.mobile ?? "Enter Mobile"}`}
                     />
                   </div>
@@ -212,18 +242,14 @@ export default function DashProfilePage() {
 
                 {/* CTO */}
                 <div className="flex py-2">
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    onClick={handleProfileUpdate}
-                  >
+                  <Button variant="solid" color="primary" type="submit">
                     Update
                   </Button>
                 </div>
-              </div>
+              </form>
 
               {/* Profile Image Info */}
-              <div className="flex flex-col items-center rounded-xl w-[40%] p-5 h-[70%] gap-5">
+              <div className="flex flex-col items-center rounded-xl w-[50%] p-5 h-[70%] gap-5">
                 <div>
                   <h1>Manage Profile Picture</h1>
                 </div>
@@ -241,7 +267,11 @@ export default function DashProfilePage() {
                     <Image
                       className={`h-[25vh] object-cover`}
                       isZoomed
-                      src={`${profile?.avatarUrl !== "" ? profile?.avatarUrl : siteConfig.footerTexts.footerImage}`}
+                      src={
+                        profile?.avatarUrl !== ""
+                          ? profile?.avatarUrl
+                          : siteConfig.staticAssets.staticLogo
+                      }
                     />
                   </>
                 )}
