@@ -5,6 +5,7 @@ import { Button } from "@nextui-org/button";
 import { Divider, Image, Input, Textarea } from "@nextui-org/react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { GoTrash } from "react-icons/go";
 
 export type CompanyInfo = {
@@ -25,97 +26,50 @@ export type CompanyInfo = {
 export default function DashSettingsPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
-  //const fnameRef = useRef<HTMLInputElement>(null);
-  const compnameRef = useRef<HTMLInputElement>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const mobiRef = useRef<HTMLInputElement>(null);
-  const mobi2Ref = useRef<HTMLInputElement>(null);
-  const mobi3Ref = useRef<HTMLInputElement>(null);
-  const bioRef = useRef<HTMLTextAreaElement>(null);
-  const visionRef = useRef<HTMLTextAreaElement>(null);
-  const missionRef = useRef<HTMLTextAreaElement>(null);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
 
-  const saveCompanyInfo = () => {
-    if (companyInfo === null) {
-      alert("Add/Update company info");
-    } else {
-      const data = {
-        "id":`${companyInfo?.id}`,
-        "companyName":
-          companyInfo?.companyName === null
-            ? compnameRef?.current?.value
-            : companyInfo?.companyName,
-        "companyAddress":
-          companyInfo?.companyAddress === null
-            ? addressRef?.current?.value
-            : companyInfo?.companyAddress,
-        "companyEmail":
-          companyInfo?.companyEmail === null
-            ? emailRef?.current?.value
-            : companyInfo?.companyEmail,
-        "companyMobile":
-          companyInfo?.companyMobile === null
-            ? mobiRef?.current?.value
-            : companyInfo?.companyMobile,
-        "companyMobileAltenate":
-          companyInfo?.companyMobileAltenate === null
-            ? mobi2Ref?.current?.value
-            : companyInfo?.companyMobileAltenate,
-        "companyMobileTelephone":
-          companyInfo?.companyMobileTelephone === null
-            ? mobi3Ref?.current?.value
-            : companyInfo?.companyMobileTelephone,
-        "companyBiography":
-          companyInfo?.companyBiography === null
-            ? bioRef?.current?.value
-            : companyInfo?.companyBiography,
-        "companyMission":
-          companyInfo?.companyMission === null
-            ? missionRef?.current?.value
-            : companyInfo?.companyMission,
-        "companyVision":
-          companyInfo?.companyVision === null
-            ? visionRef?.current?.value
-            : companyInfo?.companyVision,
-      };
+  const { register, handleSubmit } = useForm<CompanyInfo>();
 
-      //#region 
-      // {
-      //   companyName: 'GREAT HOPE FOUNDATION',
-      //   companyAddress: 'P.O.BOX 2466 DSM',
-      //   companyEmail: 'greathopefoundation@gmail.com',
-      //   companyMobile: '',
-      //   companyMobileAltenate: '',
-      //   companyMobileTelephone: '02214245141',
-      //   companyBiography: 'Test Biography info',
-      //   companyMission: 'Test Mission info',
-      //   companyVision: ''
-      // }
-      //#endregion
-      
-      console.log(data);
+  const onSubmit: SubmitHandler<CompanyInfo> = (data: CompanyInfo) => {
+    storeCompanyInfo(data);
+  };
 
-      axios
-        .put(`${api}/settings/${authed?.profileId}/companyinfo`, data, {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${authed?.token}`,
-            "Content-Type": "application/jspn",
-          },
-        })
-        .then((res: AxiosResponse) => {
-          if (res) {
-            console.log(res?.data);
-            window.location.reload();
-          }
-        })
-        .catch((err: AxiosError) => {
-          console.log(err);
+  const storeCompanyInfo = (d: CompanyInfo) => {
+    const data = {
+      id: `${companyInfo?.id}`,
+      companyName: d?.companyName,
+      companyAddress: d?.companyAddress,
+      companyEmail: d?.companyEmail,
+      companyMobile: d?.companyMobile,
+      companyMobileAltenate: d?.companyMobileAltenate,
+      companyMobileTelephone: d?.companyMobileTelephone,
+      companyBiography: d?.companyBiography,
+      companyMission: d?.companyMission,
+      companyVision: d?.companyVision,
+    };
+
+    onUpdateInfo(data);
+  };
+
+  const onUpdateInfo = (data: any) => {
+    axios
+      .put(`${api}/settings/companyinfo/${data?.id}`, data, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          console.log(res?.data);
           window.location.reload();
-        });
-    }
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+        window.location.reload();
+      });
   };
 
   useEffect(() => {
@@ -141,7 +95,10 @@ export default function DashSettingsPage() {
         <Divider />
 
         <div className="w-full flex justify-between ">
-          <div className="w-full flex flex-col gap-5 h-[50vh] p-3 overflow-y-scroll">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full flex flex-col gap-5 h-[50vh] p-3 overflow-y-scroll"
+          >
             <h1 className="text-xl">Company Info</h1>
 
             {/* Name */}
@@ -150,16 +107,18 @@ export default function DashSettingsPage() {
                 <label htmlFor="compname">Company name</label>
                 <Input
                   type="text"
-                  ref={compnameRef}
+                  defaultValue={`${companyInfo?.companyName ?? ""}`}
+                  {...register("companyName")}
                   placeholder={companyInfo?.companyName ?? "Enter Company name"}
                 />
               </div>
 
               <div className="w-full space-y-3">
-                <label htmlFor="address">Address</label>
+                <label htmlFor="address">Post Office Address</label>
                 <Input
                   type="text"
-                  ref={addressRef}
+                  defaultValue={`${companyInfo?.companyAddress ?? ""}`}
+                  {...register("companyAddress")}
                   placeholder={companyInfo?.companyAddress ?? "Enter Address"}
                 />
               </div>
@@ -173,7 +132,8 @@ export default function DashSettingsPage() {
                 <label htmlFor="cemail">Email</label>
                 <Input
                   type="email"
-                  ref={emailRef}
+                  defaultValue={`${companyInfo?.companyEmail ?? ""}`}
+                  {...register("companyEmail")}
                   placeholder={
                     companyInfo?.companyEmail ?? "Enter Company Email"
                   }
@@ -184,7 +144,8 @@ export default function DashSettingsPage() {
                 <label htmlFor="vision">Mobile</label>
                 <Input
                   type="text"
-                  ref={mobiRef}
+                  defaultValue={`${companyInfo?.companyMobile ?? ""}`}
+                  {...register("companyMobile")}
                   placeholder={
                     companyInfo?.companyMobile ?? "Enter Company mobile"
                   }
@@ -197,7 +158,8 @@ export default function DashSettingsPage() {
                 <label htmlFor="mobi2">Telephone</label>
                 <Input
                   type="text"
-                  ref={mobi2Ref}
+                  defaultValue={`${companyInfo?.companyMobileTelephone ?? ""}`}
+                  {...register("companyMobileTelephone")}
                   placeholder={
                     companyInfo?.companyMobileTelephone ??
                     "Enter Telephone mobile"
@@ -208,7 +170,8 @@ export default function DashSettingsPage() {
                 <label htmlFor="mobi3">Altenate Mobile</label>
                 <Input
                   type="text"
-                  ref={mobi3Ref}
+                  defaultValue={`${companyInfo?.companyMobileAltenate ?? ""}`}
+                  {...register("companyMobileAltenate")}
                   placeholder={
                     companyInfo?.companyMobileAltenate ??
                     "Enter Altenate mobile"
@@ -221,8 +184,9 @@ export default function DashSettingsPage() {
             <div className="w-full space-y-3">
               <label htmlFor="bio">Biography</label>
               <Textarea
-                ref={bioRef}
-                placeholder={`${"Enter Biography info"}`}
+                defaultValue={`${companyInfo?.companyBiography ?? ""}`}
+                {...register("companyBiography")}
+                placeholder={`${companyInfo?.companyBiography ?? "Enter Biography info"}`}
               ></Textarea>
             </div>
 
@@ -233,7 +197,8 @@ export default function DashSettingsPage() {
             <div className="w-full space-y-3">
               <label htmlFor="mission">Mission</label>
               <Textarea
-                ref={missionRef}
+                defaultValue={`${companyInfo?.companyMission ?? ""}`}
+                {...register("companyMission")}
                 placeholder={`${companyInfo?.companyMission ?? "Enter Mission info"}`}
               ></Textarea>
             </div>
@@ -241,17 +206,18 @@ export default function DashSettingsPage() {
             <div className="w-full space-y-3">
               <label htmlFor="vision">Vision Info</label>
               <Textarea
-                ref={visionRef}
+                defaultValue={`${companyInfo?.companyVision ?? ""}`}
+                {...register("companyVision")}
                 placeholder={`${companyInfo?.companyVision ?? "Enter Vision Info"}`}
               ></Textarea>
             </div>
             <div>
               {/* <h1>Actions</h1> */}
-              <Button variant="solid" color="primary" onClick={saveCompanyInfo}>
+              <Button variant="solid" color="primary" type="submit">
                 Save
               </Button>
             </div>
-          </div>
+          </form>
 
           <div className="w-full flex flex-col p-5">
             <CompanyAssetsUi company={companyInfo} />
@@ -296,6 +262,7 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
       alert("Add Company info to upload asset(s)");
     } else {
       const data = new FormData();
+      data.append("_method", "PUT");
 
       if (selectedImage) {
         data.append("imageAsset", selectedImage);
@@ -305,10 +272,9 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
         data.append("videoAsset", selectedVideo);
       }
 
-      data.append("_METHOD", "PUT");
 
       axios
-        .post(`${api}/settings/${authed?.profileId}/companyassets`, data, {
+        .put(`${api}/settings/companyassets/${company?.id}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
             "Content-Type": "multipart/form-data",
@@ -321,6 +287,8 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
         })
         .catch((err: AxiosError) => {
           if (err) {
+            console.log(err.response);
+            
             window.location.reload();
           }
         });

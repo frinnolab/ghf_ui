@@ -13,7 +13,6 @@ export default function DashProfilePage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const posnRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
   const coPassRef = useRef<HTMLInputElement>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
@@ -64,10 +63,6 @@ export default function DashProfilePage() {
   };
 
   const onSubmit: SubmitHandler<Profile> = (d) => {
-    //console.log(watch("firstname"));
-
-    //console.log(d);
-
     handleProfileUpdate(d);
   };
 
@@ -91,7 +86,7 @@ export default function DashProfilePage() {
       if (passRef?.current?.value !== coPassRef?.current?.value) {
         alert("Passwords dont match.");
       } else {
-        data.append("password", `${posnRef?.current?.value}`);
+        data.append("password", `${passRef?.current?.value}`);
       }
     }
     //console.log(profile);
@@ -154,7 +149,7 @@ export default function DashProfilePage() {
                     <label htmlFor="Firstname">Firstname</label>
                     <Input
                       type="text"
-                      defaultValue=""
+                      defaultValue={`${profile?.firstname ?? ""}`}
                       {...register("firstname")}
                       placeholder={`${profile?.firstname ?? "Enter lastname"}`}
                     />

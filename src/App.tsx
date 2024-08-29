@@ -69,8 +69,6 @@ function App() {
       <Route element={<DashBlogCreate />} path="/dashboard/blogs/:id" />
       <Route element={<DashProfilePage />} path="/dashboard/profile" />
       <Route element={<DashSettingsPage />} path="/dashboard/settings" />
-      {/* <Route element={<Dashy />} path="/dashy" />
-      <Route element={<SappyPage />} path="/sappy" /> */}
     </Routes>
   );
 }
