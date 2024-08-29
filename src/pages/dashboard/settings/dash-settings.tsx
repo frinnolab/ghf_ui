@@ -272,16 +272,21 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
         data.append("videoAsset", selectedVideo);
       }
 
+      console.log(company?.id);
+      
+
 
       axios
-        .put(`${api}/settings/companyassets/${company?.id}`, data, {
+        .post(`${api}/settings/companyassets/${company?.id}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
-            "Content-Type": "multipart/form-data",
-          },
+            "Content-Type": "multipart/form-data"
+          }
         })
         .then((res: AxiosResponse) => {
           if (res) {
+            console.log(res?.data);
+            
             window.location.reload();
           }
         })
