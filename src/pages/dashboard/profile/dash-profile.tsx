@@ -151,7 +151,7 @@ export default function DashProfilePage() {
                       type="text"
                       defaultValue={`${profile?.firstname ?? ""}`}
                       {...register("firstname")}
-                      placeholder={`${profile?.firstname ?? "Enter lastname"}`}
+                      placeholder={`${profile?.firstname ?? "Enter firstname"}`}
                     />
                   </div>
 

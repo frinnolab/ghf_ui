@@ -52,6 +52,7 @@ export default function DashProjectsListPage() {
   ];
   const actionTypes = ["detail", "edit", "delete"];
   const [projects, setProjects] = useState<Project[]>([]);
+  const [isProjects, setIsProjects] = useState<boolean>(false);
   const [] = useState<ProjectStatus[]>(() => {
     return [
       {
@@ -70,39 +71,43 @@ export default function DashProjectsListPage() {
   const authed = useAuthedProfile();
 
   useEffect(() => {
-    axios
-      .get(`${api}/projects`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authed?.token}`,
-        },
-      })
-      .then((res: AxiosResponse) => {
-        console.log(res.data);
+    if (!isProjects) {
+      axios
+        .get(`${api}/projects`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
 
-        const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
-          const data: Project = {
-            projectId: `${p?.projectId}`,
-            title: `${p?.title}`,
-            description: `${p?.description}`,
-            status: Number(`${p?.status}`),
-            regionsReached: Number(`${p?.regionsReached}`),
-            districtsReached: Number(`${p?.districtsReached}`),
-            schoolsReached: Number(`${p?.schoolsReached}`),
-            studentsReached: Number(`${p?.studentsReached}`),
-            thumbnailUrl: `${p?.thumbnailUrl ?? ""}`,
-            publisherId: `${p?.publisherId ?? ""}`,
-          };
+          const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
+            const data: Project = {
+              projectId: `${p?.projectId}`,
+              title: `${p?.title}`,
+              description: `${p?.description}`,
+              status: Number(`${p?.status}`),
+              regionsReached: Number(`${p?.regionsReached}`),
+              districtsReached: Number(`${p?.districtsReached}`),
+              schoolsReached: Number(`${p?.schoolsReached}`),
+              studentsReached: Number(`${p?.studentsReached}`),
+              thumbnailUrl: `${p?.thumbnailUrl ?? ""}`,
+              publisherId: `${p?.publisherId ?? ""}`,
+            };
 
-          console.log(data);
+            console.log(data);
 
-          return [data];
+            return [data];
+
+          });
+          setIsProjects(true);
+
+          setProjects(dataList);
         });
-
-        setProjects(dataList);
-      });
-  }, [projects]);
+    }
+  }, [isProjects]);
 
   const handleSelectedRow = (p: Project) => {
     nav(`/dashboard/projects/${p?.projectId}`, {

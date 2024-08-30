@@ -11,11 +11,12 @@ import {
   Input,
   Select,
   SelectItem,
-  Skeleton,
   Switch,
   Textarea,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { siteConfig } from "@/config/site";
 export default function DashProjectPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -23,6 +24,7 @@ export default function DashProjectPage() {
   const nav = useNavigate();
   const route = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [, setIsProject] = useState<boolean>(false);
   const [projectId] = useState<string | null>(() => {
     if (route?.state !== null) {
       return route?.state;
@@ -31,13 +33,6 @@ export default function DashProjectPage() {
     }
   });
   const [project, setProject] = useState<Project | null>(null);
-
-  const titleRef = useRef<HTMLInputElement | null>(null);
-  const descRef = useRef<HTMLTextAreaElement | null>(null);
-  const regionsRef = useRef<HTMLInputElement | null>(null);
-  const districtsRef = useRef<HTMLInputElement | null>(null);
-  const schoolsRef = useRef<HTMLInputElement | null>(null);
-  const studentsRef = useRef<HTMLInputElement | null>(null);
   const dateStartRef = useRef<HTMLInputElement | null>(null);
   const dateEndRef = useRef<HTMLInputElement | null>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
@@ -55,10 +50,13 @@ export default function DashProjectPage() {
     ];
   });
 
+  //Form State
+  const { register, handleSubmit } = useForm<Project>();
+
   const [selectedStatus, setSelectedStatus] = useState<ProjectStatus>();
 
   useEffect(() => {
-    if (projectId) {
+    if (!project) {
       axios
         .get(`${api}/projects/${projectId}`, {
           headers: {
@@ -73,10 +71,10 @@ export default function DashProjectPage() {
             projectId: `${res.data["projectId"]}`,
             title: `${res.data["title"]}`,
             description: `${res.data["description"]}`,
-            regionsReached: Number(`${res.data["regionsReached"]}` ?? 0),
-            districtsReached: Number(`${res.data["districtsReached"]}` ?? 0),
-            schoolsReached: Number(`${res.data["schoolsReached"]}` ?? 0),
-            studentsReached: Number(`${res.data["studentsReached"]}` ?? 0),
+            regionsReached: Number(`${res?.data["regionsReached"]}`) ?? 0,
+            districtsReached: Number(`${res.data["districtsReached"]}`) ?? 0,
+            schoolsReached: Number(`${res.data["schoolsReached"]}`) ?? 0,
+            studentsReached: Number(`${res.data["studentsReached"]}`) ?? 0,
             dateStart: `${res.data["dateStart"]}`,
             dateEnd: `${res.data["dateEnd"]}`,
             publisherId: `${res.data["publisherId"]}`,
@@ -93,9 +91,10 @@ export default function DashProjectPage() {
           setSelectedStatus(statusVal);
 
           removeSelectedImage();
+          setIsProject(true);
         });
     }
-  }, []);
+  }, [project]);
 
   const handleBack = () => nav("/dashboard/projects");
 
@@ -109,31 +108,38 @@ export default function DashProjectPage() {
     setSelectedImage(null);
   };
 
-  const handleSave = () => {
-    console.log("Save");
+  const onProjectSubmit: SubmitHandler<Project> = (d) => {
+    console.log(d);
 
+    if (projectId) {
+      handleUpdate(d);
+    } else {
+      handleSave(d);
+    }
+  };
+
+  const handleSave = (d: Project) => {
     const data = new FormData();
 
     if (project === null) {
       //Save
       data.append("_method", `POST`);
       data.append("publisherProfileId", `${authed?.profileId}`);
-      data.append("title", `${titleRef?.current?.value}`);
-      data.append("description", `${descRef?.current?.value}`);
+      data.append("title", `${d?.title ?? ""}`);
+      data.append("description", `${d?.description ?? ""}`);
       data.append(
         "status",
         `${selectedStatus?.key === undefined ? projectStatus[1].key : selectedStatus?.key}`
       );
-      data.append("regionsReached", `${regionsRef?.current?.value}`);
-      data.append("districtsReached", `${districtsRef?.current?.value}`);
-      data.append("schoolsReached", `${schoolsRef?.current?.value}`);
-      data.append("studentsReached", `${studentsRef?.current?.value}`);
-      //   data.append("dateStart", `${dateStartRef?.current?.value}`);
-      //   data.append("dateEnd", `${dateEndRef?.current?.value}`);
+      data.append("regionsReached", `${d?.regionsReached ?? 0}`);
+      data.append("districtsReached", `${d?.districtsReached ?? 0}`);
+      data.append("schoolsReached", `${d?.schoolsReached ?? 0}`);
+      data.append("studentsReached", `${d?.studentsReached ?? 0}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
       }
+
       axios
         .post(`${api}/projects`, data, {
           headers: {
@@ -152,39 +158,34 @@ export default function DashProjectPage() {
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (d: Project) => {
     const data = new FormData();
 
     if (project) {
-      console.log("Update");
-
       //Save
       data.append("_method", `PUT`);
       data.append("publisherProfileId", `${authed?.profileId}`);
-      data.append("title", `${titleRef?.current?.value ?? project?.title}`);
-      data.append(
-        "description",
-        `${descRef?.current?.value ?? project?.description}`
-      );
+      data.append("title", `${d?.title ?? project?.title}`);
+      data.append("description", `${d?.description ?? project?.description}`);
       data.append(
         "status",
-        `${selectedStatus?.key === undefined ? projectStatus[1].key : selectedStatus?.key}`
+        `${selectedStatus?.key === undefined || null ? projectStatus[1].key : selectedStatus?.key}`
       );
       data.append(
         "regionsReached",
-        `${regionsRef?.current?.value ?? project?.regionsReached}`
+        `${d?.regionsReached ?? project?.regionsReached}`
       );
       data.append(
         "districtsReached",
-        `${districtsRef?.current?.value ?? project?.districtsReached}`
+        `${d?.districtsReached ?? project?.districtsReached}`
       );
       data.append(
         "schoolsReached",
-        `${schoolsRef?.current?.value ?? project?.schoolsReached}`
+        `${d?.schoolsReached ?? project?.schoolsReached}`
       );
       data.append(
         "studentsReached",
-        `${studentsRef?.current?.value ?? project?.studentsReached}`
+        `${d?.studentsReached ?? project?.studentsReached}`
       );
 
       if (selectedImage) {
@@ -204,10 +205,7 @@ export default function DashProjectPage() {
         })
         .then((res: AxiosResponse) => {
           console.log(res.data);
-
           window.location.reload();
-          //nav("/dashboard/projects");
-          //setSelectedImage(null);
         })
         .catch((err: AxiosError) => {
           //setSelectedImage(null);
@@ -223,6 +221,7 @@ export default function DashProjectPage() {
 
     setSelectedStatus(statusVal);
   };
+
   return (
     <div className="w-full">
       <div className="w-full p-3 flex items-center gap-5">
@@ -231,10 +230,10 @@ export default function DashProjectPage() {
         </Button>
         <h1 className=" text-2xl ">{`${route?.state === null ? "Create Project" : ` ${isEdit ? " Edit" : "View"} Project`}`}</h1>
       </div>
+
       <Divider />
 
       <div className="w-full flex flex-col p-5 gap-5">
-        
         <div className={` flex justify-end items-center gap-5 `}>
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
@@ -255,15 +254,19 @@ export default function DashProjectPage() {
         </div>
 
         {/* Content */}
-        <div className="w-full rounded-2xl bg-default-50 shadow flex p-5 justify-between">
+        <div className="w-full rounded-2xl bg-default-200 shadow flex p-5 justify-between">
           {/* Form */}
-          <div className="w-[60%] flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5">
+          <form
+            onSubmit={handleSubmit(onProjectSubmit)}
+            className="w-[60%] flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
+          >
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
               <Input
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={titleRef}
+                defaultValue={`${project?.title ?? ""}`}
+                {...register("title")}
                 placeholder={`${project?.title?.toUpperCase() ?? "Enter Title"}`}
               />
             </div>
@@ -274,7 +277,8 @@ export default function DashProjectPage() {
               <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={descRef}
+                defaultValue={`${project?.description ?? ""}`}
+                {...register("description")}
                 placeholder={`${project?.description ?? "Enter Description"}`}
               />
             </div>
@@ -287,7 +291,9 @@ export default function DashProjectPage() {
                 <Input
                   disabled={!isEdit ? true : false}
                   type="number"
-                  ref={regionsRef}
+                  min={0}
+                  defaultValue={`${project?.regionsReached ?? ""}`}
+                  {...register("regionsReached")}
                   placeholder={`${project?.regionsReached ?? "Enter Regions reached"}`}
                 />
               </div>
@@ -296,7 +302,9 @@ export default function DashProjectPage() {
                 <Input
                   disabled={!isEdit ? true : false}
                   type="number"
-                  ref={districtsRef}
+                  min={0}
+                  defaultValue={`${project?.districtsReached ?? ""}`}
+                  {...register("districtsReached")}
                   placeholder={`${project?.districtsReached ?? "Enter Districts reached"}`}
                 />
               </div>
@@ -311,7 +319,9 @@ export default function DashProjectPage() {
                 <Input
                   disabled={!isEdit ? true : false}
                   type="number"
-                  ref={schoolsRef}
+                  min={0}
+                  defaultValue={`${project?.schoolsReached ?? ""}`}
+                  {...register("schoolsReached")}
                   placeholder={`${project?.schoolsReached ?? "Enter Schools reached"}`}
                 />
               </div>
@@ -320,7 +330,9 @@ export default function DashProjectPage() {
                 <Input
                   disabled={!isEdit ? true : false}
                   type="number"
-                  ref={studentsRef}
+                  min={0}
+                  defaultValue={`${project?.studentsReached ?? ""}`}
+                  {...register("studentsReached")}
                   placeholder={`${project?.studentsReached ?? "Enter Students reached"}`}
                 />
               </div>
@@ -334,6 +346,7 @@ export default function DashProjectPage() {
                 <label htmlFor="dateStart">Date Start</label>
                 <DatePicker ref={dateStartRef} />
               </div>
+
               <div className="w-full space-y-3">
                 <label htmlFor="dateEnd">Date End</label>
                 <DatePicker ref={dateEndRef} />
@@ -345,12 +358,10 @@ export default function DashProjectPage() {
 
             <div className="flex gap-5">
               <div className="w-full space-y-3">
-                <label htmlFor="dateStart"></label>
-                {/* <DatePicker ref={dateStartRef} /> */}
+                <label htmlFor="#"></label>
               </div>
               <div className="w-full flex flex-col space-y-3">
-                <label htmlFor="dateEnd">Status</label>
-                {/* <DatePicker ref={dateEndRef} /> */}
+                <label htmlFor="status">Status</label>
 
                 <Select
                   label="Select Project Status"
@@ -360,9 +371,9 @@ export default function DashProjectPage() {
                     changeStatus(e);
                   }}
                 >
-                  {projectStatus.map((animal) => (
-                    <SelectItem key={`${animal.key}`}>
-                      {animal.value}
+                  {projectStatus.map((status) => (
+                    <SelectItem key={`${status.key}`}>
+                      {status.value}
                     </SelectItem>
                   ))}
                 </Select>
@@ -371,22 +382,16 @@ export default function DashProjectPage() {
             {/* Type Stats End */}
 
             {/* Actions */}
-            <div className="w-full space-y-3">
+            <div className="w-full space-y-3 flex items-center">
               <Button
                 color="primary"
                 disabled={!isEdit ? true : false}
-                onClick={() => {
-                  if (project == null) {
-                    handleSave();
-                  } else {
-                    handleUpdate();
-                  }
-                }}
+                type="submit"
               >
                 {projectId === null ? "Save" : "Update"}
               </Button>
             </div>
-          </div>
+          </form>
           {/* Form End */}
           {/* Thumbnail */}
           <div className="w-[30%] relative rounded-2xl p-5 flex flex-col justify-end">
@@ -400,13 +405,9 @@ export default function DashProjectPage() {
             ) : (
               <div>
                 {project?.thumbnailUrl ? (
-                  <div>
-                    <Image src={`${project?.thumbnailUrl}`} />
-                  </div>
+                  <Image src={`${project?.thumbnailUrl}`} />
                 ) : (
-                  <Skeleton className="rounded-lg w-full h-[80%]">
-                    <div className="h-24 rounded-lg bg-default-300"></div>
-                  </Skeleton>
+                  <Image src={`${siteConfig?.staticAssets?.staticLogo}`} />
                 )}
               </div>
             )}
