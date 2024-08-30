@@ -16,6 +16,8 @@ import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { PartnerType } from "@/types";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Textarea } from "@nextui-org/input";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { siteConfig } from "@/config/site";
 
 export default function DashboardPartnerPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -49,11 +51,24 @@ export default function DashboardPartnerPage() {
   });
   const [partner, setPartner] = useState<Partner | null>(null);
 
-  const titleRef = useRef<HTMLInputElement | null>(null);
-  const descRef = useRef<HTMLTextAreaElement | null>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<PartnerTypes>();
+
+  //Form State
+  const { register, handleSubmit } = useForm<Partner>();
+
+  const onFormSubmit: SubmitHandler<Partner> = (d) => {
+    console.log(d);
+
+    if (partner === null) {
+      alert("Save");
+      handleSave(d);
+    } else {
+      alert("Update");
+      handleUpdate(d);
+    }
+  };
 
   const changeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = partnersListTypes.find(
@@ -86,33 +101,33 @@ export default function DashboardPartnerPage() {
     window.location.reload();
   };
 
-  const handleSave = () => {
+  const handleSave = (d: Partner) => {
     const data = new FormData();
 
     if (partner === null) {
       //Save
       data.append("_method", `POST`);
       data.append("profileId", `${authed?.profileId}`);
-      data.append(
-        "name",
-        `${titleRef?.current?.value === undefined ? "" : titleRef?.current?.value}`
-      );
+      data.append("name", `${d?.name === null ? "" : d?.name}`);
       data.append(
         "description",
-        `${descRef?.current?.value === undefined ? "" : descRef?.current?.value}`
+        `${d?.description === null ? "" : d?.description}`
       );
       data.append(
         "type",
-        `${selectedStatus?.key === undefined ? partnersListTypes[0].key : selectedStatus?.key}`
+        `${selectedStatus?.key === undefined || null ? partnersListTypes[0].key : selectedStatus?.key}`
+      );
+      data.append(
+        "startYear",
+        `${d?.startYear === null ? null : d?.startYear}`
       );
       if (selectedImage) {
         data.append("image", selectedImage);
       }
 
-      data.forEach((d)=>{
+      data.forEach((d) => {
         console.log(d);
-        
-      })
+      });
 
       axios
         .post(`${api}/partners`, data, {
@@ -132,22 +147,24 @@ export default function DashboardPartnerPage() {
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (d: Partner) => {
     const data = new FormData();
 
     if (partner) {
-      console.log("Update");
-
       //Save
       data.append("_method", `PUT`);
       data.append("profileId", `${authed?.profileId}`);
       data.append(
         "name",
-        `${titleRef?.current?.value === "" || titleRef?.current?.value === undefined ? partner?.name : titleRef?.current?.value}`
+        `${d?.name === "" || d?.name === undefined ? partner?.name : d?.name}`
       );
       data.append(
         "description",
-        `${descRef?.current?.value === "" || descRef?.current?.value === undefined ? partner?.description : descRef?.current?.value}`
+        `${d?.description === "" || d?.description === undefined ? partner?.description : d?.description}`
+      );
+      data.append(
+        "startYear",
+        `${d?.startYear === null || d?.startYear === undefined ? partner?.startYear : d?.startYear}`
       );
       data.append(
         "type",
@@ -172,13 +189,14 @@ export default function DashboardPartnerPage() {
         .then((res: AxiosResponse) => {
           console.log(res.data);
 
-          window.location.reload();
           //nav("/dashboard/projects");
           setSelectedImage(null);
+          window.location.reload();
         })
         .catch((err: AxiosError) => {
           setSelectedImage(null);
           console.log(err.response);
+          window.location.reload();
         });
     }
   };
@@ -199,6 +217,7 @@ export default function DashboardPartnerPage() {
             name: `${res.data["name"] ?? ""}`,
             description: `${res.data["description"] ?? ""}`,
             logoUrl: `${res.data["logoUrl"]}`,
+            startYear: Number(`${res.data["startYear"]}`),
           };
 
           setPartner(data);
@@ -244,46 +263,65 @@ export default function DashboardPartnerPage() {
         {/* Content */}
         <div className="w-full rounded-2xl bg-slate-200 shadow flex p-5 justify-between">
           {/* Form */}
-          <div className="w-[50%] flex flex-col gap-5 p-5 min-h-[70vh]">
+          <form
+            onSubmit={handleSubmit(onFormSubmit)}
+            className="w-[50%] flex flex-col gap-5 p-5 min-h-[70vh]"
+          >
             <div className="w-full space-y-3">
-              <label htmlFor="pName" className={`text-xl`}>Name</label>
+              <label htmlFor="pName">Name</label>
               <Input
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={titleRef}
+                defaultValue={`${partner?.name ?? ""}`}
+                {...register("name")}
                 placeholder={`${partner?.name?.toUpperCase() ?? "Enter Partner/Donor/Collaborator name"}`}
               />
             </div>
 
             <div className="w-full space-y-3">
-              <label htmlFor="pDesc" className={`text-xl`}>Description</label>
+              <label htmlFor="pDesc">Description</label>
               <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={descRef}
+                defaultValue={`${partner?.description ?? ""}`}
+                {...register("description")}
                 placeholder={`${partner?.description?.toUpperCase() ?? "Enter Partner/Donor/Collablator description"}`}
               />
             </div>
 
             {/* Editor */}
-            <div className="w-full space-y-3 flex flex-col">
-              <label htmlFor="pType" className={`text-xl`}>Select Partner Type</label>
+            <div className={`w-full flex items-center`}>
+              <div className="w-full space-y-3 flex flex-col">
+                <label htmlFor="pType">Select Partner Type</label>
 
-              <Select
-                disabled={!isEdit ? true : false}
-                label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
-                className="max-w-xs"
-                defaultSelectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
-                onChange={(e) => {
-                  changeStatus(e);
-                }}
-              >
-                {partnersListTypes.map((p) => (
-                  <SelectItem key={`${p.key}`}>
-                    {typeName(Number(p.key))}
-                  </SelectItem>
-                ))}
-              </Select>
+                <Select
+                  disabled={!isEdit ? true : false}
+                  label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
+                  className="max-w-xs"
+                  defaultSelectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
+                  onChange={(e) => {
+                    changeStatus(e);
+                  }}
+                >
+                  {partnersListTypes.map((p) => (
+                    <SelectItem key={`${p.key}`}>
+                      {typeName(Number(p.key))}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+
+              <div className="w-full space-y-3 flex flex-col">
+                <label htmlFor="pType">Start Year</label>
+                <Input
+                  disabled={!isEdit ? true : false}
+                  type="number"
+                  min={2000}
+                  defaultValue={`${partner?.startYear ?? ""}`}
+                  {...register("startYear", { min: 2000 })}
+                  placeholder={`${partner?.startYear ?? "Enter Partner/Donor/Collaborator Year"}`}
+                />
+              </div>
             </div>
 
             {/* Actions */}
@@ -291,23 +329,24 @@ export default function DashboardPartnerPage() {
               <Button
                 color="primary"
                 disabled={!isEdit ? true : false}
-                onClick={() => {
-                  if (partner == null) {
-                    handleSave();
-                  } else {
-                    handleUpdate();
-                  }
-                }}
+                type="submit"
+                // onClick={() => {
+                //   if (partner == null) {
+                //     handleSave();
+                //   } else {
+                //     handleUpdate();
+                //   }
+                // }}
               >
                 {partnerId === null ? "Save" : "Update"}
               </Button>
             </div>
-          </div>
+          </form>
           {/* Form End */}
 
           {/* Image Section */}
           <div className="w-[30%] relative rounded-2xl p-5 flex flex-col gap-3 justify-end">
-            <h1 className={` text-xl `}>Logo</h1>
+            <h1 className={` text-lg `}>Logo</h1>
             {selectedImage ? (
               <div className="w-full flex items-center justify-end min-h-[50vh]">
                 <Image
@@ -319,12 +358,14 @@ export default function DashboardPartnerPage() {
               <div className="min-h-[50vh]">
                 {partner?.logoUrl ? (
                   <div>
-                    <Image src={`${partner?.logoUrl}`} />
+                    <Image
+                      src={`${partner?.logoUrl === null || "" ? siteConfig?.staticAssets?.staticLogo : partner?.logoUrl}`}
+                    />
                   </div>
                 ) : (
-                  <Skeleton className="rounded-lg w-full h-[80%]">
-                    <div className="h-24 rounded-lg bg-default-300"></div>
-                  </Skeleton>
+                  <div>
+                    <Image src={siteConfig?.staticAssets?.staticLogo} />
+                  </div>
                 )}
               </div>
             )}

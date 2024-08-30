@@ -17,9 +17,10 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash, GoX } from "react-icons/go";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import { Profile } from "../profiles/dash-profiles-list";
 import { Input } from "@nextui-org/input";
+import { AuthRole } from "@/types";
 
 export type profileSelect = {
   key: string;
@@ -33,6 +34,7 @@ export default function DashboardTeamPage() {
   const nav = useNavigate();
   const route = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  //const [isMainBoard, setIsMainBoard] = useState<boolean>(false);
   const [, setValue] = useState<string>("");
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
   const [members, setMembers] = useState<profileSelect[]>([]);
@@ -112,9 +114,14 @@ export default function DashboardTeamPage() {
         })
         .then((res: AxiosResponse) => {
           console.log(res?.data);
+          window.location.reload();
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
+
+          if(HttpStatusCode.Found){
+            alert('Member already exists in team!.');
+          }
         });
     }
   };
@@ -145,23 +152,23 @@ export default function DashboardTeamPage() {
 
   const handleDelete = (b: TeamMember) => {
     alert(`Deleting ${b?.memberId}`);
-    // if (authed?.role == AuthRole.User) {
-    //   alert(HttpStatusCode.Unauthorized);
-    // }
+    if (authed?.role === AuthRole.User) {
+      alert(HttpStatusCode.Unauthorized);
+    }
 
-    // axios
-    //   .delete(`${api}/teams/${b?.teamId}`, {
-    //     headers: {
-    //       Accept: "application/json",
-    //       Authorization: `Bearer ${authed?.token}`,
-    //     },
-    //   })
-    //   .then(() => {
-    //     window.location.reload();
-    //   })
-    //   .catch((err: AxiosError) => {
-    //     console.log(err.response?.data ?? err.response?.statusText);
-    //   });
+    axios
+      .delete(`${api}/teams/members/${b?.teamId}/${b?.memberId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response?.data ?? err.response?.statusText);
+      });
   };
 
   useEffect(() => {
@@ -185,6 +192,8 @@ export default function DashboardTeamPage() {
         });
     }
   }, [teamId]);
+
+  //IsMainBoard
 
   useEffect(() => {
     if (!hasMembers) {
@@ -228,10 +237,25 @@ export default function DashboardTeamPage() {
 
       <div className="w-full flex flex-col p-5 gap-5">
         <div className={` flex justify-between items-center gap-5 `}>
-          <div className={``}>
+          <div className={`flex items-center gap-5`}>
             <h1 className="text-2xl">
               {team?.name} ({team?.totalMembers})
             </h1>
+
+            {/* <Switch
+              onClick={() => {
+                // if (!isEdit) {
+                //   setIsEdit(true);
+                // } else {
+                //   setIsEdit(false);
+                // }
+              }}
+              defaultSelected={isEdit}
+              size="lg"
+              startContent={<GoPencil />}
+              endContent={<GoEye />}
+              title={`${isEdit ? "Edit mode" : "View mode"}`}
+            ></Switch> */}
           </div>
 
           <div className={`flex items-center gap-3`}>
@@ -316,7 +340,11 @@ export default function DashboardTeamPage() {
                   <label htmlFor="fName">Firstname</label>
                   <Input
                     disabled
-                    placeholder={selectedMember ? selectedMember?.firstname : "Member firstname"}
+                    placeholder={
+                      selectedMember
+                        ? selectedMember?.firstname
+                        : "Member firstname"
+                    }
                   />
                 </div>
 
@@ -324,7 +352,11 @@ export default function DashboardTeamPage() {
                   <label htmlFor="lName">Lastname</label>
                   <Input
                     disabled
-                    placeholder={selectedMember ? selectedMember?.lastname : "Member lastname"}
+                    placeholder={
+                      selectedMember
+                        ? selectedMember?.lastname
+                        : "Member lastname"
+                    }
                   />
                 </div>
 
@@ -332,7 +364,11 @@ export default function DashboardTeamPage() {
                   <label htmlFor="pName">Position</label>
                   <Input
                     disabled
-                    placeholder={selectedMember ? selectedMember?.position : "Member position"}
+                    placeholder={
+                      selectedMember
+                        ? selectedMember?.position
+                        : "Member position"
+                    }
                   />
                 </div>
 

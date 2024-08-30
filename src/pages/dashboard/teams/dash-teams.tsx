@@ -28,6 +28,7 @@ import { Profile } from "../profiles/dash-profiles-list";
 export type Team = {
   teamId?: string;
   name?: string;
+  isMainBoard?: boolean;
   totalMembers?: string;
 };
 
@@ -59,6 +60,7 @@ export default function DashboardTeamsPage() {
       const data = {
         "profileId": `${authed?.profileId}`,
         "name": `${teamNameRef?.current?.value}`,
+        "isMainBoard":false
       };
 
       console.log(data);

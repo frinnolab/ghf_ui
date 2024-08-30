@@ -23,6 +23,8 @@ export type Partner = {
   name?: string;
   description?: string;
   type?: number;
+  startYear?: number;
+  endYear?: number;
 };
 
 export type PartnerTypes = {
