@@ -9,7 +9,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Skeleton,
   Switch,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
