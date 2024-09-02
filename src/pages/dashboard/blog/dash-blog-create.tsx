@@ -13,6 +13,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Blog } from "./dash-blogs";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import useAuthedProfile from "@/hooks/use-auth";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { siteConfig } from "@/config/site";
 
 export default function DashBlogCreate() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -21,8 +23,6 @@ export default function DashBlogCreate() {
   const nav = useNavigate();
   const route = useLocation();
   //From Inputs
-  const titleRef = useRef<HTMLInputElement | null>(null);
-  const descRef = useRef<HTMLTextAreaElement | null>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
@@ -36,6 +36,21 @@ export default function DashBlogCreate() {
     }
   });
   const [blog, setBlog] = useState<Blog | null>(null);
+
+  //Form States
+  const {
+    register,
+    handleSubmit,
+  } = useForm<Blog>();
+
+  const onSubmitBlog: SubmitHandler<Blog> = (data: Blog) => {
+    if (blogId) {
+      handleUpdate(data);
+    } else {
+      handleSave(data);
+    }
+  };
+
   const handleBack = () => nav("/dashboard/blogs");
 
   useEffect(() => {
@@ -48,14 +63,13 @@ export default function DashBlogCreate() {
           },
         })
         .then((res: AxiosResponse) => {
-          
-          console.log(res.data);
+          console.log(res?.data);
           const data: Blog = {
-            blogId: `${res.data["blogId"]}`,
-            title: `${res.data["title"]}`,
-            description: `${res.data["description"]}`,
-            thumbnailUrl: `${res.data["thumbnailUrl"]}`,
-            authorId: `${res.data["authorId"]}`,
+            blogId: res?.data["blogId"] ?? null,
+            title: res?.data["title"] ?? null,
+            description: res?.data["description"] ?? null,
+            thumbnailUrl: res?.data["thumbnailUrl"] ?? null,
+            authorId: res.data["authorId"] ?? null,
           };
 
           setBlog(data);
@@ -70,11 +84,11 @@ export default function DashBlogCreate() {
   };
 
   const removeSelectedImage = () => {
-
     setSelectedImage(null);
+    window.location.reload();
   };
 
-  const handleSave = () => {
+  const handleSave = (d: Blog) => {
     console.log("Save");
 
     const data = new FormData();
@@ -83,12 +97,16 @@ export default function DashBlogCreate() {
       //Save
       data.append("_method", `POST`);
       data.append("authorId", `${authed?.profileId}`);
-      data.append("title", `${titleRef?.current?.value}`);
-      data.append("description", `${descRef?.current?.value}`);
+      data.append("title", `${d?.title}`);
+      data.append("description", `${d?.description}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
       }
+
+      data.forEach((d) => {
+        console.log(d);
+      });
 
       axios
         .post(`${api}/blogs`, data, {
@@ -106,18 +124,15 @@ export default function DashBlogCreate() {
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (d: Blog) => {
     const data = new FormData();
 
     if (blog) {
       //Save
       data.append("_method", `PUT`);
       data.append("authorId", `${blog?.authorId ?? authed?.profileId}`);
-      data.append("title", `${titleRef?.current?.value ?? blog?.title}`);
-      data.append(
-        "description",
-        `${descRef?.current?.value ?? blog?.description}`
-      );
+      data.append("title", `${d?.title ?? blog?.title}`);
+      data.append("description", `${d?.description ?? blog?.description}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
@@ -128,7 +143,7 @@ export default function DashBlogCreate() {
       });
 
       axios
-        .post(`${api}/blogs/${authed?.profileId}/${blog?.blogId}`, data, {
+        .post(`${api}/blogs/${blog?.blogId}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
             "Content-Type": "multipart/form-data",
@@ -136,8 +151,7 @@ export default function DashBlogCreate() {
         })
         .then((res: AxiosResponse) => {
           console.log(res.data);
-          nav("/dashboard/blogs");
-          //setSelectedImage(null);
+          window.location.reload();
         })
         .catch((err: AxiosError) => {
           //setSelectedImage(null);
@@ -178,15 +192,18 @@ export default function DashBlogCreate() {
         </div>
 
         {/* Content */}
-        <div className="w-full rounded-2xl bg-default-50 shadow flex p-5 justify-between">
+        <div className="w-full min-h-[70dvh] rounded-2xl bg-default-200 shadow flex p-5 justify-between">
           {/* Form */}
-          <div className="w-[60%] flex flex-col gap-5">
+          <form
+            className="w-full flex flex-col gap-5"
+            onSubmit={handleSubmit(onSubmitBlog)}
+          >
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
               <Input
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={titleRef}
+                {...register("title")}
                 placeholder={`${blog?.title ?? "Enter Title"}`}
               />
             </div>
@@ -197,7 +214,7 @@ export default function DashBlogCreate() {
               <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
-                ref={descRef}
+                {...register("description")}
                 placeholder={`${blog?.description ?? "Enter Description"}`}
               />
             </div>
@@ -207,38 +224,36 @@ export default function DashBlogCreate() {
               <Button
                 color="primary"
                 disabled={!isEdit ? true : false}
-                onClick={() => {
-                  if (blog == null) {
-                    handleSave();
-                  } else {
-                    handleUpdate();
-                  }
-                }}
+                type="submit"
               >
                 {blogId === null ? "Save" : "Update"}
               </Button>
             </div>
-          </div>
+          </form>
           {/* Form End */}
           {/* Thumbnail */}
-          <div className="w-[30%] relative rounded-2xl p-5 flex flex-col justify-end">
+
+          <div className="w-full relative rounded-2xl p-5 flex flex-col items-center ">
             {selectedImage ? (
-              <div className="w-full flex items-center justify-end">
+              <div className="w-full flex items-center justify-center">
                 <Image
-                  className={`w-[50%] self-end`}
                   src={URL.createObjectURL(selectedImage)}
                 />
               </div>
             ) : (
               <div>
                 {blog?.thumbnailUrl ? (
-                  <div>
-                    <Image className={`w-[50%]`} src={blog?.thumbnailUrl ?? ""} />
+                  <div className="w-full flex items-center">
+                    <Image
+                      src={
+                        blog?.thumbnailUrl ?? siteConfig.staticAssets.staticLogo
+                      }
+                    />
                   </div>
                 ) : (
-                  <Skeleton className="rounded-lg w-full h-[80%]">
-                    <div className="h-24 rounded-lg bg-default-300"></div>
-                  </Skeleton>
+                  <Image
+                    src={siteConfig.staticAssets.staticLogo}
+                  />
                 )}
               </div>
             )}

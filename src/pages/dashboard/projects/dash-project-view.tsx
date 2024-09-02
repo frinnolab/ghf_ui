@@ -262,7 +262,6 @@ export default function DashProjectPage() {
             onSubmit={handleSubmit(onProjectSubmit)}
             className="w-[60%] flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
           >
-
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
               <Input
@@ -289,7 +288,6 @@ export default function DashProjectPage() {
             {/* Regs Stats */}
 
             <div className="flex gap-5">
-
               <div className="w-full space-y-3">
                 <label htmlFor="regionsReached">Regions Reached</label>
                 <Input
@@ -319,7 +317,6 @@ export default function DashProjectPage() {
             {/* School Stats */}
 
             <div className="flex gap-5">
-
               <div className="w-full space-y-3">
                 <label htmlFor="schoolsReached">Schools Reached</label>
                 <Input
