@@ -79,12 +79,14 @@ export default function DashProjectPage() {
             dateEnd: `${res.data["dateEnd"]}`,
             publisherId: `${res.data["publisherId"]}`,
             status: Number(`${res?.data["status"]}`),
-            thumbnailUrl: res.data["thumbnailUrl"] ?? null,
+            thumbnailUrl: res?.data["thumbnailUrl"] ?? null,
           };
 
           const statusVal = projectStatus.find(
             (p) => p?.key === Number(data?.status)
           );
+
+          console.log(statusVal);
 
           setProject(data);
 
@@ -169,7 +171,7 @@ export default function DashProjectPage() {
       data.append("description", `${d?.description ?? project?.description}`);
       data.append(
         "status",
-        `${selectedStatus?.key === undefined || null ? projectStatus[1].key : selectedStatus?.key}`
+        `${selectedStatus?.key === undefined || selectedStatus?.key === null ? projectStatus[1].key : selectedStatus?.key}`
       );
       data.append(
         "regionsReached",
@@ -260,6 +262,7 @@ export default function DashProjectPage() {
             onSubmit={handleSubmit(onProjectSubmit)}
             className="w-[60%] flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
           >
+
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
               <Input
@@ -286,6 +289,7 @@ export default function DashProjectPage() {
             {/* Regs Stats */}
 
             <div className="flex gap-5">
+
               <div className="w-full space-y-3">
                 <label htmlFor="regionsReached">Regions Reached</label>
                 <Input
@@ -297,6 +301,7 @@ export default function DashProjectPage() {
                   placeholder={`${project?.regionsReached ?? "Enter Regions reached"}`}
                 />
               </div>
+
               <div className="w-full space-y-3">
                 <label htmlFor="districtsReached">Districts Reached</label>
                 <Input
@@ -314,6 +319,7 @@ export default function DashProjectPage() {
             {/* School Stats */}
 
             <div className="flex gap-5">
+
               <div className="w-full space-y-3">
                 <label htmlFor="schoolsReached">Schools Reached</label>
                 <Input
@@ -325,6 +331,7 @@ export default function DashProjectPage() {
                   placeholder={`${project?.schoolsReached ?? "Enter Schools reached"}`}
                 />
               </div>
+
               <div className="w-full space-y-3">
                 <label htmlFor="studentsReached">Students reached</label>
                 <Input
@@ -365,6 +372,7 @@ export default function DashProjectPage() {
 
                 <Select
                   label="Select Project Status"
+                  selectedKeys={`${selectedStatus?.key ?? projectStatus[1].key}`}
                   className="max-w-xs"
                   defaultSelectedKeys={`${selectedStatus?.key ?? projectStatus[1].key}`}
                   onChange={(e) => {
@@ -405,7 +413,9 @@ export default function DashProjectPage() {
             ) : (
               <div>
                 {project?.thumbnailUrl ? (
-                  <Image src={`${project?.thumbnailUrl ?? siteConfig?.staticAssets?.staticLogo}`} />
+                  <Image
+                    src={`${project?.thumbnailUrl ?? siteConfig?.staticAssets?.staticLogo}`}
+                  />
                 ) : (
                   <Image src={`${siteConfig?.staticAssets?.staticLogo}`} />
                 )}

@@ -305,8 +305,9 @@ export default function DashboardPartnerPage() {
                 <Select
                   disabled={!isEdit ? true : false}
                   label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
+                  selectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
                   className="max-w-xs"
-                  defaultSelectedKeys={`${selectedStatus?.key}`}
+                  defaultSelectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
                   onChange={(e) => {
                     changeStatus(e);
                   }}

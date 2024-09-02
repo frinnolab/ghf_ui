@@ -81,7 +81,6 @@ export default function DashProjectsListPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
 
           const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
             const data: Project = {
@@ -96,9 +95,6 @@ export default function DashProjectsListPage() {
               thumbnailUrl: `${p?.thumbnailUrl ?? ""}`,
               publisherId: `${p?.publisherId ?? ""}`,
             };
-
-            console.log(data);
-
             return [data];
 
           });
