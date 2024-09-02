@@ -7,6 +7,7 @@ import { GoArrowLeft } from "react-icons/go";
 import { Divider, Image } from "@nextui-org/react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
+import { siteConfig } from "@/config/site";
 
 export default function UwezoDetailPage() {
   const route = useLocation();
@@ -86,7 +87,7 @@ export default function UwezoDetailPage() {
 
             {/* Impact */}
             <div className=" space-y-3 w-full">
-              <h1 className=" text-2xl ">IMPACT</h1>
+              <h1 className=" text-2xl ">REACH</h1>
 
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1>Regions Reached:</h1>
@@ -130,9 +131,9 @@ export default function UwezoDetailPage() {
             <Image
               className={` w-[50vw] object-cover`}
               src={
-                project?.thumbnailUrl !== ""
+                project?.thumbnailUrl !== "" || null
                   ? project?.thumbnailUrl
-                  : "assets/logos/GHFLOGO.jpg"
+                  : siteConfig?.staticAssets?.staticLogo
               }
             />
           </div>

@@ -5,6 +5,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { GoArrowUpRight } from "react-icons/go";
+import { siteConfig } from "@/config/site";
 
 export default function UwezoPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -100,9 +101,9 @@ export default function UwezoPage() {
                     <Image
                       className={` w-screen h-[60dvh] object-cover`}
                       src={
-                        p?.thumbnailUrl !== ""
+                        p?.thumbnailUrl !== "" || null
                           ? p?.thumbnailUrl
-                          : "assets/logos/GHFLOGO.jpg"
+                          : siteConfig?.staticAssets?.staticLogo
                       }
                     />
 

@@ -5,6 +5,7 @@ import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
 import { Divider, Image } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { siteConfig } from "@/config/site";
 
 export default function BlogDetailPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -63,7 +64,13 @@ export default function BlogDetailPage() {
       </div>
       <Divider />
       <div className="w-full flex flex-col">
-        <Image radius="none" className={`w-screen h-screen object-cover`} src={`${blog?.thumbnailUrl != '' ? blog?.thumbnailUrl : 'assets/logos/GHFLOGO.jpg' }`} />
+        <div className={`p-5`}>
+          <Image
+            radius="none"
+            className={`w-screen h-screen object-cover`}
+            src={`${blog?.thumbnailUrl != "" || null ? blog?.thumbnailUrl : siteConfig?.staticAssets?.staticLogo}`}
+          />
+        </div>
 
         {/* Contents */}
         <Divider />
@@ -74,7 +81,7 @@ export default function BlogDetailPage() {
 
           <div className=" space-y-5 ">
             <label htmlFor="description">Description</label>
-            <p className=" text-2xl text-balance p-5 bg-default-200 rounded-2xl ">
+            <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
               {blog?.description}
             </p>
           </div>

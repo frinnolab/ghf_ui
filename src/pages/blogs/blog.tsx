@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Image } from "@nextui-org/react";
 import { GoArrowUpRight } from "react-icons/go";
+import { siteConfig } from "@/config/site";
 
 export default function BlogPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -68,7 +69,7 @@ export default function BlogPage() {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-wrap justify-between gap-5 ">
+              <div className="w-full flex flex-wrap gap-10 ">
                 {blogs?.flatMap((b: Blog) => (
                   <div
                     key={b?.blogId}
@@ -78,9 +79,9 @@ export default function BlogPage() {
                       <Image
                         className="w-screen h-[30vh] object-cover"
                         src={
-                          b?.thumbnailUrl !== ""
+                          b?.thumbnailUrl !== "" || null
                             ? b?.thumbnailUrl
-                            : "assets/logos/GHFLOGO.jpg"
+                            : siteConfig?.staticAssets?.staticLogo
                         }
                       />
                     </div>
