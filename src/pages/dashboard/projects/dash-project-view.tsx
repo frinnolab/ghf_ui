@@ -79,7 +79,7 @@ export default function DashProjectPage() {
             dateEnd: `${res.data["dateEnd"]}`,
             publisherId: `${res.data["publisherId"]}`,
             status: Number(`${res?.data["status"]}`),
-            thumbnailUrl: `${res.data["thumbnailUrl"]}`,
+            thumbnailUrl: res.data["thumbnailUrl"] ?? null,
           };
 
           const statusVal = projectStatus.find(
@@ -405,7 +405,7 @@ export default function DashProjectPage() {
             ) : (
               <div>
                 {project?.thumbnailUrl ? (
-                  <Image src={`${project?.thumbnailUrl}`} />
+                  <Image src={`${project?.thumbnailUrl ?? siteConfig?.staticAssets?.staticLogo}`} />
                 ) : (
                   <Image src={`${siteConfig?.staticAssets?.staticLogo}`} />
                 )}

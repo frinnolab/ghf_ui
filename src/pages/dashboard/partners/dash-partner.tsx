@@ -215,11 +215,20 @@ export default function DashboardPartnerPage() {
             partnerId: `${res.data["partnerId"]}`,
             name: `${res.data["name"] ?? ""}`,
             description: `${res.data["description"] ?? ""}`,
-            logoUrl: `${res.data["logoUrl"]}`,
+            logoUrl: res?.data["logoUrl"] ?? null,
             startYear: Number(`${res.data["startYear"]}`),
+            type: Number(res?.data["type"] ?? 0),
           };
 
           setPartner(data);
+
+          const resType = res?.data["type"];
+
+          const pType = partnersListTypes.filter(
+            (pt) => pt.key === `${resType}`
+          )[0];
+
+          setSelectedStatus(pType);
         });
     }
   }, [partnerId]);
@@ -297,16 +306,16 @@ export default function DashboardPartnerPage() {
                   disabled={!isEdit ? true : false}
                   label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
                   className="max-w-xs"
-                  defaultSelectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
+                  defaultSelectedKeys={`${selectedStatus?.key}`}
                   onChange={(e) => {
                     changeStatus(e);
                   }}
                 >
-                  {partnersListTypes.map((p) => (
+                  {partnersListTypes.map((p) => 
                     <SelectItem key={`${p.key}`}>
                       {typeName(Number(p.key))}
                     </SelectItem>
-                  ))}
+                  )}
                 </Select>
               </div>
 
