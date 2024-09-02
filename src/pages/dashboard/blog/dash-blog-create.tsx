@@ -1,12 +1,5 @@
 import { Button } from "@nextui-org/button";
-import {
-  Divider,
-  Image,
-  Input,
-  Skeleton,
-  Switch,
-  Textarea,
-} from "@nextui-org/react";
+import { Divider, Image, Input, Switch, Textarea } from "@nextui-org/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -38,10 +31,7 @@ export default function DashBlogCreate() {
   const [blog, setBlog] = useState<Blog | null>(null);
 
   //Form States
-  const {
-    register,
-    handleSubmit,
-  } = useForm<Blog>();
+  const { register, handleSubmit } = useForm<Blog>();
 
   const onSubmitBlog: SubmitHandler<Blog> = (data: Blog) => {
     if (blogId) {
@@ -89,8 +79,6 @@ export default function DashBlogCreate() {
   };
 
   const handleSave = (d: Blog) => {
-    console.log("Save");
-
     const data = new FormData();
 
     if (blog === null) {
@@ -103,10 +91,6 @@ export default function DashBlogCreate() {
       if (selectedImage) {
         data.append("image", selectedImage);
       }
-
-      data.forEach((d) => {
-        console.log(d);
-      });
 
       axios
         .post(`${api}/blogs`, data, {
@@ -171,7 +155,7 @@ export default function DashBlogCreate() {
       </div>
       <Divider />
 
-      <div className="w-full flex flex-col p-5 gap-5">
+      <div className="w-full flex flex-col p-10 gap-5">
         <div className={` flex justify-end items-center gap-5 `}>
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
@@ -192,7 +176,7 @@ export default function DashBlogCreate() {
         </div>
 
         {/* Content */}
-        <div className="w-full min-h-[70dvh] rounded-2xl bg-default-200 shadow flex p-5 justify-between">
+        <div className="w-full min-h-[70dvh] rounded-2xl bg-default-200 shadow gap-5 flex p-5 justify-between">
           {/* Form */}
           <form
             className="w-full flex flex-col gap-5"
@@ -233,17 +217,15 @@ export default function DashBlogCreate() {
           {/* Form End */}
           {/* Thumbnail */}
 
-          <div className="w-full relative rounded-2xl p-5 flex flex-col items-center ">
+          <div className="w-full min-h-[30dvh] relative rounded-2xl p-5 flex flex-col items-center ">
             {selectedImage ? (
-              <div className="w-full flex items-center justify-center">
-                <Image
-                  src={URL.createObjectURL(selectedImage)}
-                />
+              <div className="w-full flex items-center p-5 justify-center">
+                <Image src={URL.createObjectURL(selectedImage)} />
               </div>
             ) : (
               <div>
                 {blog?.thumbnailUrl ? (
-                  <div className="w-full flex items-center">
+                  <div className="w-full flex items-center justify-center">
                     <Image
                       src={
                         blog?.thumbnailUrl ?? siteConfig.staticAssets.staticLogo
@@ -251,9 +233,7 @@ export default function DashBlogCreate() {
                     />
                   </div>
                 ) : (
-                  <Image
-                    src={siteConfig.staticAssets.staticLogo}
-                  />
+                  <Image src={siteConfig.staticAssets.staticLogo} />
                 )}
               </div>
             )}
