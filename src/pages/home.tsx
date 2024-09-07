@@ -5,12 +5,13 @@ import { Image } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
-import { FaMapPin, FaPen, FaPeopleGroup } from "react-icons/fa6";
+import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
+import { useNavigate } from "react-router-dom";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -26,6 +27,7 @@ export default function HomePage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
+  const navigate = useNavigate();
 
   const [partners] = useState<Partner[]>([
     {
@@ -89,7 +91,7 @@ export default function HomePage() {
   useEffect(() => {
     if (impacts === null) {
       axios
-        .get(`${api}/impacts`)
+        .get(`${api}/impacts?limit=3`)
         .then((res: AxiosResponse) => {
           console.log(res.data);
           const data: Impact[] = Array.from(res?.data).flatMap((d: any) => {
@@ -124,6 +126,12 @@ export default function HomePage() {
       introVideoRef?.current?.pause();
       setIsPaused(true);
     }
+  };
+
+  const toImpactDetail = (b: Impact) => {
+    navigate(`/impacts/${b?.impactId}`, {
+      state: `${b?.impactId}`,
+    });
   };
 
   return (
@@ -369,23 +377,32 @@ export default function HomePage() {
                         <FaPeopleGroup className="text-orange-500" />
                         <p className={`text-md`}>{mp?.studentsTotal}</p>
                       </span>
-                      <Link
-                        href={`impacts/${mp?.impactId}`}
-                        className="w-[30%] flex text-center rounded p-1 border border-transparent hover:bg-primary hover:text-default-100"
-                      >
-                        View Impact <GoArrowUpRight />{" "}
-                      </Link>
+
+                      <div className="p-1">
+                        <Button
+                          variant="light"
+                          color="primary"
+                          className="flex items-center"
+                          onClick={() => {
+                            toImpactDetail(mp);
+                          }}
+                        >
+                          View Impact <GoArrowUpRight size={20} />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <Link
-                href={`impacts`}
-                className="w-[10%] flex text-center rounded p-1 border border-transparent hover:bg-primary hover:text-default-100"
-              >
-                View all impacts <GoArrowUpRight />{" "}
-              </Link>
+              <div className={`w-full flex items-center justify-center`}>
+                <Link
+                  href={`impacts`}
+                  className="flex text-center rounded p-2 border border-transparent hover:bg-primary hover:text-default-100"
+                >
+                  View all impacts <GoArrowUpRight />{" "}
+                </Link>
+              </div>
             </div>
           )}
         </div>

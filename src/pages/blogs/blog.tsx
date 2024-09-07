@@ -20,6 +20,7 @@ export default function BlogPage() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (blogs === null) {
       axios
         .get(`${api}/blogs`, {

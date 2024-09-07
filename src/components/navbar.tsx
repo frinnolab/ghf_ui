@@ -128,7 +128,7 @@ export const Navbar = () => {
               navigate("/login");
             }}
           >
-            Login <GoArrowRight/>
+            Login <GoArrowRight />
           </Button>
         </NavbarItem>
       </NavbarContent>

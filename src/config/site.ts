@@ -13,6 +13,10 @@ export const siteConfig = {
       href: "/uwezo",
     },
     {
+      label: "Impacts",
+      href: "/impacts",
+    },
+    {
       label: "Blog",
       href: "/blog",
     },
