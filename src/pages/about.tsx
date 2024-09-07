@@ -22,6 +22,7 @@ export default function DocsPage() {
             (d: any) => {
               const data: TeamMember = {
                 memberId: d?.memberId,
+                memberAvatarUrl: d?.memberAvatarUrl,
                 member: d?.member,
                 teamId: d?.teamId,
                 teamPosition: d?.teamPosition,
@@ -103,7 +104,7 @@ function TeamCard({ member }: { member: TeamMember }) {
         <Avatar
           size="lg"
           src={
-            member?.member?.avatarUrl !== "" ? member?.member?.avatarUrl : ""
+            member?.memberAvatarUrl !== "" ? member?.memberAvatarUrl : ""
           }
           defaultValue={`${(<GoPersonFill />)}`}
         />

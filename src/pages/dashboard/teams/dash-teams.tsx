@@ -34,6 +34,7 @@ export type Team = {
 
 export type TeamMember = {
   teamId?: string;
+  memberAvatarUrl?: string;
   member?: Profile;
   memberId?: string;
   teamPosition?: string;
