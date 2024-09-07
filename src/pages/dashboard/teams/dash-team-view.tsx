@@ -7,6 +7,11 @@ import {
   Autocomplete,
   AutocompleteItem,
   Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Switch,
   Table,
   TableBody,
@@ -15,12 +20,14 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
+  useDisclosure,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash, GoX } from "react-icons/go";
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import { Profile } from "../profiles/dash-profiles-list";
 import { Input } from "@nextui-org/input";
 import { AuthRole } from "@/types";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export type profileSelect = {
   key: string;
@@ -34,6 +41,7 @@ export default function DashboardTeamPage() {
   const nav = useNavigate();
   const route = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isMainBoard, setIsMainBoard] = useState<boolean>(false);
   //const [isMainBoard, setIsMainBoard] = useState<boolean>(false);
   const [, setValue] = useState<string>("");
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
@@ -41,6 +49,11 @@ export default function DashboardTeamPage() {
   const [tmembers, setTMembers] = useState<TeamMember[]>([]);
   const [hasMembers, setHasMembers] = useState<boolean>(false);
   const actionTypes = ["detail", "edit", "delete"];
+
+  const { register, handleSubmit } = useForm<Team>();
+
+  //Team Manage Modal
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [teamId] = useState<string | null>(() => {
     if (route?.state !== null) {
@@ -119,8 +132,8 @@ export default function DashboardTeamPage() {
         .catch((err: AxiosError) => {
           console.log(err.response);
 
-          if(HttpStatusCode.Found){
-            alert('Member already exists in team!.');
+          if (HttpStatusCode.Found) {
+            alert("Member already exists in team!.");
           }
         });
     }
@@ -171,6 +184,113 @@ export default function DashboardTeamPage() {
       });
   };
 
+  const onUpdateTeam: SubmitHandler<Team> = (d: Team) => {
+    const data = {
+      name: d?.name ?? team?.name,
+      teamId: team?.teamId,
+      isMainBoard: isMainBoard,
+      profileId: `${authed?.profileId}`,
+    };
+
+    axios
+      .put(`${api}/teams/${team?.teamId}`, data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        console.log(res?.data);
+
+        window.location.reload();
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+      });
+  };
+
+  const onSetMainBoardTeam = () => {
+    axios
+      .get(`${api}/teams/main`)
+      .then((res: AxiosResponse) => {
+        if (HttpStatusCode.Ok) {
+          console.log(res?.data);
+
+          if (res?.data["teamId"] === team?.teamId) {
+            alert("Team already Main Board.");
+            setIsMainBoard(true);
+          } 
+          // if (res?.data["teamId"]) {
+          //   alert(
+          //     "Main Board already exists. Remove before setting another team."
+          //   );
+          //   setIsMainBoard(false);
+          // }
+          //setIsMainBoard(res?.data['isMainBoard']);
+        }
+        
+        if (HttpStatusCode.NoContent) {
+          console.log(res?.data);
+          alert(
+            "Main Board Set. Update to Save changes."
+          );
+          //Update Team name. Set isMainBoard to false.
+          setIsMainBoard(true);
+          // const data = {
+          //   profileId: `${authed?.profileId}`,
+          //   teamId: `${team?.teamId}`,
+          //   isMainBoard: true,
+          // };
+
+          // axios
+          //   .put(`${api}/teams/${team?.teamId}`, data, {
+          //     headers: {
+          //       Accept: "application/json",
+          //       "Content-Type": "application/json",
+          //       Authorization: `Bearer ${authed?.token}`,
+          //     },
+          //   })
+          //   .then((res: AxiosResponse) => {
+          //     console.log(res?.data);
+
+          //     //onClose();
+          //   });
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+        setIsMainBoard(Boolean(team?.isMainBoard));
+        onClose();
+      });
+  };
+
+  const onRemoveMainBoardTeam = () => {
+    //Update Team name. Set isMainBoard to false.
+    setIsMainBoard(false);
+    // const data = {
+    //   profileId: `${authed?.profileId}`,
+    //   teamId: `${team?.teamId}`,
+    //   isMainBoard: false,
+    // };
+
+    // axios
+    //   .put(`${api}/teams/${team?.teamId}`, data, {
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${authed?.token}`,
+    //     },
+    //   })
+    //   .then((res: AxiosResponse) => {
+    //     console.log(res?.data);
+    //     onClose();
+    //   })
+    //   .catch((err: AxiosError) => {
+    //     console.log(err);
+    //   });
+  };
+
   useEffect(() => {
     if (teamId) {
       axios
@@ -181,19 +301,19 @@ export default function DashboardTeamPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
+          console.log(res?.data);
           const data: Team = {
             teamId: `${res.data["teamId"]}`,
             name: `${res.data["name"]}`,
+            isMainBoard: res?.data["isMainBoard"],
             totalMembers: `${res.data["totalMembers"]}`,
           };
 
           setTeam(data);
+          setIsMainBoard(res?.data["isMainBoard"]);
         });
     }
   }, [teamId]);
-
-  //IsMainBoard
 
   useEffect(() => {
     if (!hasMembers) {
@@ -242,20 +362,22 @@ export default function DashboardTeamPage() {
               {team?.name} ({team?.totalMembers})
             </h1>
 
-            {/* <Switch
-              onClick={() => {
-                // if (!isEdit) {
-                //   setIsEdit(true);
-                // } else {
-                //   setIsEdit(false);
-                // }
-              }}
-              defaultSelected={isEdit}
-              size="lg"
-              startContent={<GoPencil />}
-              endContent={<GoEye />}
-              title={`${isEdit ? "Edit mode" : "View mode"}`}
-            ></Switch> */}
+            <Tooltip
+              content="Edit Team name"
+              placement="bottom"
+              hidden={!isEdit}
+            >
+              <Button
+                disableRipple
+                size="sm"
+                className={`bg-transparent ${isEdit ? "visible" : "invisible"}`}
+                onPress={onOpen}
+              >
+                <span className={`p-2 rounded-full hover:bg-default-200`}>
+                  <GoPencil className={`text-xl`} />
+                </span>
+              </Button>
+            </Tooltip>
           </div>
 
           <div className={`flex items-center gap-3`}>
@@ -444,7 +566,80 @@ export default function DashboardTeamPage() {
             </Table>
           </div>
         </div>
+
+        {/* Team Edit Dialog */}
+        <>
+          <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader>
+                    Edit {team?.name} {isMainBoard ? "True" : "False"}
+                  </ModalHeader>
+
+                  <ModalBody>
+                    <form onSubmit={handleSubmit(onUpdateTeam)}>
+                      <Input
+                        label="Name"
+                        placeholder={`${team?.name ?? "Edit Team name"}`}
+                        {...register("name")}
+                      />
+
+                      <div className={`flex flex-col`}>
+                        <label htmlFor="isMain">
+                          Is Main Board: {isMainBoard ? "True" : "False"}
+                        </label>
+                        <Switch
+                          onClick={() => {
+                            if (!isMainBoard) {
+                              alert("Set as Main board");
+                              onSetMainBoardTeam();
+                              //setIsMainBoard(true);
+                            } else {
+                              alert("Remove Main board");
+                              onRemoveMainBoardTeam();
+                              //setIsMainBoard(false);
+                            }
+                          }}
+                          defaultSelected={team?.isMainBoard}
+                          size="lg"
+                        ></Switch>
+                      </div>
+                      <ModalFooter>
+                        <Button
+                          color="danger"
+                          variant="flat"
+                          onPress={() => {
+                            setIsMainBoard(Boolean(team?.isMainBoard));
+
+                            onClose();
+                          }}
+                        >
+                          Close
+                        </Button>
+                        <Button color="primary" type="submit">
+                          Update
+                        </Button>
+                      </ModalFooter>
+                    </form>
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
+        {/* Team Edit Dialog End */}
       </div>
     </div>
   );
 }
+// function TeamManage({ team, modelOpen }: { team: Team; modelOpen: boolean }) {
+//   return;
+//   <>
+//     <Modal isOpen={modelOpen} placement="top">
+//       <ModalHeader>
+//         Edit {team?.name}
+//       </ModalHeader>
+//     </Modal>
+//   </>;
+// }

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 export type Impact = {
   impactId?: string;
+  assetUrl?: string;
   title?: string;
   description?: string;
   schoolName?: string;

@@ -5,11 +5,12 @@ import { Image } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
-import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
+import { FaMapPin, FaPen, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/config/site";
+import { Impact } from "./dashboard/impacts/dash-impacts-list";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -24,6 +25,7 @@ export default function HomePage() {
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
+  const [impacts, setImpacts] = useState<Impact[] | null>(null);
 
   const [partners] = useState<Partner[]>([
     {
@@ -84,6 +86,36 @@ export default function HomePage() {
     }
   }, [summaryInfo]);
 
+  useEffect(() => {
+    if (impacts === null) {
+      axios
+        .get(`${api}/impacts`)
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+          const data: Impact[] = Array.from(res?.data).flatMap((d: any) => {
+            console.log(d);
+
+            const resData: Impact = {
+              impactId: `${d?.impactId}`,
+              assetUrl: d?.assetUrl ?? null,
+              title: d?.title,
+              schoolName: d?.schoolName,
+              schoolRegion: d?.schoolRegion,
+              studentsTotal: Number(d?.studentsTotal),
+            };
+            return [resData];
+          });
+
+          setImpacts(() => {
+            return [...data];
+          });
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+        });
+    }
+  }, [impacts]);
+
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
@@ -142,9 +174,7 @@ export default function HomePage() {
         </div>
 
         {/* Who We're */}
-        <motion.div
-          className="w-full flex flex-col space-y-5 px-20 font-semibold cursor-default z-50 panel panel-intro"
-        >
+        <motion.div className="w-full flex flex-col space-y-5 px-20 font-semibold cursor-default z-50 panel panel-intro">
           <div className=" bg-default-200 rounded-2xl p-10 ">
             <h1 className="text-3xl py-3">Who we are</h1>
 
@@ -244,7 +274,7 @@ export default function HomePage() {
                 borderRadius: "20px",
               }}
               width={1000}
-              src = {siteConfig.staticAssets.staticIntroVideo}
+              src={siteConfig.staticAssets.staticIntroVideo}
               onClick={playInftro}
               muted
               // controls
@@ -264,9 +294,7 @@ export default function HomePage() {
         {/* Vision Section End*/}
 
         {/* Donors Section */}
-        <motion.div
-          className="w-full flex flex-col justify-center items-center p-10 h-screen panel"
-        >
+        <motion.div className="w-full flex flex-col justify-center items-center p-10 h-screen panel">
           <h1 className=" text-5xl ">Our Partners & Donors</h1>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
@@ -288,7 +316,7 @@ export default function HomePage() {
         {/* Donors Section End*/}
 
         {/* Contact Section */}
-        <div className="w-full flex flex-col justify-center text-center items-center gap-10 p-10 panel">
+        <div className="w-full flex-col justify-center text-center items-center gap-10 p-10 panel hidden">
           <h1 className=" text-5xl ">Current Projects</h1>
 
           <p className=" text-balance text-2xl hidden ">
@@ -304,6 +332,64 @@ export default function HomePage() {
           </Link>
         </div>
         {/* Contact Section End*/}
+
+        {/* Impacts */}
+        <div
+          className={`w-full ${impacts === null || impacts?.length === 0 ? "hidden" : "flex items-center"}  bg-default-200 p-10 min-h-screen`}
+        >
+          {impacts === null || impacts?.length === 0 ? (
+            <div className={`w-full flex justify-center items-center`}>
+              <p></p>
+            </div>
+          ) : (
+            // <> {impacts?.length}</>
+            <div className={`w-full flex flex-col gap-8`}>
+              <h1 className=" text-5xl ">Recent Impacts</h1>
+              <div className={`w-full flex  gap-10`}>
+                {impacts?.flatMap((mp) => (
+                  <div
+                    key={mp?.impactId}
+                    className={`w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
+                  >
+                    <Image
+                      src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
+                    />
+                    <div className={`p-3 flex flex-col gap-3`}>
+                      <h1 className={`text-2xl`}>{mp?.title}</h1>
+                      <span className={`flex items-center gap-3`}>
+                        <FaUniversity className="text-blue-500" />
+                        <p className={`text-md`}>{mp?.schoolName}</p>
+                      </span>
+                      <span className={`flex items-center gap-3`}>
+                        <FaMapMarkedAlt className="text-green-500" />
+                        <p className={`text-md`}>{mp?.schoolRegion}</p>
+                      </span>
+
+                      <span className={`flex items-center gap-3`}>
+                        <FaPeopleGroup className="text-orange-500" />
+                        <p className={`text-md`}>{mp?.studentsTotal}</p>
+                      </span>
+                      <Link
+                        href={`impacts/${mp?.impactId}`}
+                        className="w-[30%] flex text-center rounded p-1 border border-transparent hover:bg-primary hover:text-default-100"
+                      >
+                        View Impact <GoArrowUpRight />{" "}
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                href={`impacts`}
+                className="w-[10%] flex text-center rounded p-1 border border-transparent hover:bg-primary hover:text-default-100"
+              >
+                View all impacts <GoArrowUpRight />{" "}
+              </Link>
+            </div>
+          )}
+        </div>
+        {/* Impacts End */}
       </div>
     </DefaultLayout>
   );

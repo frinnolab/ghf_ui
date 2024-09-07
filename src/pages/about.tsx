@@ -49,7 +49,7 @@ export default function DocsPage() {
             <h1 className={title()}>About Us</h1>
           </div>
           {/* Bio */}
-          <div className="bg-default-200 rounded-3xl p-5">
+          <div className="bg-default-200 rounded-xl p-5 shadow">
             <p className="text-2xl text-justify p-5">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
@@ -79,7 +79,7 @@ export default function DocsPage() {
               </>
             ) : (
               <>
-                <div className={`p-5 w-full flex flex-wrap gap-2`}>
+                <div className={`p-5 w-full flex flex-wrap gap-5`}>
                   {members?.flatMap((m) => (
                     <TeamCard key={m?.teamId} member={m} />
                   ))}
@@ -97,7 +97,7 @@ export default function DocsPage() {
 function TeamCard({ member }: { member: TeamMember }) {
   return (
     <div
-      className={`flex justify-between gap-3 p-5 rounded-3xl text-end border-2 w-[30dvw]`}
+      className={`flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end w-[30dvw]`}
     >
       <div>
         <Avatar
@@ -113,7 +113,7 @@ function TeamCard({ member }: { member: TeamMember }) {
       <div>
         <div className="">
           <label className="text-small text-slate-500" htmlFor="pname">
-            Name
+            Fullname
           </label>
           <h1>
             {member?.member?.firstname} {member?.member?.lastname}
