@@ -61,10 +61,8 @@ export default function DashboardPartnerPage() {
     console.log(d);
 
     if (partner === null) {
-      alert("Save");
       handleSave(d);
     } else {
-      alert("Update");
       handleUpdate(d);
     }
   };

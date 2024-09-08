@@ -6,15 +6,18 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
-import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowDown, GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
 import { useNavigate } from "react-router-dom";
+import { PartnerType } from "@/types";
 export type Partner = {
   label?: string;
   logo?: string;
+  type?:PartnerType;
+  startYear?:number;
 };
 
 export default function HomePage() {
@@ -29,7 +32,7 @@ export default function HomePage() {
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
   const navigate = useNavigate();
 
-  const [partners] = useState<Partner[]>([
+  const [partners0] = useState<Partner[]>([
     {
       label: "PREMIUM AGENCY",
       logo: `assets/logos/PA.jpg`,
@@ -47,6 +50,11 @@ export default function HomePage() {
       logo: `assets/logos/EFM.jpeg`,
     },
   ]);
+
+  const [isPartners, setIsPartners] = useState<boolean>(false);
+  const [collabs, setCollabs] = useState<Partner[]|null>(null);
+  //const [donors, setDonors] = useState<Partner[]|null>(null);
+  const [partners, setPartners] = useState<Partner[]|null>(null);
 
   useEffect(() => {
     if (summaryInfo === null) {
@@ -118,6 +126,43 @@ export default function HomePage() {
     }
   }, [impacts]);
 
+  //fetch Partners
+  useEffect(()=>{
+    if(!isPartners){
+      axios.get(`${api}/partners`).then((res:AxiosResponse)=>{
+        console.log(res?.data);
+        setIsPartners(true);
+
+        //donors & Partners
+
+        const dataP:Partner[] = Array.from(res?.data).flatMap((p:any)=>{
+          const pData:Partner = {
+            "label":p?.name,
+            "logo":p?.logoUrl,
+            "type":p?.type,
+            "startYear": Number(p?.startYear) 
+          }
+          return [pData];
+        })
+
+        console.log(dataP);
+        
+
+        setPartners(()=>{
+          return dataP.filter((p)=>p?.type !== PartnerType.COLLABORATOR);
+        })
+
+        setCollabs(()=>{
+          return dataP?.filter((p)=>p?.type === PartnerType.COLLABORATOR);
+        })
+
+      }).catch((err:AxiosError)=>{
+        console.log(err);
+        
+      })
+    }
+  },[isPartners])
+
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
@@ -149,6 +194,18 @@ export default function HomePage() {
           >
             <div className="w-full flex justify-between">
               <div></div>
+              <div hidden>
+                <Button
+                  variant="light"
+                  color="primary"
+                  className="flex items-center"
+                  onClick={() => {
+                    window.scrollTo(0, window.innerHeight);
+                  }}
+                >
+                  <GoArrowDown size={20} />
+                </Button>
+              </div>
               <div
                 ref={headTxtCardRef}
                 className="flex flex-col space-y-3 font-semibold p-5 shadow-md rounded-3xl bg-default-50/40"
@@ -202,7 +259,10 @@ export default function HomePage() {
         {/* Who We're End */}
 
         {/* Data Summary Section */}
-        <div className="w-full flex flex-col justify-center items-center h-screen p-5 cursor-default panel panel-sum">
+        <div
+          id="infoStats"
+          className="w-full flex flex-col justify-center items-center h-screen p-5 cursor-default panel panel-sum"
+        >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex  justify-between gap-10 p-10">
             {/* Regions */}
@@ -245,7 +305,10 @@ export default function HomePage() {
         {/* Data Summary Section End*/}
 
         {/* Vision Section */}
-        <div className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-10 bg-orange-500 h-screen panel">
+        <div
+          id="aboutInfo"
+          className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-10 bg-orange-500 h-screen panel"
+        >
           <div className="flex flex-col w-full space-y-5">
             {/* Our vision */}
             <div className="w-full flex flex-col space-y-5">
@@ -306,7 +369,7 @@ export default function HomePage() {
           <h1 className=" text-5xl ">Our Partners & Donors</h1>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
-            {partners.map((p: Partner, i) => (
+            {partners?.map((p: Partner, i) => (
               <div key={i} className=" p-10 rounded-2xl text-center ">
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
@@ -398,7 +461,7 @@ export default function HomePage() {
               <div className={`w-full flex items-center justify-center`}>
                 <Link
                   href={`impacts`}
-                  className="flex text-center rounded p-2 border border-transparent hover:bg-primary hover:text-default-100"
+                  className="flex text-center rounded p-2 border border-transparent bg-primary text-default-100"
                 >
                   View all impacts <GoArrowUpRight />{" "}
                 </Link>
@@ -407,6 +470,27 @@ export default function HomePage() {
           )}
         </div>
         {/* Impacts End */}
+
+        {/* Collaborators */}
+        <div className="w-full flex flex-col justify-center items-center p-10 h-screen panel">
+          <h1 className=" text-5xl ">Collaborators Since 2016</h1>
+
+          <div className="w-full flex justify-between items-center gap-5 p-5">
+            {collabs?.map((p: Partner, i) => (
+              <div key={i} className=" p-10 rounded-2xl text-center ">
+                <h1 className=" text-2xl hidden ">{p?.label}</h1>
+
+                <Image
+                  width={250}
+                  height={250}
+                  className={``}
+                  src={`${p?.logo}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Collaborators End */}
       </div>
     </DefaultLayout>
   );
