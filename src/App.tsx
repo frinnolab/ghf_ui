@@ -29,6 +29,8 @@ import DashImpactsListPage from "./pages/dashboard/impacts/dash-impacts-list";
 import DashImpactView from "./pages/dashboard/impacts/dash-impact";
 import ImpactList from "./pages/impacts/impacts";
 import ImpactView from "./pages/impacts/impact_view";
+import SappyPage from "./pages/sappy/sappy-page";
+import SabbyPage from "./pages/sappy/sabby-page";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
       {/* <Route element={<IndexPage />} path="/" /> */}
       <Route element={<HomePage />} path="/" />
       <Route element={<UwezoPage />} path="/uwezo" />
+      <Route element={<SappyPage />} path="/sappy" />
+      <Route element={<SabbyPage />} path="/sabby" />
       <Route element={<UwezoDetailPage />} path="/uwezo/:id" />
       <Route element={<ImpactList />} path="/impacts" />
       <Route element={<ImpactView />} path="/impacts/:id" />
