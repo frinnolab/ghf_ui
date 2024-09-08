@@ -110,6 +110,10 @@ export const siteConfig = {
     instagram: "@greathopetz",
     facebook: "GREAT HOPE FOUNDATION – GHF",
   },
+
+  socialLinks:{
+    
+  },
   
   footerTexts:{
     footerImage:'/assets/logos/GHF_LOGO.png',

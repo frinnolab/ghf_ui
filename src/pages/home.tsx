@@ -17,7 +17,7 @@ export type Partner = {
   label?: string;
   logo?: string;
   type?: PartnerType;
-  startYear?: number;
+  startYear: number;
 };
 
 export default function HomePage() {
@@ -135,7 +135,7 @@ export default function HomePage() {
           });
 
           setCollabs(() => {
-            return dataP?.filter((p) => p?.type === PartnerType.COLLABORATOR);
+            return dataP?.filter((p) => p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016);
           });
         })
         .catch((err: AxiosError) => {
