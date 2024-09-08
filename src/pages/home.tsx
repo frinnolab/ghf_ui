@@ -16,8 +16,8 @@ import { PartnerType } from "@/types";
 export type Partner = {
   label?: string;
   logo?: string;
-  type?:PartnerType;
-  startYear?:number;
+  type?: PartnerType;
+  startYear?: number;
 };
 
 export default function HomePage() {
@@ -32,29 +32,10 @@ export default function HomePage() {
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
   const navigate = useNavigate();
 
-  const [partners0] = useState<Partner[]>([
-    {
-      label: "PREMIUM AGENCY",
-      logo: `assets/logos/PA.jpg`,
-    },
-    {
-      label: "KARIMJEE FOUNDATION",
-      logo: `assets/logos/KM.png`,
-    },
-    {
-      label: "Segal",
-      logo: `assets/logos/SEG.jpeg`,
-    },
-    {
-      label: "EFM",
-      logo: `assets/logos/EFM.jpeg`,
-    },
-  ]);
-
   const [isPartners, setIsPartners] = useState<boolean>(false);
-  const [collabs, setCollabs] = useState<Partner[]|null>(null);
+  const [collabs, setCollabs] = useState<Partner[] | null>(null);
   //const [donors, setDonors] = useState<Partner[]|null>(null);
-  const [partners, setPartners] = useState<Partner[]|null>(null);
+  const [partners, setPartners] = useState<Partner[] | null>(null);
 
   useEffect(() => {
     if (summaryInfo === null) {
@@ -127,41 +108,41 @@ export default function HomePage() {
   }, [impacts]);
 
   //fetch Partners
-  useEffect(()=>{
-    if(!isPartners){
-      axios.get(`${api}/partners`).then((res:AxiosResponse)=>{
-        console.log(res?.data);
-        setIsPartners(true);
+  useEffect(() => {
+    if (!isPartners) {
+      axios
+        .get(`${api}/partners`)
+        .then((res: AxiosResponse) => {
+          console.log(res?.data);
+          setIsPartners(true);
 
-        //donors & Partners
+          //donors & Partners
 
-        const dataP:Partner[] = Array.from(res?.data).flatMap((p:any)=>{
-          const pData:Partner = {
-            "label":p?.name,
-            "logo":p?.logoUrl,
-            "type":p?.type,
-            "startYear": Number(p?.startYear) 
-          }
-          return [pData];
+          const dataP: Partner[] = Array.from(res?.data).flatMap((p: any) => {
+            const pData: Partner = {
+              label: p?.name,
+              logo: p?.logoUrl,
+              type: p?.type,
+              startYear: Number(p?.startYear),
+            };
+            return [pData];
+          });
+
+          console.log(dataP);
+
+          setPartners(() => {
+            return dataP.filter((p) => p?.type !== PartnerType.COLLABORATOR);
+          });
+
+          setCollabs(() => {
+            return dataP?.filter((p) => p?.type === PartnerType.COLLABORATOR);
+          });
         })
-
-        console.log(dataP);
-        
-
-        setPartners(()=>{
-          return dataP.filter((p)=>p?.type !== PartnerType.COLLABORATOR);
-        })
-
-        setCollabs(()=>{
-          return dataP?.filter((p)=>p?.type === PartnerType.COLLABORATOR);
-        })
-
-      }).catch((err:AxiosError)=>{
-        console.log(err);
-        
-      })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
     }
-  },[isPartners])
+  }, [isPartners]);
 
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
@@ -365,7 +346,9 @@ export default function HomePage() {
         {/* Vision Section End*/}
 
         {/* Donors Section */}
-        <motion.div className="w-full flex flex-col justify-center items-center p-10 h-screen panel">
+        <div
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 h-screen panel"}`}
+        >
           <h1 className=" text-5xl ">Our Partners & Donors</h1>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
@@ -383,7 +366,7 @@ export default function HomePage() {
             ))}
           </div>
           <div></div>
-        </motion.div>
+        </div>
         {/* Donors Section End*/}
 
         {/* Contact Section */}
@@ -472,7 +455,9 @@ export default function HomePage() {
         {/* Impacts End */}
 
         {/* Collaborators */}
-        <div className="w-full flex flex-col justify-center items-center p-10 h-screen panel">
+        <div
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 h-screen panel"}`}
+        >
           <h1 className=" text-5xl ">Collaborators Since 2016</h1>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
