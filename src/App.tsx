@@ -37,10 +37,10 @@ function App() {
     <Routes>
       {/* <Route element={<IndexPage />} path="/" /> */}
       <Route element={<HomePage />} path="/" />
-      <Route element={<UwezoPage />} path="/uwezo" />
+      <Route element={<UwezoPage />} path="/whatwedo" />
       <Route element={<SappyPage />} path="/sappy" />
       <Route element={<SabbyPage />} path="/sabby" />
-      <Route element={<UwezoDetailPage />} path="/uwezo/:id" />
+      <Route element={<UwezoDetailPage />} path="/whatwedo/:id" />
       <Route element={<ImpactList />} path="/impacts" />
       <Route element={<ImpactView />} path="/impacts/:id" />
       <Route element={<BlogPage />} path="/blog" />

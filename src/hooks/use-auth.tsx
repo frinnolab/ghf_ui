@@ -5,6 +5,10 @@ export default function useAuthedProfile(){
     const [authedProfile] = useState<loginResponse | null>(() => {
         if (window.sessionStorage.length > 0) {
           const data = JSON.parse(`${window.sessionStorage.getItem("profile")}`);
+          
+          
+          //console.log(data);
+          
           return {
             profileId: `${data["profileId"]}`,
             email: `${data["email"]}`,

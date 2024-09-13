@@ -9,37 +9,71 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
-import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { GoArrowRight } from "react-icons/go";
+import useAuthedProfile from "@/hooks/use-auth";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Avatar,
+} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
+import { AuthRole } from "@/types";
+import axios, { AxiosResponse } from "axios";
+
 // import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
+  const api = `${import.meta.env.VITE_API_URL}`;
+  const authed = useAuthedProfile();
   const navigate = useNavigate();
-  // const searchInput = (
-  //   <Input
-  //     aria-label="Search"
-  //     classNames={{
-  //       inputWrapper: "bg-default-100",
-  //       input: "text-sm",
-  //     }}
-  //     endContent={
-  //       <Kbd className="hidden lg:inline-block" keys={["enter"]}>
-  //         Enter
-  //       </Kbd>
-  //     }
-  //     labelPlacement="outside"
-  //     placeholder="Search..."
-  //     startContent={
-  //       <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-  //     }
-  //     type="search"
-  //   />
-  // );
+  const [currentProfile, setCurrentProfile] = useState<Profile | null>(null);
+  const currentRoute = useLocation();
+
+  useEffect(() => {
+    console.log(authed);
+
+    if (currentProfile === null && authed?.profileId) {
+      axios
+        .get(`${api}/profiles/${authed?.profileId}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+
+          const data: Profile = {
+            profileId: res.data?.profileId,
+            firstname: res.data?.firstname ?? "",
+            lastname: res.data?.lastname ?? "",
+            email: res.data?.email ?? "",
+            role: Number(res.data.roleType) ?? AuthRole.User,
+            avatarUrl: res.data?.avatarUrl ?? "",
+            position: res.data?.position ?? "",
+          };
+          setCurrentProfile(data);
+        });
+    }
+  }, [currentProfile]);
+
+  const roleName = (role: number) => {
+    switch (role) {
+      case AuthRole.Admin:
+        return "Admin";
+      case AuthRole.SuperAdmin:
+        return "Super Admin";
+      default:
+        return "User";
+    }
+  };
 
   return (
     <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
@@ -67,31 +101,11 @@ export const Navbar = () => {
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <Link
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </Link>
-            </NavbarItem>
-          ))}
-        </div>
-      </NavbarContent>
-
-      {/* Middle Navs */}
-      <NavbarContent className="sm:hidden" justify="center">
-        <div className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <Link
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
+                color={
+                  item?.href === currentRoute?.pathname
+                    ? "primary"
+                    : "foreground"
+                }
                 href={item.href}
               >
                 {item.label}
@@ -105,31 +119,72 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        {/* <NavbarItem className="hidden sm:flex gap-2" >
-          <Link isExternal href={siteConfig.links.X}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.facebook}>
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.linkedin}>
-            <GithubIcon className="text-default-500" />
-          </Link>
-        </NavbarItem> */}
-        {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
         <NavbarItem>
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem className="flex gap-5">
-          <Button
-            className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
-            variant="flat"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Login <GoArrowRight />
-          </Button>
+          {authed?.profileId ? (
+            <>
+              <Dropdown placement="bottom-start">
+                <DropdownTrigger>
+                  <Avatar
+                    isBordered
+                    as="button"
+                    className="transition-transform"
+                    src={`${currentProfile?.avatarUrl ?? siteConfig?.staticAssets?.staticLogo}`}
+                  />
+                </DropdownTrigger>
+
+                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                  <DropdownItem
+                    key="profile"
+                    className="h-14 gap-2"
+                    href="/dashboard/profile"
+                  >
+                    <p className="font-semibold">Hello</p>
+                    <p className="font-semibold">{currentProfile?.firstname}</p>
+                  </DropdownItem>
+                  <DropdownItem key="role" className="h-14 gap-2">
+                    <p className="font-semibold text-default-400">Role</p>
+                    <p className="font-semibold">
+                      {roleName(Number(currentProfile?.role))}
+                    </p>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="dashboard"
+                    className="h-7 gap-2"
+                    href="/dashboard"
+                  >
+                    <p className="font-semibold text-default-400">Dashboard</p>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    className="h-7 gap-2"
+                    onPress={() => {
+                      if (authed) {
+                        window.sessionStorage.clear();
+                        navigate("/login");
+                      }
+                    }}
+                  >
+                    <p className="font-semibold text-danger-400">Logout</p>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </>
+          ) : (
+            <>
+              <Button
+                className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
+                variant="flat"
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                Login <GoArrowRight />
+              </Button>
+            </>
+          )}
         </NavbarItem>
       </NavbarContent>
 
@@ -144,17 +199,15 @@ export const Navbar = () => {
       <NavbarMenu>
         {/* {searchInput} */}
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.dashNavMenuItems.map((item, index) => (
+          {siteConfig.navItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={
-                  index === 2
+                  item?.href === currentRoute?.pathname
                     ? "primary"
-                    : index === siteConfig.dashNavMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
+                    : "foreground"
                 }
-                href="#"
+                href={`${item?.href}`}
                 size="lg"
               >
                 {item.label}

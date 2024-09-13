@@ -135,7 +135,9 @@ export default function HomePage() {
           });
 
           setCollabs(() => {
-            return dataP?.filter((p) => p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016);
+            return dataP?.filter(
+              (p) => p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016
+            );
           });
         })
         .catch((err: AxiosError) => {
@@ -171,40 +173,14 @@ export default function HomePage() {
           {/* Header Text */}
           <div
             ref={headerTextsRef}
-            className="w-full flex flex-col gap-5 z-30 absolute text-end p-10"
+            className="w-full flex flex-col items-center gap-5 top-[85%] z-30 absolute p-10"
           >
-            <div className="w-full flex justify-between">
-              <div></div>
-              <div hidden>
-                <Button
-                  variant="light"
-                  color="primary"
-                  className="flex items-center"
-                  onClick={() => {
-                    window.scrollTo(0, window.innerHeight);
-                  }}
-                >
-                  <GoArrowDown size={20} />
-                </Button>
-              </div>
-              <div
-                ref={headTxtCardRef}
-                className="flex flex-col space-y-3 font-semibold p-5 shadow-md rounded-3xl bg-default-50/40"
-              >
-                <h1 className=" text-xl md:text-3xl font-semibold">
-                  WE LIVE TO EMPOWER
-                </h1>
-                <h1 className=" text-xl md:text-3xl font-semibold">DEVELOP</h1>
-                <h1 className=" text-xl md:text-3xl font-semibold">
-                  AND INSPIRE YOUNG GENERATION
-                </h1>
-                <h1 className=" text-xl md:text-3xl font-semibold">
-                  TO ACQUIRE ENTREPRENEURSHIP
-                </h1>
-                <h1 className=" text-xl md:text-3xl font-semibold">
-                  AND 21ST CENTURY SKILLS
-                </h1>
-              </div>
+            <div className="flex items-center gap-1 text-center text-xl font-semibold p-5 shadow-md rounded-xl bg-default-50/40">
+              <h1>WE LIVE TO EMPOWER,</h1>
+              <h1>DEVELOP</h1>
+              <h1>AND INSPIRE YOUNG GENERATION</h1>
+              <h1>TO ACQUIRE ENTREPRENEURSHIP</h1>
+              <h1>AND 21ST CENTURY SKILLS</h1>
             </div>
           </div>
           {/* Header Text End*/}
@@ -220,7 +196,7 @@ export default function HomePage() {
         </div>
 
         {/* Who We're */}
-        <motion.div className="w-full flex flex-col space-y-5 px-20 font-semibold cursor-default z-50 panel panel-intro">
+        <motion.div className="w-full flex flex-col space-y-10 px-20 font-semibold cursor-default z-50 panel panel-intro">
           <div className=" bg-default-200 rounded-2xl p-10 ">
             <h1 className="text-3xl py-3">Who we are</h1>
 
@@ -236,13 +212,22 @@ export default function HomePage() {
               courage to bring the very best out of themselves.
             </p>
           </div>
+
+          <div className={`w-full flex items-center justify-center`}>
+            <Link
+              href={`whatwedo`}
+              className="flex text-center rounded p-2 border border-transparent bg-primary text-default-100"
+            >
+              View what we do <GoArrowUpRight />{" "}
+            </Link>
+          </div>
         </motion.div>
         {/* Who We're End */}
 
         {/* Data Summary Section */}
         <div
           id="infoStats"
-          className="w-full flex flex-col justify-center items-center h-screen p-5 cursor-default panel panel-sum"
+          className="w-full flex flex-col justify-center items-center p-5 cursor-default panel panel-sum"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex  justify-between gap-10 p-10">
@@ -347,7 +332,7 @@ export default function HomePage() {
 
         {/* Donors Section */}
         <div
-          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 h-screen panel"}`}
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
         >
           <h1 className=" text-5xl ">Our Partners & Donors</h1>
 
@@ -357,8 +342,8 @@ export default function HomePage() {
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
-                  width={350}
-                  height={350}
+                  width={200}
+                  height={200}
                   className={``}
                   src={`${p?.logo}`}
                 />
@@ -389,7 +374,8 @@ export default function HomePage() {
 
         {/* Impacts */}
         <div
-          className={`w-full ${impacts === null || impacts?.length === 0 ? "hidden" : "flex items-center"}  bg-default-200 p-10 min-h-screen`}
+          // className={`w-full ${impacts === null || impacts?.length === 0 ? "hidden" : "flex items-center"}  bg-default-200 p-10 min-h-screen`}
+          hidden
         >
           {impacts === null || impacts?.length === 0 ? (
             <div className={`w-full flex justify-center items-center`}>
@@ -456,9 +442,14 @@ export default function HomePage() {
 
         {/* Collaborators */}
         <div
-          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 h-screen panel"}`}
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
         >
-          <h1 className=" text-5xl ">Collaborators Since 2016</h1>
+          <div className={`w-full space-y-3 text-center`}>
+            <h1 className=" text-5xl ">Collaborators Since 2016</h1>
+            <p className=" text-2xl text-default-500 ">
+              Happy to have worked with these organization since 2016
+            </p>
+          </div>
 
           <div className="w-full flex justify-between items-center gap-5 p-5">
             {collabs?.map((p: Partner, i) => (
@@ -466,8 +457,8 @@ export default function HomePage() {
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
-                  width={250}
-                  height={250}
+                  width={200}
+                  height={200}
                   className={``}
                   src={`${p?.logo}`}
                 />

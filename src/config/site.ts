@@ -9,8 +9,8 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Uwezo",
-      href: "/uwezo",
+      label: "What we do",
+      href: "/whatwedo",
     },
     {
       label: "Impacts",
