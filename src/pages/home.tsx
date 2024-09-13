@@ -6,7 +6,7 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
-import { GoArrowDown, GoArrowUpRight } from "react-icons/go";
+import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/config/site";
@@ -23,7 +23,6 @@ export type Partner = {
 export default function HomePage() {
   const mainSectionRef = useRef(null);
   const headerTextsRef = useRef(null);
-  const headTxtCardRef = useRef<HTMLDivElement | null>(null);
   const introVideoRef = useRef<HTMLVideoElement>(null);
   const sumRegRef = useRef<HTMLHeadingElement | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(true);
