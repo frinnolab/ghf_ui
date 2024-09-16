@@ -217,7 +217,8 @@ export default function HomePage() {
               href={`whatwedo`}
               className="flex text-center rounded p-2 border border-transparent bg-primary text-default-100"
             >
-              View what we do <GoArrowUpRight />{" "}
+              
+              What we do <GoArrowUpRight />{" "}
             </Link>
           </div>
         </motion.div>
@@ -226,7 +227,7 @@ export default function HomePage() {
         {/* Data Summary Section */}
         <div
           id="infoStats"
-          className="w-full flex flex-col justify-center items-center p-5 cursor-default panel panel-sum"
+          className="w-full  flex flex-col justify-center items-center p-5 cursor-default panel panel-sum"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex  justify-between gap-10 p-10">

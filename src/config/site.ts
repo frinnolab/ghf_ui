@@ -21,6 +21,10 @@ export const siteConfig = {
       href: "/blog",
     },
     {
+      label: "Publications",
+      href: "/publications",
+    },
+    {
       label: "About",
       href: "/about",
     },
@@ -51,29 +55,28 @@ export const siteConfig = {
       href: "/dashboard",
     },
     {
-      label: "Blogs",
-      href: "/dashboard/blogs",
+      label: "Profiles",
+      href: "/dashboard/profiles",
     },
     {
       label: "Projects",
       href: "/dashboard/projects",
     },
     {
+      label: "Partners",
+      href: "/dashboard/partners",
+    },
+    {
       label: "Impacts",
       href: "/dashboard/impacts",
     },
-    // {
-    //   label: "Programs",
-    //   href: "/dashboard/programs",
-    // },
     {
-      label: "Profiles",
-      href: "/dashboard/profiles",
+      label: "Publications",
+      href: "/dashboard/publications",
     },
-
     {
-      label: "Partners",
-      href: "/dashboard/partners",
+      label: "Blogs",
+      href: "/dashboard/blogs",
     },
     {
       label: "Teams",

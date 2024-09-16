@@ -31,6 +31,10 @@ import ImpactList from "./pages/impacts/impacts";
 import ImpactView from "./pages/impacts/impact_view";
 import SappyPage from "./pages/sappy/sappy-page";
 import SabbyPage from "./pages/sappy/sabby-page";
+import DashPublications from "./pages/dashboard/publications/dash-publications";
+import DashPublicationsView from "./pages/dashboard/publications/dash-publication-view";
+import Publications from "./pages/publications/publications";
+import PublicationsView from "./pages/publications/publication-view";
 
 function App() {
   return (
@@ -46,6 +50,8 @@ function App() {
       <Route element={<BlogPage />} path="/blog" />
       <Route element={<BlogDetailPage />} path="/blog/:id" />
       {/* <Route element={<BlogPage />} path="/careers" /> */}
+      <Route element={<Publications />} path="/publications" />
+      <Route element={<PublicationsView />} path="/publications/:id" />
       <Route element={<AboutPage />} path="/about" />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<RegisterPage />} path="/register" />
@@ -77,6 +83,9 @@ function App() {
       <Route element={<DashBlogCreate />} path="/dashboard/blogs/:id" />
       <Route element={<DashProfilePage />} path="/dashboard/profile" />
       <Route element={<DashSettingsPage />} path="/dashboard/settings" />
+      <Route element={<DashPublications />} path="/dashboard/publications" />
+      <Route element={<DashPublicationsView />} path="/dashboard/publications/:id" />
+      <Route element={<DashPublicationsView />} path="/dashboard/publications/create" />
     </Routes>
   );
 }
