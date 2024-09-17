@@ -95,6 +95,7 @@ export default function ImpactView() {
       </div>
 
       <Divider />
+      
       <div className="w-full flex flex-col gap-5 p-10">
         <div className={`p-2`}>
           <Image

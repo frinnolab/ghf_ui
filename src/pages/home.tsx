@@ -174,7 +174,7 @@ export default function HomePage() {
             ref={headerTextsRef}
             className="w-full flex flex-col items-center gap-5 top-[85%] z-30 absolute p-10"
           >
-            <div className="flex items-center gap-1 text-center text-xl font-semibold p-5 shadow-md rounded-xl bg-default-50/40">
+            <div className="flex items-center gap-1 text-center text-2xl font-semibold p-5 shadow-md rounded-xl bg-default-50/40">
               <h1>WE LIVE TO EMPOWER,</h1>
               <h1>DEVELOP</h1>
               <h1>AND INSPIRE YOUNG GENERATION</h1>
@@ -215,9 +215,8 @@ export default function HomePage() {
           <div className={`w-full flex items-center justify-center`}>
             <Link
               href={`whatwedo`}
-              className="flex text-center rounded p-2 border border-transparent bg-primary text-default-100"
+              className="flex text-center rounded p-3 border border-transparent bg-primary text-default-100"
             >
-              
               What we do <GoArrowUpRight />{" "}
             </Link>
           </div>

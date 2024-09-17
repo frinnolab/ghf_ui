@@ -17,12 +17,12 @@ export const siteConfig = {
       href: "/impacts",
     },
     {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
       label: "Publications",
       href: "/publications",
+    },
+    {
+      label: "Blog",
+      href: "/blog",
     },
     {
       label: "About",

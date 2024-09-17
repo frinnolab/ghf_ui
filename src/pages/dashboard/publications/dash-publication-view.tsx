@@ -240,33 +240,34 @@ export default function DashPublicationsView() {
         });
     }
   };
-  const downloadPubAsset = (assetId: string) => {
-    if (!isEdit) {
-      console.log("Enable Edit mode to download Asset(S)");
-    } else {
-      axios
-        .get(`${api}/publications/assets/${assetId}`, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authed?.token}`,
-          },
-        })
-        .then((res: AxiosResponse) => {
-          if (res) {
 
-            console.log(res?.data);
+  // const downloadPubAsset = (assetId: string) => {
+  //   if (!isEdit) {
+  //     console.log("Enable Edit mode to download Asset(S)");
+  //   } else {
+  //     axios
+  //       .get(`${api}/publications/assets/${assetId}`, {
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${authed?.token}`,
+  //         },
+  //       })
+  //       .then((res: AxiosResponse) => {
+  //         if (res) {
+
+  //           console.log(res?.data);
             
-            //window.location.reload();
-          }
-        })
-        .catch((err: AxiosError) => {
-          console.log(err.response);
+  //           //window.location.reload();
+  //         }
+  //       })
+  //       .catch((err: AxiosError) => {
+  //         console.log(err.response);
 
-          window.location.reload();
-        });
-    }
-  };
+  //         window.location.reload();
+  //       });
+  //   }
+  // };
 
   useEffect(() => {
     if (!publication) {

@@ -55,7 +55,7 @@ const ImpactList = () => {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10 min-h-[50vh]">
+      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <h1 className={title()}>Impacts</h1>
         {/* Impacts Content */}
         <div className="w-full flex flex-col px-20 gap-5 ">
@@ -69,7 +69,7 @@ const ImpactList = () => {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-wrap gap-10 ">
+              <div className="w-full flex flex-wrap gap-10">
                 {impacts?.flatMap((mp) => (
                   <div
                     key={mp?.impactId}
@@ -78,7 +78,7 @@ const ImpactList = () => {
                     <Image
                       src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
                     />
-                    <div className={`p-3 flex flex-col gap-3`}>
+                    <div className={`p-3 flex flex-col gap-2`}>
                       <h1 className={`text-2xl`}>{mp?.title}</h1>
                       
                       <span className={`flex items-center gap-3`}>
