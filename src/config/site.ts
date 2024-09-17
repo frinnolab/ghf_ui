@@ -71,6 +71,10 @@ export const siteConfig = {
       href: "/dashboard/impacts",
     },
     {
+      label: "Donations",
+      href: "/dashboard/donations",
+    },
+    {
       label: "Publications",
       href: "/dashboard/publications",
     },

@@ -361,12 +361,9 @@ export default function DashProjectPage() {
             {/* Type Stats */}
 
             <div className="flex gap-5">
-
-
               <div className="w-full space-y-3">
                 <label htmlFor="#"></label>
               </div>
-
 
               <div className="w-full flex flex-col space-y-3">
                 <label htmlFor="status">Status</label>
@@ -387,7 +384,6 @@ export default function DashProjectPage() {
                   ))}
                 </Select>
               </div>
-              
             </div>
             {/* Type Stats End */}
 

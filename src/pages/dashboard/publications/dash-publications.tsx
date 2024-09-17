@@ -63,7 +63,7 @@ export default function DashPublications() {
       case PublishTypeEnum.Report:
         return "Report";
       default:
-        return "Newsletter";
+        return "Newsltter";
     }
   };
 

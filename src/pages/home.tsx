@@ -1,9 +1,9 @@
 import DefaultLayout from "@/layouts/default";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
-import { Image } from "@nextui-org/react";
+import { Image, Input, Select, SelectItem, Textarea } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
@@ -13,6 +13,12 @@ import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
 import { useNavigate } from "react-router-dom";
 import { PartnerType } from "@/types";
+import {
+  Donation,
+  DonationCurrencyType,
+  DonationType,
+} from "./dashboard/donations/dash-donations-list";
+import { SubmitHandler, useForm } from "react-hook-form";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -35,6 +41,116 @@ export default function HomePage() {
   const [collabs, setCollabs] = useState<Partner[] | null>(null);
   //const [donors, setDonors] = useState<Partner[]|null>(null);
   const [partners, setPartners] = useState<Partner[] | null>(null);
+  const [donation] = useState<Donation | null>(null);
+
+  const [donationTypes] = useState<DonationType[] | null>(() => {
+    let data: DonationType[] = [];
+    axios
+      .get(`${api}/donations/types`)
+      .then((res: AxiosResponse) => {
+        console.log(res?.data);
+        data = Array.from(res?.data).flatMap((d: any) => {
+          const dType: DonationType = {
+            title: d?.title,
+            type: Number(d?.type),
+          };
+          return [dType];
+        });
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+        return null;
+      });
+
+    if (data?.length > 0) {
+      return [...data];
+    } else {
+      return null;
+    }
+  });
+
+  const [selectedDonorType, setSelectedselectedDonorType] =
+    useState<DonationType>();
+
+  const [currencyTypes] = useState<DonationCurrencyType[] | null>(() => {
+    let data: DonationCurrencyType[] = [];
+    axios
+      .get(`${api}/donations/currencies`)
+      .then((res: AxiosResponse) => {
+        console.log(res?.data);
+        data = Array.from(res?.data).flatMap((d: any) => {
+          const dType: DonationCurrencyType = {
+            title: d?.title,
+            type: Number(d?.type),
+            shortName: d?.shortname,
+          };
+          return [dType];
+        });
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+        return null;
+      });
+
+    if (data?.length > 0) {
+      return [...data];
+    } else {
+      return null;
+    }
+  });
+
+  const [selectedDonorCurrType, setSelectedselectedDonorCurrType] =
+    useState<DonationCurrencyType>();
+
+  const { register, handleSubmit } = useForm<Donation>();
+  const onDonationSubmit: SubmitHandler<Donation> = (d) => {
+    console.log(d);
+    onSaveDonor(d);
+  };
+
+  const changeDonorType = (e: ChangeEvent<HTMLSelectElement>) => {
+    const statusVal = donationTypes?.find(
+      (p) => p?.type === Number(e.target.value)
+    );
+
+    setSelectedselectedDonorType(statusVal);
+  };
+
+  const changeDonorCurrType = (e: ChangeEvent<HTMLSelectElement>) => {
+    const statusVal = currencyTypes?.find(
+      (p) => p?.type === Number(e.target.value)
+    );
+
+    setSelectedselectedDonorCurrType(statusVal);
+  };
+
+  const onSaveDonor = (p: Donation) => {
+    const data: Donation = {
+      amountPledged: p?.amountPledged,
+      company: p?.company,
+      description: p?.description,
+      email: p?.email,
+      firstname: p?.firstname,
+      lastname: p?.lastname,
+      mobile: p?.mobile,
+      donorCurrencyType: Number(`${selectedDonorCurrType?.type ?? 0}`),
+      donorType: Number(`${selectedDonorType?.type ?? 0}`),
+    };
+
+    axios
+      .post(`${api}/donations`, data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          alert("Successfully Submitted.");
+        }
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
     if (summaryInfo === null) {
@@ -174,7 +290,7 @@ export default function HomePage() {
             ref={headerTextsRef}
             className="w-full flex flex-col items-center gap-5 top-[85%] z-30 absolute p-10"
           >
-            <div className="flex items-center gap-1 text-center text-2xl font-semibold p-5 shadow-md rounded-xl bg-default-50/40">
+            <div className="flex items-center gap-1 text-center text-xl font-semibold p-5 shadow-md rounded-xl bg-default-50/50">
               <h1>WE LIVE TO EMPOWER,</h1>
               <h1>DEVELOP</h1>
               <h1>AND INSPIRE YOUNG GENERATION</h1>
@@ -466,6 +582,178 @@ export default function HomePage() {
           </div>
         </div>
         {/* Collaborators End */}
+
+        {/* Donations */}
+        <div
+          className={`${"bg-default-200 w-full flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+        >
+          <div className={`w-full space-y-3 text-center`}>
+            <h1 className=" text-5xl ">Donations</h1>
+            <p className=" text-2xl text-default-500 ">
+              To pledge donation, please fill in the form.
+            </p>
+          </div>
+
+          <div className=" shadow rounded-2xl bg-default-50 p-5 ">
+            <form
+              onSubmit={handleSubmit(onDonationSubmit)}
+              className=" flex flex-col gap-3 p-5 space-y-2"
+            >
+              {/* Fullnames */}
+              <div className="w-full gap-5 flex justify-between items-center">
+                {/* Fname */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="Firstname">Firstname</label>
+                  <Input
+                    type="text"
+                    defaultValue={`${donation?.firstname ?? ""}`}
+                    {...register("firstname")}
+                    placeholder={`${donation?.firstname ?? "Enter Firstname"}`}
+                  />
+                </div>
+
+                {/* Lname */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="Lastname">Lastname</label>
+                  <Input
+                    type="text"
+                    defaultValue={`${donation?.lastname ?? ""}`}
+                    {...register("lastname")}
+                    placeholder={`${donation?.lastname ?? "Enter Lastname"}`}
+                  />
+                </div>
+              </div>
+
+              {/* Fullnames End*/}
+
+              {/* Contact */}
+              <div className="w-full gap-5 flex justify-between items-center">
+                {/* Email */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="email">Email</label>
+                  <Input
+                    type="text"
+                    defaultValue={`${donation?.email ?? ""}`}
+                    {...register("email")}
+                    placeholder={`${donation?.email ?? "Enter email"}`}
+                  />
+                </div>
+
+                {/* Mobile */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="mobile">Mobile</label>
+                  <Input
+                    type="text"
+                    defaultValue={`${donation?.mobile ?? ""}`}
+                    {...register("mobile")}
+                    placeholder={`${donation?.mobile ?? "Enter mobile"}`}
+                  />
+                </div>
+              </div>
+
+              {/* Contact End*/}
+
+              {/* Types */}
+              <div className="w-full gap-5 flex justify-between items-center">
+                {/* Type */}
+                {donationTypes === null ? (
+                  <></>
+                ) : (
+                  <div className="w-full space-y-2">
+                    <label htmlFor="donorType">Donor Type</label>
+                    <Select
+                      label="Select Donor Type"
+                      selectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
+                      className="max-w-xs"
+                      defaultSelectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
+                      onChange={(e) => {
+                        changeDonorType(e);
+                      }}
+                    >
+                      {donationTypes?.map((status) => (
+                        <SelectItem key={`${status.type}`}>
+                          {status.title}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+
+                {/* Company */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="company">Company</label>
+                  <Input
+                    type="text"
+                    defaultValue={`${donation?.company ?? ""}`}
+                    {...register("company")}
+                    placeholder={`${donation?.company ?? "Enter company"}`}
+                  />
+                </div>
+              </div>
+
+              {/* Types End*/}
+
+              {/* Currencies */}
+              <div className="w-full gap-5 flex justify-between items-center">
+                {/* Currency Type */}
+
+                {currencyTypes === null ? (
+                  <></>
+                ) : (
+                  <div className="w-full space-y-2">
+                    <label htmlFor="currency">Currency Type</label>
+                    <Select
+                      label="Select Currency Type"
+                      selectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
+                      className="max-w-xs"
+                      defaultSelectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
+                      onChange={(e) => {
+                        changeDonorCurrType(e);
+                      }}
+                    >
+                      {currencyTypes?.map((status) => (
+                        <SelectItem key={`${status.type}`}>
+                          {status.shortName}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+
+                {/* Pledge */}
+                <div className="w-full space-y-2">
+                  <label htmlFor="amount">Amount</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    defaultValue={`${donation?.amountPledged ?? ""}`}
+                    {...register("amountPledged")}
+                    placeholder={`${donation?.amountPledged ?? "Enter Amount Pledge"}`}
+                  />
+                </div>
+              </div>
+
+              {/* Editor */}
+              <div className="w-full space-y-2">
+                <label htmlFor="description">Description</label>
+                <Textarea
+                  type="text"
+                  defaultValue={`${donation?.description ?? ""}`}
+                  {...register("description")}
+                  placeholder={`${donation?.description ?? "Enter Description"}`}
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="w-full space-y-2 flex items-center justify-end">
+                <Button color="primary" type="submit">
+                  {"Submit"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+        {/* Donations End */}
       </div>
     </DefaultLayout>
   );
