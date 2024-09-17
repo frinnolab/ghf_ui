@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Publication,
   PublicationAsset,
-  PublishTypeEnum,
 } from "../dashboard/publications/dash-publications";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
