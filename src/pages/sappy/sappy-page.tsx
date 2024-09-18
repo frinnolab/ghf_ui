@@ -5,11 +5,11 @@ import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 
 const SappyPage = () => {
-  const tl = fx.timeline({
-    defaults: {
-      duration: 1,
-    },
-  });
+  // const tl = fx.timeline({
+  //   defaults: {
+  //     duration: 1,
+  //   },
+  // });
   fx.registerPlugin(ScrollTrigger);
 
   //#region Sappy Refs

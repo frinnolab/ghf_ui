@@ -43,68 +43,22 @@ export default function HomePage() {
   const [partners, setPartners] = useState<Partner[] | null>(null);
   const [donation] = useState<Donation | null>(null);
 
-  const [donationTypes] = useState<DonationType[] | null>(() => {
-    let data: DonationType[] = [];
-    axios
-      .get(`${api}/donations/types`)
-      .then((res: AxiosResponse) => {
-        console.log(res?.data);
-        data = Array.from(res?.data).flatMap((d: any) => {
-          const dType: DonationType = {
-            title: d?.title,
-            type: Number(d?.type),
-          };
-          return [dType];
-        });
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-        return null;
-      });
-
-    if (data?.length > 0) {
-      return [...data];
-    } else {
-      return null;
-    }
-  });
+  const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
+    null
+  );
 
   const [selectedDonorType, setSelectedselectedDonorType] =
     useState<DonationType>();
 
-  const [currencyTypes] = useState<DonationCurrencyType[] | null>(() => {
-    let data: DonationCurrencyType[] = [];
-    axios
-      .get(`${api}/donations/currencies`)
-      .then((res: AxiosResponse) => {
-        console.log(res?.data);
-        data = Array.from(res?.data).flatMap((d: any) => {
-          const dType: DonationCurrencyType = {
-            title: d?.title,
-            type: Number(d?.type),
-            shortName: d?.shortname,
-          };
-          return [dType];
-        });
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-        return null;
-      });
-
-    if (data?.length > 0) {
-      return [...data];
-    } else {
-      return null;
-    }
-  });
+  const [currencyTypes, setCurrencyTypes] = useState<
+    DonationCurrencyType[] | null
+  >(null);
 
   const [selectedDonorCurrType, setSelectedselectedDonorCurrType] =
     useState<DonationCurrencyType>();
 
   const { register, handleSubmit } = useForm<Donation>();
   const onDonationSubmit: SubmitHandler<Donation> = (d) => {
-    console.log(d);
     onSaveDonor(d);
   };
 
@@ -150,6 +104,52 @@ export default function HomePage() {
         }
       })
       .catch(() => {});
+  };
+
+  const fetchDonationTypes = () => {
+    let data: DonationType[] = [];
+    axios
+      .get(`${api}/donations/types`)
+      .then((res: AxiosResponse) => {
+        console.log(res?.data);
+        data = Array.from(res?.data).flatMap((d: any) => {
+          const dType: DonationType = {
+            title: d?.title,
+            type: Number(d?.type),
+          };
+          return [dType];
+        });
+
+        setDonationTypes([...data]);
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+        return null;
+      });
+  };
+  const fetchCurrencyTypes = () => {
+    let data: DonationCurrencyType[] = [];
+    axios
+      .get(`${api}/donations/currencies`)
+      .then((res: AxiosResponse) => {
+        console.log("currencies");
+        console.log(res?.data);
+
+        data = Array.from(res?.data).flatMap((d: any) => {
+          const dType: DonationCurrencyType = {
+            title: d?.title,
+            type: Number(d?.type),
+            shortName: d?.shortname,
+          };
+          return [dType];
+        });
+
+        setCurrencyTypes([...data]);
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+        return null;
+      });
   };
 
   useEffect(() => {
@@ -260,6 +260,12 @@ export default function HomePage() {
         });
     }
   }, [isPartners]);
+
+  //fetch Donations
+  useEffect(() => {
+    fetchCurrencyTypes();
+    fetchDonationTypes();
+  }, []);
 
   const playInftro = () => {
     if (introVideoRef?.current?.paused) {
@@ -663,9 +669,7 @@ export default function HomePage() {
                     <label htmlFor="donorType">Donor Type</label>
                     <Select
                       label="Select Donor Type"
-                      selectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
                       className="max-w-xs"
-                      defaultSelectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
                       onChange={(e) => {
                         changeDonorType(e);
                       }}
@@ -704,9 +708,7 @@ export default function HomePage() {
                     <label htmlFor="currency">Currency Type</label>
                     <Select
                       label="Select Currency Type"
-                      selectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
                       className="max-w-xs"
-                      defaultSelectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
                       onChange={(e) => {
                         changeDonorCurrType(e);
                       }}

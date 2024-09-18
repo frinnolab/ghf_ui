@@ -10,7 +10,6 @@ import {
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
 import {
-  DatePicker,
   Divider,
   Input,
   Select,
@@ -18,9 +17,8 @@ import {
   Switch,
   Textarea,
 } from "@nextui-org/react";
-import { GoArrowLeft, GoDownload, GoEye, GoFile, GoPencil, GoTrash } from "react-icons/go";
+import { GoArrowLeft, GoEye, GoFile, GoPencil, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Image } from "@nextui-org/react";
 
 export default function DashPublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
