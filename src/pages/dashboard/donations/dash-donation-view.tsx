@@ -2,8 +2,12 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Donation,
-  DonationCurrencyType,
+  DonationCurrencyEnum,
+  // DonationCurrencyType,
+  // DonationStatus,
+  DonationStatusEnum,
   DonationType,
+  DonationTypeEnum,
 } from "./dash-donations-list";
 import { Button } from "@nextui-org/button";
 import {
@@ -17,10 +21,13 @@ import {
 import { GoArrowLeft, GoEye, GoPencil } from "react-icons/go";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
+import useAuthedProfile from "@/hooks/use-auth";
 
 export default function DashDonationView() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const authed = useAuthedProfile();
+  // const [isStatuses, setIsStatuses] = useState<boolean>(false);
   const nav = useNavigate();
   const route = useLocation();
   const [donationId] = useState<string | null>(() => {
@@ -32,42 +39,201 @@ export default function DashDonationView() {
   });
   const [donation, setDonation] = useState<Donation | null>(null);
 
-  const handleBack = () => nav("/dashboard/donations");
+  const [donorsStatus] = useState<DonationType[] | null>(() => {
+    return [
+      {
+        id: "",
+        type: DonationStatusEnum.UNPAID,
+        title: "UNPAID",
+      },
+      {
+        id: "",
+        type: DonationStatusEnum.PAID,
+        title: "PAID",
+      },
+    ];
+  });
 
-  const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
-    null
-  );
-  const [selectedDonorType, setSelectedselectedDonorType] =
+  const [currentDonorStatus, setCurrentDonorStatus] = useState<DonationType>();
+
+  const [donorsType] = useState<DonationType[] | null>(() => {
+    return [
+      {
+        id: "",
+        type: DonationTypeEnum["LOCAL DONOR"],
+        title: "LOCAL DONOR",
+      },
+      {
+        id: "",
+        type: DonationTypeEnum["FOREIGN DONOR"],
+        title: "FOREIGN DONOR",
+      },
+    ];
+  });
+
+  const [currentDonorType, setCurrentDonorType] = useState<DonationType>();
+
+  const [donorsCurrencies] = useState<DonationType[] | null>(() => {
+    return [
+      {
+        id: "",
+        type: DonationCurrencyEnum.TZS,
+        title: "TZS",
+      },
+      {
+        id: "",
+        type: DonationCurrencyEnum.USD,
+        title: "USD",
+      },
+      {
+        id: "",
+        type: DonationCurrencyEnum.GBP,
+        title: "GBP",
+      },
+    ];
+  });
+
+  const [currentDonorCurrency, setCurrentDonorCurrency] =
     useState<DonationType>();
 
-  const [currencyTypes, setCurrencyTypes] = useState<
-    DonationCurrencyType[] | null
-  >(null);
+  const handleBack = () => nav("/dashboard/donations");
 
-  const [selectedDonorCurrType, setSelectedselectedDonorCurrType] =
-    useState<DonationCurrencyType>();
+  //#region status fetches
+  // const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
+  //   null
+  // );
 
-  const fetchDonationTypes = () => {
-    let data: DonationType[] = [];
-    axios
-      .get(`${api}/donations/types`)
-      .then((res: AxiosResponse) => {
-        console.log(res?.data);
-        data = Array.from(res?.data).flatMap((d: any) => {
-          const dType: DonationType = {
-            title: d?.title,
-            type: Number(d?.type),
-          };
-          return [dType];
-        });
+  // const [donationStatus, setDonationStatus] = useState<DonationStatus[] | null>(
+  //   null
+  // );
+  // const [selectedDonorStatus, setSelectedDonorStatus] =
+  //   useState<DonationStatus>();
+  // const [selectedDonorType, setSelectedselectedDonorType] =
+  //   useState<DonationType>();
 
-        setDonationTypes([...data]);
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-        return null;
-      });
-  };
+  // const [currencyTypes, setCurrencyTypes] = useState<
+  //   DonationCurrencyType[] | null
+  // >(null);
+
+  // const [selectedDonorCurrType, setSelectedselectedDonorCurrType] =
+  //   useState<DonationCurrencyType>();
+
+  // const fetchDonationTypes = () => {
+  //   let data: DonationType[] = [];
+  //   axios
+  //     .get(`${api}/donations/types`)
+  //     .then((res: AxiosResponse) => {
+  //       data = Array.from(res?.data).flatMap((d: any) => {
+  //         const dType: DonationType = {
+  //           title: d?.title,
+  //           id: d?.donorTypeId,
+  //           type: Number(d?.type),
+  //         };
+  //         return [dType];
+  //       });
+
+  //       setDonationTypes([...data]);
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       console.log(err.response);
+  //       return null;
+  //     });
+  // };
+
+  // const fetchCurrencyTypes = () => {
+  //   let data: DonationCurrencyType[] = [];
+  //   axios
+  //     .get(`${api}/donations/currencies`)
+  //     .then((res: AxiosResponse) => {
+  //       data = Array.from(res?.data).flatMap((d: any) => {
+  //         const dType: DonationCurrencyType = {
+  //           id: d?.donorCurrencyId,
+  //           title: d?.title,
+  //           type: Number(d?.type),
+  //           shortName: d?.shortname,
+  //         };
+  //         return [dType];
+  //       });
+
+  //       setCurrencyTypes([...data]);
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       console.log(err.response);
+  //       return null;
+  //     });
+  // };
+
+  // const fetchStatusTypes = () => {
+  //   let data: DonationStatus[] = [];
+  //   axios
+  //     .get(`${api}/donations/status`)
+  //     .then((res: AxiosResponse) => {
+  //       data = Array.from(res?.data).flatMap((d: any) => {
+  //         const dType: DonationStatus = {
+  //           id: d?.donorStatusId,
+  //           title: d?.title,
+  //           type: d?.type,
+  //         };
+  //         return [dType];
+  //       });
+
+  //       setDonationStatus([...data]);
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       console.log(err.response);
+  //       return null;
+  //     });
+  // };
+
+  // const onSetDonorStatus = (status: Number) => {
+  //   const donorStatus: DonationStatus = {
+  //     title: donationStatus?.find((d) => Number(d?.type) === Number(status))
+  //       ?.title,
+  //     type: Number(
+  //       donationStatus?.find((d) => Number(d?.type) === Number(status))?.type
+  //     ),
+  //   };
+  //   setSelectedDonorStatus(donorStatus);
+  // };
+
+  // const onSetDonorType = (status: Number) => {
+
+  //   console.log('Donor Type');
+  //   console.log(status);
+  //   console.log(donationTypes);
+
+  //   const donorType: DonationType = {
+  //     title: donationTypes?.find((d) => Number(d?.type) === Number(status))
+  //       ?.title,
+  //     type: Number(
+  //       donationTypes?.find((d) => Number(d?.type) === Number(status))?.type
+  //     ),
+  //   };
+  //   setSelectedselectedDonorType(donorType);
+  // };
+
+  // const onSetCurrencyType = (status: Number) => {
+  //   const donorCurrType: DonationCurrencyType = {
+  //     title: currencyTypes?.find((d) => Number(d?.type) === Number(status))
+  //       ?.title,
+  //     type: Number(
+  //       donationTypes?.find((d) => Number(d?.type) === Number(status))?.type
+  //     ),
+  //     shortName: `${currencyTypes?.find((d) => Number(d?.type) === Number(status))?.shortName}`,
+  //   };
+  //   setSelectedselectedDonorCurrType(donorCurrType);
+  // };
+
+  // useEffect(() => {
+  //   if (!isStatuses) {
+  //     fetchDonationTypes();
+  //     fetchCurrencyTypes();
+  //     fetchStatusTypes();
+
+  //     setIsStatuses(true);
+  //   }
+  // }, [isStatuses]);
+  //#endregion
 
   const fetchDonations = () => {
     axios
@@ -85,35 +251,19 @@ export default function DashDonationView() {
             mobile: res?.data?.mobile,
             donorCurrencyType: Number(res?.data?.donorCurrencyType),
             donorType: Number(res?.data?.donorType),
+            statusType: Number(res?.data?.statusType),
           };
 
           setDonation(data);
 
-          console.log(res?.data);
-          
+          // //SetDonation Status Type
+          onSetDonorStatus(Number(res?.data?.statusType));
 
-          //SetDonation Type
-          const donorType: DonationType = {
-            title: `${donationTypes?.find((d) => d?.type === Number(res?.data?.donorType))?.title}`,
-            type: Number(
-              donationTypes?.find(
-                (d) => d?.type === Number(res?.data?.donorType)
-              )?.type
-            ),
-          };
-          setSelectedselectedDonorType(donorType);
+          // //SetDonation Type
+          onSetDonorType(Number(res?.data?.donorType));
 
-          //Setcurrency Type
-          const donorCurrType: DonationCurrencyType = {
-            title: `${currencyTypes?.find((d) => d?.type === Number(res?.data?.donorCurrencyType))?.title}`,
-            type: Number(
-              donationTypes?.find(
-                (d) => d?.type === Number(res?.data?.donorCurrencyType)
-              )?.type
-            ),
-            shortName: `${currencyTypes?.find((d) => d?.type === Number(res?.data?.donorCurrencyType))?.shortName}`,
-          };
-          setSelectedselectedDonorCurrType(donorCurrType);
+          // //Setcurrency Type
+          onSetCurrencyType(Number(res?.data?.donorCurrencyType));
         }
       })
       .catch((err: AxiosError) => {
@@ -121,81 +271,151 @@ export default function DashDonationView() {
       });
   };
 
-  const fetchCurrencyTypes = () => {
-    let data: DonationCurrencyType[] = [];
-    axios
-      .get(`${api}/donations/currencies`)
-      .then((res: AxiosResponse) => {
-        console.log(res?.data);
-        data = Array.from(res?.data).flatMap((d: any) => {
-          const dType: DonationCurrencyType = {
-            title: d?.title,
-            type: Number(d?.type),
-            shortName: d?.shortname,
-          };
-          return [dType];
-        });
-
-        setCurrencyTypes([...data]);
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-        return null;
-      });
-  };
-
   const { register, handleSubmit } = useForm<Donation>();
-  const onDonationSubmit: SubmitHandler<Donation> = (d) => {
-    onSaveDonor(d);
+  const onDonationSubmit: SubmitHandler<Donation> = () => {
+    onSaveDonor();
   };
 
   const changeDonorType = (e: ChangeEvent<HTMLSelectElement>) => {
-    const statusVal = donationTypes?.find(
+    // const statusVal = donationTypes?.find(
+    //   (p) => p?.type === Number(e.target.value)
+    // );
+
+    // setSelectedselectedDonorType(statusVal);
+    const statusVal = donorsType?.find(
       (p) => p?.type === Number(e.target.value)
     );
 
-    setSelectedselectedDonorType(statusVal);
+    setCurrentDonorType(statusVal);
   };
 
   const changeDonorCurrType = (e: ChangeEvent<HTMLSelectElement>) => {
-    const statusVal = currencyTypes?.find(
+    // const statusVal = currencyTypes?.find(
+    //   (p) => p?.type === Number(e.target.value)
+    // );
+
+    // setSelectedselectedDonorCurrType(statusVal);
+    const statusVal = donorsCurrencies?.find(
       (p) => p?.type === Number(e.target.value)
     );
 
-    setSelectedselectedDonorCurrType(statusVal);
+    setCurrentDonorCurrency(statusVal);
   };
 
-  const onSaveDonor = (p: Donation) => {
+  const changeDonorStatusType = (e: ChangeEvent<HTMLSelectElement>) => {
+    // const statusVal = donationStatus?.find(
+    //   (p) => p?.type === Number(e.target.value)
+    // );
+    // setSelectedDonorStatus(statusVal);
+
+    const statusVal = donorsStatus?.find(
+      (p) => p?.type === Number(e.target.value)
+    );
+    setCurrentDonorStatus(statusVal);
+  };
+
+  const onSaveDonor = () => {
     const data: Donation = {
-      amountPledged: p?.amountPledged,
-      company: p?.company,
-      description: p?.description,
-      email: p?.email,
-      firstname: p?.firstname,
-      lastname: p?.lastname,
-      mobile: p?.mobile,
-      donorCurrencyType: Number(`${selectedDonorCurrType?.type ?? 0}`),
-      donorType: Number(`${selectedDonorType?.type ?? 0}`),
+      amountPledged: donation?.amountPledged,
+      company: donation?.company,
+      description: donation?.description,
+      email: donation?.email,
+      firstname: donation?.firstname,
+      lastname: donation?.lastname,
+      mobile: donation?.mobile,
+      donorCurrencyType: Number(
+        Number.isNaN(currentDonorCurrency?.type)
+          ? donation?.donorCurrencyType
+          : currentDonorCurrency?.type
+      ),
+      donorType: Number(
+        Number.isNaN(currentDonorType?.type)
+          ? donation?.donorType
+          : currentDonorType?.type
+      ),
+      statusType: Number(
+        Number.isNaN(currentDonorStatus?.type)
+          ? donation?.statusType
+          : currentDonorStatus?.type
+      ),
     };
 
     axios
-      .put(`${api}/donations`, data, {
+      .put(`${api}/donations/${donation?.donationId}`, data, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: `Bearer ${authed?.token}`,
         },
       })
       .then((res: AxiosResponse) => {
-        if (res) {
-          alert("Successfully Submitted.");
+        if (res?.data) {
+          window.location.reload();
         }
       })
       .catch(() => {});
   };
+  
+  const onSetDonorStatus = (status: Number) => {
+    const donorStatus: DonationType = {
+      title: donorsStatus?.find((d) => Number(d?.type) === Number(status))
+        ?.title,
+      type: Number(
+        donorsStatus?.find((d) => Number(d?.type) === Number(status))?.type
+      ),
+    };
+
+    setCurrentDonorStatus(donorStatus);
+    // const donorStatus: DonationStatus = {
+    //   title: donationStatus?.find((d) => Number(d?.type) === Number(status))
+    //     ?.title,
+    //   type: Number(
+    //     donationStatus?.find((d) => Number(d?.type) === Number(status))?.type
+    //   ),
+    // };
+    // setSelectedDonorStatus(donorStatus);
+  };
+
+  const onSetDonorType = (status: Number) => {
+    const donorType: DonationType = {
+      title: donorsType?.find((d) => Number(d?.type) === Number(status))?.title,
+      type: Number(
+        donorsType?.find((d) => Number(d?.type) === Number(status))?.type
+      ),
+    };
+    setCurrentDonorType(donorType);
+    // const donorType: DonationType = {
+    //   title: donationTypes?.find((d) => Number(d?.type) === Number(status))
+    //     ?.title,
+    //   type: Number(
+    //     donationTypes?.find((d) => Number(d?.type) === Number(status))?.type
+    //   ),
+    // };
+    // setSelectedselectedDonorType(donorType);
+  };
+
+  const onSetCurrencyType = (status: Number) => {
+    const donorCurrType: DonationType = {
+      title: donorsCurrencies?.find((d) => Number(d?.type) === Number(status))
+        ?.title,
+      type: Number(
+        donorsCurrencies?.find((d) => Number(d?.type) === Number(status))?.type
+      ),
+    };
+    setCurrentDonorCurrency(donorCurrType);
+
+    // const donorCurrType: DonationCurrencyType = {
+    //   title: currencyTypes?.find((d) => Number(d?.type) === Number(status))
+    //     ?.title,
+    //   type: Number(
+    //     donationTypes?.find((d) => Number(d?.type) === Number(status))?.type
+    //   ),
+    //   shortName: `${currencyTypes?.find((d) => Number(d?.type) === Number(status))?.shortName}`,
+    // };
+    // setSelectedselectedDonorCurrType(donorCurrType);
+  };
 
   useEffect(() => {
-    fetchDonationTypes();
-    fetchCurrencyTypes();
     if (donationId) {
       fetchDonations();
     }
@@ -207,7 +427,7 @@ export default function DashDonationView() {
         <Button variant="light" onClick={handleBack}>
           <GoArrowLeft size={20} />
         </Button>
-        <h1 className=" text-2xl ">{`${route?.state === null ? "" : ` ${isEdit ? "" : "View"} Donation`}`}</h1>
+        <h1 className=" text-2xl ">{`${route?.state === null ? "Edit" : ` ${isEdit ? "" : "View"} Donation`}`}</h1>
       </div>
 
       <Divider />
@@ -235,7 +455,7 @@ export default function DashDonationView() {
         <div className="w-full rounded-2xl bg-default-200 shadow flex p-5 justify-center">
           <form
             onSubmit={handleSubmit(onDonationSubmit)}
-            className=" flex flex-col gap-3 p-5 space-y-2"
+            className=" flex flex-col gap-3 p-5 space-y-2 overflow-y-scroll h-[70dvh]"
           >
             {/* Fullnames */}
             <div className="w-full gap-5 flex justify-between items-center">
@@ -298,23 +518,23 @@ export default function DashDonationView() {
             {/* Types */}
             <div className="w-full gap-5 flex justify-between items-center">
               {/* Type */}
-              {donationTypes === null ? (
+              {donorsType === null ? (
                 <></>
               ) : (
                 <div className="w-full space-y-2">
-                  <label htmlFor="donorType">Donor Type</label>
+                  <label htmlFor="donorType">Donor</label>
                   <Select
-                    disabled
-                    label="Select Donor Type"
-                    // selectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
+                    isDisabled
+                    label="Select Donor"
+                    // selectedKeys={`${selectedDonorType?.type ?? donationTypes[0]?.type}`}
                     className="max-w-xs"
-                    defaultSelectedKeys={`${selectedDonorType?.type ?? donationTypes[1]?.type}`}
+                    defaultSelectedKeys={`${currentDonorType?.type ?? donorsType[0]?.type}`}
                     onChange={(e) => {
                       changeDonorType(e);
                     }}
                   >
-                    {donationTypes?.map((status, i) => (
-                      <SelectItem key={`${i}`}>
+                    {donorsType?.map((status) => (
+                      <SelectItem key={`${status?.type}`}>
                         {status.title}
                       </SelectItem>
                     ))}
@@ -341,24 +561,24 @@ export default function DashDonationView() {
             <div className="w-full gap-5 flex justify-between items-center">
               {/* Currency Type */}
 
-              {currencyTypes === null ? (
+              {donorsCurrencies === null ? (
                 <></>
               ) : (
                 <div className="w-full space-y-2">
-                  <label htmlFor="currency">Currency Type</label>
+                  <label htmlFor="currency">Currency</label>
                   <Select
-                    disabled
-                    label="Select Currency Type"
-                    // selectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
+                    isDisabled
+                    label="Select Currency"
+                    // selectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[0]?.type}`}
                     className="max-w-xs"
-                    defaultSelectedKeys={`${selectedDonorCurrType?.type ?? currencyTypes[1]?.type}`}
+                    defaultSelectedKeys={`${currentDonorCurrency?.type ?? donorsCurrencies[0]?.type}`}
                     onChange={(e) => {
                       changeDonorCurrType(e);
                     }}
                   >
-                    {currencyTypes?.map((status,i) => (
-                      <SelectItem key={`${i}`}>
-                        {status.shortName}
+                    {donorsCurrencies?.map((status) => (
+                      <SelectItem key={`${status?.type}`}>
+                        {status.title}
                       </SelectItem>
                     ))}
                   </Select>
@@ -391,9 +611,41 @@ export default function DashDonationView() {
               />
             </div>
 
+            {/* Status */}
+            <div className="w-full gap-5 flex justify-between items-center">
+              {donorsStatus === null ? (
+                <></>
+              ) : (
+                <div className="w-full flex flex-col space-y-2">
+                  <label htmlFor="status">Status</label>
+                  <Select
+                    isDisabled={!isEdit}
+                    label="Select Status"
+                    selectedKeys={`${currentDonorStatus?.type ?? donorsStatus[0]?.type}`}
+                    className="max-w-xs"
+                    defaultSelectedKeys={`${currentDonorStatus?.type ?? donorsStatus[0]?.type}`}
+                    onChange={(e) => {
+                      changeDonorStatusType(e);
+                    }}
+                  >
+                    {donorsStatus?.map((status) => (
+                      <SelectItem key={`${status?.type}`}>
+                        {status.title}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
+              )}
+            </div>
+            {/* Status End*/}
+
             {/* Actions */}
             <div className="w-full space-y-2 flex items-center justify-end">
-              <Button color="primary" type="submit">
+              <Button
+                color={isEdit ? "primary" : "default"}
+                type="submit"
+                disabled={!isEdit}
+              >
                 {"Submit"}
               </Button>
             </div>

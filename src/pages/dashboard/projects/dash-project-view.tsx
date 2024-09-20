@@ -66,7 +66,6 @@ export default function DashProjectPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const data: Project = {
             projectId: `${res.data["projectId"]}`,
             title: `${res.data["title"]}`,
@@ -85,8 +84,6 @@ export default function DashProjectPage() {
           const statusVal = projectStatus.find(
             (p) => p?.key === Number(data?.status)
           );
-
-          console.log(statusVal);
 
           setProject(data);
 
@@ -111,8 +108,6 @@ export default function DashProjectPage() {
   };
 
   const onProjectSubmit: SubmitHandler<Project> = (d) => {
-    console.log(d);
-
     if (projectId) {
       handleUpdate(d);
     } else {
@@ -151,8 +146,9 @@ export default function DashProjectPage() {
         })
         .then((res: AxiosResponse) => {
           //setSelectedImage(null);
-          console.log(res.data);
-          nav("/dashboard/projects");
+          if (res?.data) {
+            nav("/dashboard/projects");
+          }
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -194,10 +190,6 @@ export default function DashProjectPage() {
         data.append("image", selectedImage);
       }
 
-      data.forEach((d) => {
-        console.log(d);
-      });
-
       axios
         .post(`${api}/projects/${project?.projectId}`, data, {
           headers: {
@@ -206,8 +198,9 @@ export default function DashProjectPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
-          window.location.reload();
+          if (res?.data) {
+            window.location.reload();
+          }
         })
         .catch((err: AxiosError) => {
           //setSelectedImage(null);

@@ -666,7 +666,7 @@ export default function HomePage() {
                   <></>
                 ) : (
                   <div className="w-full space-y-2">
-                    <label htmlFor="donorType">Donor Type</label>
+                    <label htmlFor="donorType">Donor</label>
                     <Select
                       label="Select Donor Type"
                       className="max-w-xs"
@@ -705,7 +705,7 @@ export default function HomePage() {
                   <></>
                 ) : (
                   <div className="w-full space-y-2">
-                    <label htmlFor="currency">Currency Type</label>
+                    <label htmlFor="currency">Currency</label>
                     <Select
                       label="Select Currency Type"
                       className="max-w-xs"

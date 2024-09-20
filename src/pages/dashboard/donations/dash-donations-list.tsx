@@ -222,15 +222,44 @@ export type Donation = {
   amountPledged?: string;
   donorCurrencyType?: number;
   donorType?: number;
+  statusType?: number;
 };
 
 export type DonationType = {
+  id?: string;
+  title?: string;
+  type?: number;
+};
+export type DonationStatus = {
+  id?: string;
   title?: string;
   type?: number;
 };
 
 export type DonationCurrencyType = {
+  id?: string;
   title?: string;
   shortName?: string;
   type?: number;
 };
+
+//Type Enums
+export enum DonationTypeEnum{
+  "LOCAL DONOR" = 0,
+  "FOREIGN DONOR" = 1
+}
+
+export enum DonationCurrencyEnum{
+  "TZS" = 0,
+  "USD" = 1,
+  "GBP" = 2
+}
+
+export enum DonationStatusEnum{
+  "UNPAID" = 0,
+  "PAID" = 1,
+}
+
+
+
+
