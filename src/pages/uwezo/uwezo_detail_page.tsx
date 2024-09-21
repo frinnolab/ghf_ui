@@ -51,8 +51,6 @@ export default function UwezoDetailPage() {
           };
 
           setProject(data);
-
-          console.log(data);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -67,7 +65,7 @@ export default function UwezoDetailPage() {
           className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
           variant="flat"
           onClick={() => {
-            navigate("/uwezo");
+            navigate("/whatwedo");
           }}
         >
           <span>
@@ -87,7 +85,7 @@ export default function UwezoDetailPage() {
 
             {/* Impact */}
             <div className=" space-y-3 w-full">
-              <h1 className=" text-2xl ">REACH</h1>
+              <h1 className=" text-2xl ">PROJECT REACH</h1>
 
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1>Regions Reached:</h1>
@@ -137,6 +135,7 @@ export default function UwezoDetailPage() {
               }
             />
           </div>
+
         </div>
 
         {/* Contents */}

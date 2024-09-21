@@ -78,7 +78,7 @@ const ImpactList = () => {
                     <Image
                       src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
                     />
-                    <div className={`p-3 flex flex-col gap-2`}>
+                    <div className={`p-3 flex flex-col gap-1`}>
                       <h1 className={`text-2xl`}>{mp?.title}</h1>
                       
                       <span className={`flex items-center gap-3`}>
@@ -99,7 +99,7 @@ const ImpactList = () => {
                         <Button
                           variant="light"
                           color="primary"
-                          className="flex items-center"
+                          className="flex items-center border border-primary-400 hover:border-transparent"
                           onClick={() => {
                             toDetail(mp);
                           }}

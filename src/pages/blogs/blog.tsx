@@ -96,7 +96,7 @@ export default function BlogPage() {
                       <Button
                         variant="light"
                         color="primary"
-                        className="flex items-center"
+                        className="flex items-center border border-primary-400 hover:border-transparent"
                         onClick={() => {
                           toDetail(b);
                         }}

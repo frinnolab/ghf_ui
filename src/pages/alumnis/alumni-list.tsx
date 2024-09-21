@@ -203,7 +203,7 @@ export default function AlumniList() {
                         <Button
                           variant="light"
                           color="primary"
-                          className="flex items-center"
+                          className="flex items-center border border-primary-400 hover:border-transparent"
                           onClick={() => {
                             toDetail(d);
                           }}
@@ -230,7 +230,7 @@ export default function AlumniList() {
             <div className=" shadow rounded-2xl bg-default-50 p-3 ">
               <form
                 onSubmit={handleSubmit(onAlumniSubmit)}
-                className=" flex flex-col gap-5 p-4 space-y-1"
+                className=" flex flex-col gap-1 p-4 space-y-1"
               >
                 {/* Fullnames */}
                 <div className="w-full gap-5 flex justify-between items-center">
