@@ -37,6 +37,10 @@ import Publications from "./pages/publications/publications";
 import PublicationsView from "./pages/publications/publication-view";
 import DashDonations from "./pages/dashboard/donations/dash-donations-list";
 import DashDonationView from "./pages/dashboard/donations/dash-donation-view";
+import AlumniList from "./pages/alumnis/alumni-list";
+import AlumniView from "./pages/alumnis/alumni-view";
+import DashAlumniList from "./pages/dashboard/alumnis/dash-alumni-list";
+import DashAlumniView from "./pages/dashboard/alumnis/dash-alumni-view";
 
 function App() {
   return (
@@ -44,9 +48,9 @@ function App() {
       {/* <Route element={<IndexPage />} path="/" /> */}
       <Route element={<HomePage />} path="/" />
       <Route element={<UwezoPage />} path="/whatwedo" />
+      <Route element={<UwezoDetailPage />} path="/whatwedo/:id" />
       <Route element={<SappyPage />} path="/sappy" />
       <Route element={<SabbyPage />} path="/sabby" />
-      <Route element={<UwezoDetailPage />} path="/whatwedo/:id" />
       <Route element={<ImpactList />} path="/impacts" />
       <Route element={<ImpactView />} path="/impacts/:id" />
       <Route element={<BlogPage />} path="/blog" />
@@ -54,6 +58,8 @@ function App() {
       {/* <Route element={<BlogPage />} path="/careers" /> */}
       <Route element={<Publications />} path="/publications" />
       <Route element={<PublicationsView />} path="/publications/:id" />
+      <Route element={<AlumniList />} path="/alumnis" />
+      <Route element={<AlumniView />} path="/alumnis/:id" />
       <Route element={<AboutPage />} path="/about" />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<RegisterPage />} path="/register" />
@@ -70,6 +76,8 @@ function App() {
       <Route element={<DashDonationView />} path="/dashboard/donations/:id" />
       <Route element={<DashProjectPage />} path="/dashboard/projects/:id" />
       <Route element={<DashProjectPage />} path="/dashboard/projects/create" />
+      <Route element={<DashAlumniList />} path="/dashboard/alumnis" />
+      <Route element={<DashAlumniView />} path="/dashboard/alumnis/:id" />
       <Route element={<DashboardPartnersPage />} path="/dashboard/partners" />
       <Route
         element={<DashboardPartnerPage />}

@@ -103,9 +103,7 @@ function TeamCard({ member }: { member: TeamMember }) {
       <div>
         <Avatar
           size="lg"
-          src={
-            member?.memberAvatarUrl !== "" ? member?.memberAvatarUrl : ""
-          }
+          src={member?.memberAvatarUrl !== "" ? member?.memberAvatarUrl : ""}
           defaultValue={`${(<GoPersonFill />)}`}
         />
       </div>

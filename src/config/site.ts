@@ -21,6 +21,10 @@ export const siteConfig = {
       href: "/publications",
     },
     {
+      label: "Alumni",
+      href: "/alumnis",
+    },
+    {
       label: "Blog",
       href: "/blog",
     },
@@ -85,6 +89,10 @@ export const siteConfig = {
     {
       label: "Teams",
       href: "/dashboard/teams",
+    },
+    {
+      label: "Alumni",
+      href: "/dashboard/alumnis",
     },
     {
       label: "My Profile",

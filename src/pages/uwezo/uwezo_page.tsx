@@ -13,7 +13,7 @@ export default function UwezoPage() {
   const navigate = useNavigate();
 
   const toDetail = (p: Project) => {
-    navigate(`/uwezo/${p?.projectId}`, {
+    navigate(`/whatwedo/${p?.projectId}`, {
       state: `${p?.projectId}`,
     });
   };
@@ -129,9 +129,7 @@ export default function UwezoPage() {
                   </div>
                 ))}
 
-                <div>
-                  {/* Pagination */}
-                </div>
+                <div>{/* Pagination */}</div>
               </div>
             )}
           </div>

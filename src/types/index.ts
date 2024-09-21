@@ -7,7 +7,10 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 export enum AuthRole {
   "SuperAdmin" = -1,
   "Admin" = 1,
-  "User" = 0
+  "Alumni" = 2,
+  "Employee" = 3,
+  "User" = 0,
+  "Volunteer" = 4,
 }
 
 export enum PartnerType {

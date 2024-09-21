@@ -89,11 +89,6 @@ export default function DashProfilePage() {
         data.append("password", `${passRef?.current?.value}`);
       }
     }
-    //console.log(profile);
-
-    data.forEach((d) => {
-      console.log(d?.valueOf());
-    });
 
     //Update Profile
     axios

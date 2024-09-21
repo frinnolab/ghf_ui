@@ -82,7 +82,6 @@ const DashImpactsListPage = () => {
       axios
         .get(`${api}/impacts`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           setIsImpacts(true);
           const data: Impact[] = Array.from(res?.data).flatMap((d: any) => {
             console.log(d);
@@ -105,7 +104,7 @@ const DashImpactsListPage = () => {
           console.log(err);
         });
     }
-  }, [impacts]);
+  }, [impacts, isImpacts]);
 
   return (
     <DashboardLayout>
