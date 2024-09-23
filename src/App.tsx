@@ -58,8 +58,8 @@ function App() {
       {/* <Route element={<BlogPage />} path="/careers" /> */}
       <Route element={<Publications />} path="/publications" />
       <Route element={<PublicationsView />} path="/publications/:id" />
-      <Route element={<AlumniList />} path="/alumnis" />
-      <Route element={<AlumniView />} path="/alumnis/:id" />
+      <Route element={<AlumniList />} path="/alumni" />
+      <Route element={<AlumniView />} path="/alumni/:id" />
       <Route element={<AboutPage />} path="/about" />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<RegisterPage />} path="/register" />
@@ -76,8 +76,8 @@ function App() {
       <Route element={<DashDonationView />} path="/dashboard/donations/:id" />
       <Route element={<DashProjectPage />} path="/dashboard/projects/:id" />
       <Route element={<DashProjectPage />} path="/dashboard/projects/create" />
-      <Route element={<DashAlumniList />} path="/dashboard/alumnis" />
-      <Route element={<DashAlumniView />} path="/dashboard/alumnis/:id" />
+      <Route element={<DashAlumniList />} path="/dashboard/alumni" />
+      <Route element={<DashAlumniView />} path="/dashboard/alumni/:id" />
       <Route element={<DashboardPartnersPage />} path="/dashboard/partners" />
       <Route
         element={<DashboardPartnerPage />}

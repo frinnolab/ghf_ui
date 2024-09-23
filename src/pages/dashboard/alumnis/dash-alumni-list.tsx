@@ -25,7 +25,7 @@ export default function DashAlumniList() {
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Alumni) => {
-    nav(`/dashboard/alumnis/${p?.alumniId}`, {
+    nav(`/dashboard/alumni/${p?.alumniId}`, {
       state: p?.alumniId,
     });
   };

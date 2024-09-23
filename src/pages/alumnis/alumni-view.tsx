@@ -5,8 +5,8 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { Profile } from "../dashboard/profiles/dash-profiles-list";
 import { AuthRole } from "@/types";
 import { Button } from "@nextui-org/button";
-import { Avatar, Divider, Image } from "@nextui-org/react";
-import { GoArrowLeft, GoPerson, GoPersonFill } from "react-icons/go";
+import { Avatar, Divider } from "@nextui-org/react";
+import { GoArrowLeft } from "react-icons/go";
 import { siteConfig } from "@/config/site";
 
 export default function AlumniView() {
@@ -65,7 +65,7 @@ export default function AlumniView() {
           className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
           variant="flat"
           onClick={() => {
-            navigate("/alumnis");
+            navigate("/alumni");
           }}
         >
           <span>
@@ -124,7 +124,7 @@ export default function AlumniView() {
                   ? siteConfig?.staticAssets?.staticLogo
                   : alumni?.alumniProfile?.avatarUrl
               }`}
-              />
+            />
           </div>
         </div>
 

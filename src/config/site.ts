@@ -22,7 +22,7 @@ export const siteConfig = {
     },
     {
       label: "Alumni",
-      href: "/alumnis",
+      href: "/alumni",
     },
     {
       label: "Blog",
@@ -92,7 +92,7 @@ export const siteConfig = {
     },
     {
       label: "Alumni",
-      href: "/dashboard/alumnis",
+      href: "/dashboard/alumni",
     },
     {
       label: "My Profile",

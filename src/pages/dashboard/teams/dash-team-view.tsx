@@ -215,23 +215,14 @@ export default function DashboardTeamPage() {
       .get(`${api}/teams/main`)
       .then((res: AxiosResponse) => {
         if (HttpStatusCode.Ok) {
-          console.log(res?.data);
 
           if (res?.data["teamId"] === team?.teamId) {
             alert("Team already Main Board.");
             setIsMainBoard(true);
           } 
-          // if (res?.data["teamId"]) {
-          //   alert(
-          //     "Main Board already exists. Remove before setting another team."
-          //   );
-          //   setIsMainBoard(false);
-          // }
-          //setIsMainBoard(res?.data['isMainBoard']);
         }
         
         if (HttpStatusCode.NoContent) {
-          console.log(res?.data);
           alert(
             "Main Board Set. Update to Save changes."
           );

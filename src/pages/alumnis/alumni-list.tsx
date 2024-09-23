@@ -24,7 +24,7 @@ export default function AlumniList() {
   } = useForm<Alumni>();
 
   const toDetail = (b: Alumni) => {
-    navigate(`/alumnis/${b?.alumniId}`, {
+    navigate(`/alumni/${b?.alumniId}`, {
       state: `${b?.alumniId}`,
     });
   };
@@ -160,7 +160,7 @@ export default function AlumniList() {
                       <Avatar
                         size="lg"
                         src={
-                          d?.alumniProfile?.avatarUrl !== ""
+                          d?.alumniProfile?.avatarUrl !== "" || null
                             ? d?.alumniProfile?.avatarUrl
                             : ""
                         }
@@ -228,6 +228,7 @@ export default function AlumniList() {
             <h1 className=" text-2xl ">Register as Alumni here.</h1>
 
             <div className=" shadow rounded-2xl bg-default-50 p-3 ">
+              
               <form
                 onSubmit={handleSubmit(onAlumniSubmit)}
                 className=" flex flex-col gap-1 p-4 space-y-1"
@@ -386,7 +387,7 @@ export default function AlumniList() {
                       }}
                     />
 
-                    <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                    <span className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedImage ? "" : "hidden"}`}>
                       <GoTrash
                         size={20}
                         className=" text-danger-500"

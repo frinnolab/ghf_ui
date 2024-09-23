@@ -293,6 +293,7 @@ export default function DashImpactView() {
 
   return (
     <div className="w-full">
+
       <div className="w-full p-3 flex items-center gap-5">
         <Button variant="light" onClick={handleBack}>
           <GoArrowLeft size={20} />
@@ -304,6 +305,7 @@ export default function DashImpactView() {
       <div className="w-full flex flex-col p-5 gap-5">
         
         <div className={`w-full flex justify-between items-center gap-5 `}>
+
           <div>
             <h1
               className={` ${impactId === null ? "hidden" : ""} text-start text-xl`}
@@ -331,6 +333,7 @@ export default function DashImpactView() {
               title={`${isEdit ? "Edit mode" : "View mode"}`}
             ></Switch>
           </div>
+
         </div>
 
         {/* Content */}
@@ -503,7 +506,7 @@ export default function DashImpactView() {
           </div>
           {/* Asets End */}
         </div>
-        {/* Content End 17897806*/}
+        {/* Content End*/}
       </div>
     </div>
   );

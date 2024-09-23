@@ -362,6 +362,7 @@ export default function DashProjectPage() {
                 <label htmlFor="status">Status</label>
 
                 <Select
+                  isDisabled={!isEdit ? true : false}
                   label="Select Project Status"
                   selectedKeys={`${selectedStatus?.key ?? projectStatus[1].key}`}
                   className="max-w-xs"
