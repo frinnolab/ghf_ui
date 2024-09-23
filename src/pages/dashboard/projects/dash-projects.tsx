@@ -3,6 +3,7 @@ import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -53,6 +54,8 @@ export default function DashProjectsListPage() {
   const actionTypes = ["detail", "edit", "delete"];
   const [projects, setProjects] = useState<Project[]>([]);
   const [isProjects, setIsProjects] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const [] = useState<ProjectStatus[]>(() => {
     return [
       {
@@ -72,6 +75,7 @@ export default function DashProjectsListPage() {
 
   useEffect(() => {
     if (!isProjects) {
+      setIsloading(true);
       axios
         .get(`${api}/projects`, {
           headers: {
@@ -81,7 +85,6 @@ export default function DashProjectsListPage() {
           },
         })
         .then((res: AxiosResponse) => {
-
           const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
             const data: Project = {
               projectId: `${p?.projectId}`,
@@ -96,11 +99,14 @@ export default function DashProjectsListPage() {
               publisherId: `${p?.publisherId ?? ""}`,
             };
             return [data];
-
           });
           setIsProjects(true);
 
           setProjects(dataList);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [isProjects]);
@@ -151,44 +157,59 @@ export default function DashProjectsListPage() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
-          <TableBody emptyContent="No Projects at the moment" items={projects}>
-            {projects.map((project, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.title}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.description}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.regionsReached}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.districtsReached}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.schoolsReached}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(project)}>
-                  {project?.studentsReached}
-                </TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(project, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody
+              emptyContent="No Projects at the moment"
+              items={projects}
+            >
+              {projects.map((project, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.title}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.description}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.regionsReached}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.districtsReached}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.schoolsReached}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(project)}>
+                    {project?.studentsReached}
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() =>
+                              handleAction(project, actionTypes[0])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
 
-                    {/* <Tooltip content="Edit">
+                      {/* <Tooltip content="Edit">
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <GoPencil
                           onClick={() => handleAction(project, actionTypes[1])}
@@ -196,19 +217,22 @@ export default function DashProjectsListPage() {
                       </span>
                     </Tooltip> */}
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(project, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() =>
+                              handleAction(project, actionTypes[2])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

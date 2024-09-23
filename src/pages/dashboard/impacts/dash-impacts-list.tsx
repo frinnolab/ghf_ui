@@ -2,6 +2,7 @@ import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -40,6 +41,7 @@ const DashImpactsListPage = () => {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [impacts, setImpacts] = useState<Impact[]>([]);
   const [isImpacts, setIsImpacts] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Impact) => {
     nav(`/dashboard/impacts/${p?.impactId}`, {
@@ -79,6 +81,7 @@ const DashImpactsListPage = () => {
 
   useEffect(() => {
     if (!isImpacts) {
+      setIsloading(true);
       axios
         .get(`${api}/impacts`)
         .then((res: AxiosResponse) => {
@@ -98,6 +101,10 @@ const DashImpactsListPage = () => {
           setImpacts(() => {
             return [...data];
           });
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           setIsImpacts(true);
@@ -130,38 +137,48 @@ const DashImpactsListPage = () => {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
-          <TableBody emptyContent="No Impacts at the moment" items={impacts}>
-            {impacts.map((impact, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(impact)}>
-                  {impact?.title}
-                </TableCell>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody emptyContent="No Impacts at the moment" items={impacts}>
+              {impacts.map((impact, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(impact)}>
+                    {impact?.title}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(impact)}>
-                  {impact?.schoolName}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(impact)}>
+                    {impact?.schoolName}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(impact)}>
-                  {impact?.studentsTotal}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(impact)}>
+                    {impact?.studentsTotal}
+                  </TableCell>
 
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(impact, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(impact, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
 
-                    {/* <Tooltip content="Edit">
+                      {/* <Tooltip content="Edit">
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <GoPencil
                           onClick={() => handleAction(project, actionTypes[1])}
@@ -169,19 +186,20 @@ const DashImpactsListPage = () => {
                       </span>
                     </Tooltip> */}
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(impact, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(impact, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

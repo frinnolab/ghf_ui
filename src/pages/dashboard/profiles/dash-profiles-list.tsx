@@ -2,6 +2,7 @@ import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -33,6 +34,7 @@ export default function DashProfilesListPage() {
   const authed = useAuthedProfile();
   const api = `${import.meta.env.VITE_API_URL}`;
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Profile) => {
     console.log(p);
@@ -58,12 +60,15 @@ export default function DashProfilesListPage() {
         return "Admin";
       case AuthRole.SuperAdmin:
         return "Super Admin";
+      case AuthRole.Alumni:
+        return "Alumni";
       default:
         return "User";
     }
   };
 
   useEffect(() => {
+    setIsloading(true);
     axios
       .get(`${api}/profiles`, {
         headers: {
@@ -91,6 +96,10 @@ export default function DashProfilesListPage() {
           }
         );
         setProfiles(profilesData);
+
+        setTimeout(() => {
+          setIsloading(false);
+        }, 2000);
       });
   }, [api]);
 
@@ -101,7 +110,7 @@ export default function DashProfilesListPage() {
         <div className="w-full flex justify-between ">
           <h1 className=" text-2xl ">Manage Profiles</h1>
 
-          <Button variant="solid" color="primary">
+          <Button variant="solid" color="primary" className="hidden">
             Add{" "}
             <span>
               <GoPlus size={20} />
@@ -110,58 +119,78 @@ export default function DashProfilesListPage() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
-          <TableBody emptyContent="No profiles at the moment" items={profiles}>
-            {profiles.map((profile, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(profile)}>
-                  {profile?.email}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(profile)}>
-                  {profile?.firstname}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(profile)}>
-                  {profile?.lastname}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(profile)}>
-                  {roleName(Number(profile?.role ?? 0))}
-                </TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(profile, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody
+              emptyContent="No profiles at the moment"
+              items={profiles}
+            >
+              {profiles.map((profile, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(profile)}>
+                    {profile?.email}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(profile)}>
+                    {profile?.firstname}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(profile)}>
+                    {profile?.lastname}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(profile)}>
+                    {roleName(Number(profile?.role ?? 0))}
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() =>
+                              handleAction(profile, actionTypes[0])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip content="Edit">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoPencil
-                          onClick={() => handleAction(profile, actionTypes[1])}
-                        />
-                      </span>
-                    </Tooltip>
+                      <Tooltip content="Edit">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoPencil
+                            onClick={() =>
+                              handleAction(profile, actionTypes[1])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(profile, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() =>
+                              handleAction(profile, actionTypes[2])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

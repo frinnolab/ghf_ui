@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site";
 import useAuthedProfile from "@/hooks/use-auth";
 import DashboardLayout from "@/layouts/dash-layout";
-import { Button, Divider, Image, Input } from "@nextui-org/react";
+import { Button, Divider, Image, Input, Spinner } from "@nextui-org/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Profile } from "../profiles/dash-profiles-list";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -17,6 +17,7 @@ export default function DashProfilePage() {
   const coPassRef = useRef<HTMLInputElement>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   //Form State
   const {
@@ -27,6 +28,8 @@ export default function DashProfilePage() {
 
   useEffect(() => {
     if (profile === null) {
+      setIsloading(true);
+
       axios
         .get(`${api}/profiles/${authed?.profileId}`, {
           headers: {
@@ -47,6 +50,10 @@ export default function DashProfilePage() {
             position: res.data?.position ?? "",
           };
           setProfile(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [profile]);
@@ -57,6 +64,8 @@ export default function DashProfilePage() {
         return "Admin";
       case AuthRole.SuperAdmin:
         return "Super Admin";
+      case AuthRole.Alumni:
+        return "Alumni";
       default:
         return "User";
     }
@@ -130,162 +139,174 @@ export default function DashProfilePage() {
               <h1 className=" text-small ">Update your personal information</h1>
             </div>
             <Divider />
-            {/* Form */}
-            {/* Personal Info */}
-            <div className="w-full flex justify-between">
-              {/* Form */}
-              <form
-                className=" w-full flex flex-col overflow-y-auto h-[85%] px-5"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                {/* Fname & Lname */}
-                <div className="flex gap-10">
-                  <div className="w-full space-y-3">
-                    <label htmlFor="Firstname">Firstname</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${profile?.firstname ?? ""}`}
-                      {...register("firstname")}
-                      placeholder={`${profile?.firstname ?? "Enter firstname"}`}
-                    />
+
+            {isLoading ? (
+              <>
+                <Spinner
+                  size="lg"
+                  className=" flex justify-center "
+                  label="Loading..."
+                  color="primary"
+                />
+              </>
+            ) : (
+              <div className="w-full flex justify-between">
+                {/* Form */}
+                <form
+                  className=" w-full flex flex-col overflow-y-auto h-[85%] px-5"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  {/* Fname & Lname */}
+                  <div className="flex gap-10">
+                    <div className="w-full space-y-3">
+                      <label htmlFor="Firstname">Firstname</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${profile?.firstname ?? ""}`}
+                        {...register("firstname")}
+                        placeholder={`${profile?.firstname ?? "Enter firstname"}`}
+                      />
+                    </div>
+
+                    <div className="w-full space-y-3">
+                      <label htmlFor="Lastname">Lastname</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${profile?.lastname ?? ""}`}
+                        {...register("lastname")}
+                        placeholder={`${profile?.lastname ?? "Enter lastname"}`}
+                      />
+                    </div>
                   </div>
 
-                  <div className="w-full space-y-3">
-                    <label htmlFor="Lastname">Lastname</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${profile?.lastname ?? ""}`}
-                      {...register("lastname")}
-                      placeholder={`${profile?.lastname ?? "Enter lastname"}`}
-                    />
-                  </div>
-                </div>
+                  {/* Email & position */}
+                  <div className="flex gap-10">
+                    <div className="w-full space-y-3 flex flex-col">
+                      <label htmlFor="email">Email</label>
+                      <Input
+                        type="email"
+                        defaultValue={`${profile?.email ?? ""}`}
+                        {...register("email", { required: true })}
+                        placeholder={`${profile?.email ?? "Enter email"}`}
+                      />
+                      {errors.email && (
+                        <span className="text-danger">
+                          Email field is required
+                        </span>
+                      )}
+                    </div>
 
-                {/* Email & position */}
-                <div className="flex gap-10">
-                  <div className="w-full space-y-3 flex flex-col">
-                    <label htmlFor="email">Email</label>
-                    <Input
-                      type="email"
-                      defaultValue={`${profile?.email ?? ""}`}
-                      {...register("email", { required: true })}
-                      placeholder={`${profile?.email ?? "Enter email"}`}
-                    />
-                    {errors.email && (
-                      <span className="text-danger">
-                        Email field is required
-                      </span>
-                    )}
+                    <div className="w-full space-y-3">
+                      <label htmlFor="position">Position</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${profile?.position ?? ""}`}
+                        {...register("position")}
+                        placeholder={`${profile?.position ?? "Enter Position"}`}
+                      />
+                    </div>
                   </div>
-
-                  <div className="w-full space-y-3">
-                    <label htmlFor="position">Position</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${profile?.position ?? ""}`}
-                      {...register("position")}
-                      placeholder={`${profile?.position ?? "Enter Position"}`}
-                    />
-                  </div>
-                </div>
-                {/* Role & Mobile */}
-                <div className="flex gap-10">
-                  <div className="w-full space-y-3">
-                    <label htmlFor="role">Role</label>
-                    <Input
-                      disabled
-                      type="text"
-                      placeholder={`${roleName(Number(profile?.role ?? 0)) ?? "Enter Role"}`}
-                    />
-                  </div>
-                  <div className="w-full space-y-3">
-                    <label htmlFor="mobile">Mobile</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${profile?.mobile ?? ""}`}
-                      {...register("mobile")}
-                      placeholder={`${profile?.mobile ?? "Enter Mobile"}`}
-                    />
-                  </div>
-                </div>
-
-                {/* Passwords */}
-                <div className="flex gap-10">
-                  <div className="w-full space-y-3">
-                    <label htmlFor="Password">Password</label>
-                    <Input
-                      type="password"
-                      ref={passRef}
-                      placeholder="********"
-                    />
+                  {/* Role & Mobile */}
+                  <div className="flex gap-10">
+                    <div className="w-full space-y-3">
+                      <label htmlFor="role">Role</label>
+                      <Input
+                        disabled
+                        type="text"
+                        placeholder={`${roleName(Number(profile?.role ?? 0)) ?? "Enter Role"}`}
+                      />
+                    </div>
+                    <div className="w-full space-y-3">
+                      <label htmlFor="mobile">Mobile</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${profile?.mobile ?? ""}`}
+                        {...register("mobile")}
+                        placeholder={`${profile?.mobile ?? "Enter Mobile"}`}
+                      />
+                    </div>
                   </div>
 
-                  <div className="w-full space-y-3">
-                    <label htmlFor="Confirm password">Confirm password</label>
-                    <Input
-                      type="password"
-                      ref={coPassRef}
-                      placeholder="********"
-                    />
+                  {/* Passwords */}
+                  <div className="flex gap-10">
+                    <div className="w-full space-y-3">
+                      <label htmlFor="Password">Password</label>
+                      <Input
+                        type="password"
+                        ref={passRef}
+                        placeholder="********"
+                      />
+                    </div>
+
+                    <div className="w-full space-y-3">
+                      <label htmlFor="Confirm password">Confirm password</label>
+                      <Input
+                        type="password"
+                        ref={coPassRef}
+                        placeholder="********"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* CTO */}
-                <div className="flex py-2">
-                  <Button variant="solid" color="primary" type="submit">
-                    Update
-                  </Button>
-                </div>
-              </form>
+                  {/* CTO */}
+                  <div className="flex py-2">
+                    <Button variant="solid" color="primary" type="submit">
+                      Update
+                    </Button>
+                  </div>
+                </form>
 
-              {/* Profile Image Info */}
-              <div className="flex flex-col items-center rounded-xl w-[50%] p-5 h-[70%] gap-5">
-                <div>
-                  <h1>Manage Profile Picture</h1>
-                </div>
-                <Divider />
-                {selectedImage ? (
-                  <>
-                    <Image
-                      className={`h-[25vh] object-cover`}
-                      isZoomed
-                      src={URL.createObjectURL(selectedImage)}
+                {/* Profile Image Info */}
+                <div className="flex flex-col items-center rounded-xl w-[50%] p-5 h-[70%] gap-5">
+                  <div>
+                    <h1>Manage Profile Picture</h1>
+                  </div>
+                  <Divider />
+                  {selectedImage ? (
+                    <>
+                      <Image
+                        className={`h-[25vh] object-cover`}
+                        isZoomed
+                        src={URL.createObjectURL(selectedImage)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        className={`h-[25vh] object-cover`}
+                        isZoomed
+                        src={
+                          profile?.avatarUrl !== ""
+                            ? profile?.avatarUrl
+                            : siteConfig.staticAssets.staticLogo
+                        }
+                      />
+                    </>
+                  )}
+
+                  <div className="p-3 flex items-center">
+                    <input
+                      accept="image/*"
+                      ref={thumbRef}
+                      type="file"
+                      onChange={(e) => {
+                        onChangePic(e);
+                      }}
                     />
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      className={`h-[25vh] object-cover`}
-                      isZoomed
-                      src={
-                        profile?.avatarUrl !== ""
-                          ? profile?.avatarUrl
-                          : siteConfig.staticAssets.staticLogo
-                      }
-                    />
-                  </>
-                )}
 
-                <div className="p-3 flex items-center">
-                  <input
-                    accept="image/*"
-                    ref={thumbRef}
-                    type="file"
-                    onChange={(e) => {
-                      onChangePic(e);
-                    }}
-                  />
-
-                  <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-                    <GoTrash
-                      size={20}
-                      className=" text-danger-500"
-                      onClick={removeSelectedImage}
-                    />
-                  </span>
+                    <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                      <GoTrash
+                        size={20}
+                        className=" text-danger-500"
+                        onClick={removeSelectedImage}
+                      />
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+            {/* Form */}
+            {/* Personal Info */}
           </div>
         </div>
       </div>

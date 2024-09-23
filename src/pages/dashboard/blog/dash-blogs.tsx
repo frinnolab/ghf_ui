@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -29,6 +30,7 @@ export default function DashBlogsListPage() {
   const actionTypes = ["detail", "edit", "delete"];
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isBlogs, setIsBlogs] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
@@ -36,6 +38,7 @@ export default function DashBlogsListPage() {
 
   useEffect(() => {
     if (!isBlogs) {
+      setIsloading(true);
       axios
         .get(`${api}/blogs`, {
           headers: {
@@ -59,10 +62,16 @@ export default function DashBlogsListPage() {
           setBlogs(datas);
           setIsBlogs(true);
 
-          console.log(res.data);
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [blogs]);
@@ -132,44 +141,55 @@ export default function DashBlogsListPage() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
-          <TableBody emptyContent="No Blogs at the moment" items={blogs}>
-            {blogs.map((blog, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(blog)}>
-                  {blog?.title}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(blog)}>
-                  {blog?.description}
-                </TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="View">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(blog, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody emptyContent="No Blogs at the moment" items={blogs}>
+              {blogs.map((blog, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(blog)}>
+                    {blog?.title}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(blog)}>
+                    {blog?.description}
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="View">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(blog, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(blog, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(blog, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

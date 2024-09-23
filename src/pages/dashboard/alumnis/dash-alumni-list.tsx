@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Profile } from "../profiles/dash-profiles-list";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +24,7 @@ export default function DashAlumniList() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Alumni) => {
     nav(`/dashboard/alumni/${p?.alumniId}`, {
@@ -61,6 +63,7 @@ export default function DashAlumniList() {
 
   useEffect(() => {
     if (!isAlumni) {
+      setIsloading(true);
       axios
         .get(`${api}/alumnis`)
         .then((res: AxiosResponse) => {
@@ -95,10 +98,18 @@ export default function DashAlumniList() {
           setAlumnis(() => {
             return [...data];
           });
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           setIsAlumni(true);
           console.log(err);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [alumnis, isAlumni]);
@@ -112,55 +123,66 @@ export default function DashAlumniList() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
 
-          <TableBody emptyContent="No Alumnis at the moment" items={alumnis}>
-            {alumnis?.map((alumni, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(alumni)}>
-                  {alumni?.alumniProfile?.firstname}
-                </TableCell>
+            <TableBody emptyContent="No Alumnis at the moment" items={alumnis}>
+              {alumnis?.map((alumni, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(alumni)}>
+                    {alumni?.alumniProfile?.firstname}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(alumni)}>
-                  {alumni?.alumniProfile?.lastname}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(alumni)}>
+                    {alumni?.alumniProfile?.lastname}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(alumni)}>
-                  {alumni?.participationSchool}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(alumni)}>
+                    {alumni?.participationSchool}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(alumni)}>
-                  {alumni?.participationYear}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(alumni)}>
+                    {alumni?.participationYear}
+                  </TableCell>
 
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(alumni, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(alumni, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(alumni, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(alumni, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

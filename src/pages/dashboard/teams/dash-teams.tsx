@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -46,6 +47,7 @@ export default function DashboardTeamsPage() {
   const [isTeams, setIsTeams] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const actionTypes = ["detail", "edit", "delete"];
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
@@ -59,13 +61,11 @@ export default function DashboardTeamsPage() {
       teamNameRef?.current?.value !== undefined
     ) {
       const data = {
-        "profileId": `${authed?.profileId}`,
-        "name": `${teamNameRef?.current?.value}`,
-        "isMainBoard":false
+        profileId: `${authed?.profileId}`,
+        name: `${teamNameRef?.current?.value}`,
+        isMainBoard: false,
       };
 
-      console.log(data);
-      
       axios
         .post(`${api}/teams`, data, {
           headers: {
@@ -82,7 +82,6 @@ export default function DashboardTeamsPage() {
           }
         })
         .catch((err: AxiosError) => {
-         
           console.log(err.response);
         });
     }
@@ -135,6 +134,8 @@ export default function DashboardTeamsPage() {
 
   useEffect(() => {
     if (!isTeams) {
+      setIsloading(true);
+
       axios
         .get(`${api}/teams`, {
           headers: {
@@ -156,10 +157,16 @@ export default function DashboardTeamsPage() {
           setIsTeams(true);
           setTeams([...datas]);
 
-          console.log(res.data);
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [isTeams, teams]);
@@ -179,46 +186,57 @@ export default function DashboardTeamsPage() {
         </div>
         <Divider />
 
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
+
+            <TableBody emptyContent="No Teams at the moment" items={teams}>
+              {teams.map((team) => (
+                <TableRow className="w-full" key={team?.teamId}>
+                  <TableCell onClick={() => handleSelectedRow(team)}>
+                    {team?.name}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(team)}>
+                    {team?.totalMembers}
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="View">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(team, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
+
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(team, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
         {/* Table */}
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
-
-          <TableBody emptyContent="No Teams at the moment" items={teams}>
-            {teams.map((team) => (
-              <TableRow className="w-full" key={team?.teamId}>
-                <TableCell onClick={() => handleSelectedRow(team)}>
-                  {team?.name}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(team)}>
-                  {team?.totalMembers}
-                </TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="View">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(team, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
-
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(team, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
         {/* Table End */}
       </section>
 

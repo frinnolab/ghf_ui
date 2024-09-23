@@ -4,6 +4,7 @@ import { AuthRole, PartnerType } from "@/types";
 import { Button } from "@nextui-org/button";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -39,9 +40,11 @@ export default function DashboardPartnersPage() {
   const [partners, setpartners] = useState<Partner[]>([]);
   const [isPartner, setIsPartners] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isPartner) {
+      setIsloading(true);
       axios
         .get(`${api}/partners`, {
           headers: {
@@ -68,6 +71,10 @@ export default function DashboardPartnersPage() {
           setpartners(partnersData);
 
           setIsPartners(true);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [partners, isPartner]);
@@ -149,45 +156,63 @@ export default function DashboardPartnersPage() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
 
-          <TableBody emptyContent="No Partners at the moment" items={partners}>
-            {partners.map((partner, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(partner)}>
-                  {partner?.name}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(partner)}>
-                  {typeName(Number(partner?.type))}
-                </TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="View">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(partner, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+            <TableBody
+              emptyContent="No Partners at the moment"
+              items={partners}
+            >
+              {partners.map((partner, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(partner)}>
+                    {partner?.name}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(partner)}>
+                    {typeName(Number(partner?.type))}
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="View">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() =>
+                              handleAction(partner, actionTypes[0])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(partner, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() =>
+                              handleAction(partner, actionTypes[2])
+                            }
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );

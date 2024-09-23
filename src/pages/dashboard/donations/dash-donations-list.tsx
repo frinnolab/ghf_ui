@@ -1,6 +1,7 @@
 import DashboardLayout from "@/layouts/dash-layout";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +21,8 @@ export default function DashDonations() {
   const actionTypes = ["detail", "edit", "delete"];
   const columns = ["Email", "Company", "Amount Pledged", "Actions"];
   const [donations, setDonations] = useState<Donation[]>([]);
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const [] = useState<DonationType[] | null>(() => {
     let data: DonationType[] = [];
     axios
@@ -111,6 +114,8 @@ export default function DashDonations() {
 
   useEffect(() => {
     if (!hasDonations) {
+      setIsloading(true);
+
       axios
         .get(`${api}/donations`)
         .then((res: AxiosResponse) => {
@@ -129,9 +134,17 @@ export default function DashDonations() {
 
           setHasDonations(true);
           setDonations(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           console.log(err);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [hasDonations]);
@@ -160,52 +173,63 @@ export default function DashDonations() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
 
-          <TableBody
-            emptyContent="No Donations at the moment"
-            items={donations ?? []}
-          >
-            {donations?.map((d) => (
-              <TableRow className="w-full" key={d?.donationId}>
-                <TableCell onClick={() => handleSelectedRow(d)}>
-                  {d?.email}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(d)}>
-                  {d?.company}
-                </TableCell>
-                <TableCell onClick={() => handleSelectedRow(d)}>
-                  {d?.amountPledged}
-                </TableCell>
+            <TableBody
+              emptyContent="No Donations at the moment"
+              items={donations ?? []}
+            >
+              {donations?.map((d) => (
+                <TableRow className="w-full" key={d?.donationId}>
+                  <TableCell onClick={() => handleSelectedRow(d)}>
+                    {d?.email}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(d)}>
+                    {d?.company}
+                  </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(d)}>
+                    {d?.amountPledged}
+                  </TableCell>
 
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(d, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(d, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(d, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(d, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );
@@ -244,22 +268,18 @@ export type DonationCurrencyType = {
 };
 
 //Type Enums
-export enum DonationTypeEnum{
+export enum DonationTypeEnum {
   "LOCAL DONOR" = 0,
-  "FOREIGN DONOR" = 1
+  "FOREIGN DONOR" = 1,
 }
 
-export enum DonationCurrencyEnum{
+export enum DonationCurrencyEnum {
   "TZS" = 0,
   "USD" = 1,
-  "GBP" = 2
+  "GBP" = 2,
 }
 
-export enum DonationStatusEnum{
+export enum DonationStatusEnum {
   "UNPAID" = 0,
   "PAID" = 1,
 }
-
-
-
-

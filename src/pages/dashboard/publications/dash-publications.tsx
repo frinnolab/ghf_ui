@@ -2,6 +2,7 @@ import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import {
   Divider,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +22,7 @@ export default function DashPublications() {
   const columns = ["Title", "Type", "Actions"];
   const [publications, setPublication] = useState<Publication[]>([]);
   const [hasPubs, setHasPub] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Publication) => {
     nav(`/dashboard/publications/${p?.publishId}`, {
@@ -69,6 +71,8 @@ export default function DashPublications() {
 
   useEffect(() => {
     if (!hasPubs) {
+      setIsloading(true);
+
       axios
         .get(`${api}/publications`)
         .then((res: AxiosResponse) => {
@@ -80,7 +84,7 @@ export default function DashPublications() {
               const resData: Publication = {
                 publishId: `${d?.publishId}`,
                 title: d?.title,
-                publishType : d?.publishType
+                publishType: d?.publishType,
               };
               return [resData];
             }
@@ -88,9 +92,17 @@ export default function DashPublications() {
 
           setHasPub(true);
           setPublication(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           console.log(err);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         });
     }
   }, [hasPubs]);
@@ -119,50 +131,61 @@ export default function DashPublications() {
         </div>
         <Divider />
 
-        <Table fullWidth isStriped removeWrapper>
-          <TableHeader>
-            {columns.map((column) => (
-              <TableColumn key={column}>{column}</TableColumn>
-            ))}
-          </TableHeader>
+        {isLoading ? (
+          <>
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Loading..."
+              color="primary"
+            />
+          </>
+        ) : (
+          <Table fullWidth isStriped removeWrapper>
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column}>{column}</TableColumn>
+              ))}
+            </TableHeader>
 
-          <TableBody
-            emptyContent="No publications at the moment"
-            items={publications ?? []}
-          >
-            {publications.map((pub, i) => (
-              <TableRow className="w-full" key={i}>
-                <TableCell onClick={() => handleSelectedRow(pub)}>
-                  {pub?.title}
-                </TableCell>
+            <TableBody
+              emptyContent="No publications at the moment"
+              items={publications ?? []}
+            >
+              {publications.map((pub, i) => (
+                <TableRow className="w-full" key={i}>
+                  <TableCell onClick={() => handleSelectedRow(pub)}>
+                    {pub?.title}
+                  </TableCell>
 
-                <TableCell onClick={() => handleSelectedRow(pub)}>
-                  {setTypeName(Number(pub.publishType))}
-                </TableCell>
+                  <TableCell onClick={() => handleSelectedRow(pub)}>
+                    {setTypeName(Number(pub.publishType))}
+                  </TableCell>
 
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <Tooltip content="Detail">
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <GoEye
-                          onClick={() => handleAction(pub, actionTypes[0])}
-                        />
-                      </span>
-                    </Tooltip>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <Tooltip content="Detail">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <GoEye
+                            onClick={() => handleAction(pub, actionTypes[0])}
+                          />
+                        </span>
+                      </Tooltip>
 
-                    <Tooltip color="danger" content="Delete">
-                      <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                        <GoTrash
-                          onClick={() => handleAction(pub, actionTypes[2])}
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <Tooltip color="danger" content="Delete">
+                        <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                          <GoTrash
+                            onClick={() => handleAction(pub, actionTypes[2])}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </DashboardLayout>
   );
