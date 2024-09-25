@@ -8,7 +8,6 @@ import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
-import { motion } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
 import { useNavigate } from "react-router-dom";
@@ -267,11 +266,6 @@ export default function HomePage() {
     }
   };
 
-  const toImpactDetail = (b: Impact) => {
-    navigate(`/impacts/${b?.impactId}`, {
-      state: `${b?.impactId}`,
-    });
-  };
 
   return (
     <DefaultLayout>
@@ -286,7 +280,7 @@ export default function HomePage() {
             ref={headerTextsRef}
             className=" flex flex-col items-center gap-5 md:top-[85%] top-[15%] z-30 absolute p-10"
           >
-            <div className="w-full flex flex-col md:flex-row items-center gap-1 text-center lg:text-xl  font-semibold p-5 shadow-md rounded-xl bg-default-50/50">
+            <div className="w-full flex flex-col md:flex-row items-center gap-1 text-center md:text-xl  font-semibold p-5 shadow-md rounded-xl bg-default-50/50">
               <h1>WE LIVE TO EMPOWER,</h1>
               <h1>DEVELOP</h1>
               <h1>AND INSPIRE YOUNG GENERATION</h1>
@@ -296,7 +290,7 @@ export default function HomePage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute md:top-[-1%] top-16">
+          <div className="w-full absolute top-16 md:top-[-1%] xl:top-[3%] ">
             <Image
               radius="none"
               alt="Header img"
@@ -339,7 +333,7 @@ export default function HomePage() {
         {/* Data Summary Section */}
         <div
           id="infoStats"
-          className="w-full md:h-screen  flex flex-col gap-5 md:gap-0 justify-center items-center p-5 md:p-0 cursor-default panel panel-sum"
+          className="w-full xl:h-[60%] md:h-screen flex flex-col gap-5 md:gap-0 justify-center items-center p-5 cursor-default panel panel-sum"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
@@ -468,92 +462,6 @@ export default function HomePage() {
           <div></div>
         </div>
         {/* Donors Section End*/}
-
-        {/* Contact Section */}
-        <div className="w-full flex-col justify-center text-center items-center gap-10 p-10 panel hidden">
-          <h1 className=" text-5xl ">Current Projects</h1>
-
-          <p className=" text-balance text-2xl hidden ">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor
-            asperiores veritatis doloremque expedita consequatur maxime.
-          </p>
-          <h1 className=" text-9xl text-orange-500 ">
-            {summaryInfo?.projects?.value ?? 0}
-          </h1>
-
-          <Link href="/uwezo">
-            View Projects <GoArrowUpRight />{" "}
-          </Link>
-        </div>
-        {/* Contact Section End*/}
-
-        {/* Impacts */}
-        <div
-          // className={`w-full ${impacts === null || impacts?.length === 0 ? "hidden" : "flex items-center"}  bg-default-200 p-10 min-h-screen`}
-          hidden
-        >
-          {impacts === null || impacts?.length === 0 ? (
-            <div className={`w-full flex justify-center items-center`}>
-              <p></p>
-            </div>
-          ) : (
-            // <> {impacts?.length}</>
-            <div className={`w-full flex flex-col gap-8`}>
-              <h1 className=" text-5xl ">Recent Impacts</h1>
-              <div className={`w-full flex  gap-10`}>
-                {impacts?.flatMap((mp) => (
-                  <div
-                    key={mp?.impactId}
-                    className={`w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
-                  >
-                    <Image
-                      src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
-                    />
-                    <div className={`p-3 flex flex-col gap-3`}>
-                      <h1 className={`text-2xl`}>{mp?.title}</h1>
-                      <span className={`flex items-center gap-3`}>
-                        <FaUniversity className="text-blue-500" />
-                        <p className={`text-md`}>{mp?.schoolName}</p>
-                      </span>
-                      <span className={`flex items-center gap-3`}>
-                        <FaMapMarkedAlt className="text-green-500" />
-                        <p className={`text-md`}>{mp?.schoolRegion}</p>
-                      </span>
-
-                      <span className={`flex items-center gap-3`}>
-                        <FaPeopleGroup className="text-orange-500" />
-                        <p className={`text-md`}>{mp?.studentsTotal}</p>
-                      </span>
-
-                      <div className="p-1">
-                        <Button
-                          variant="light"
-                          color="primary"
-                          className="flex items-center"
-                          onClick={() => {
-                            toImpactDetail(mp);
-                          }}
-                        >
-                          View Impact <GoArrowUpRight size={20} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className={`w-full flex items-center justify-center`}>
-                <Link
-                  href={`impacts`}
-                  className="flex text-center rounded p-2 border border-transparent bg-primary text-default-100"
-                >
-                  View all impacts <GoArrowUpRight />{" "}
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-        {/* Impacts End */}
 
         {/* Collaborators */}
         <div

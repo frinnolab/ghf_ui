@@ -20,11 +20,12 @@ export default function DefaultLayout({
     <div className="w-full relative flex flex-col h-screen">
       <Navbar />
       {/* <main className="container mx-auto max-w-7xl px-0 flex-grow pt-16"> */}
-      <main className="w-full px-0 flex-grow pt-16 bg-default-50">{children}</main>
+      <main className="w-full px-0 flex-grow pt-16 bg-default-50">
+        {children}
+      </main>
       {/* FOOTER */}
 
       <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20">
-
         <div className="w-full flex flex-col-reverse md:flex-row gap-5 items-center justify-between">
           <Link
             className="flex justify-start items-center gap-1"
@@ -34,6 +35,7 @@ export default function DefaultLayout({
             {/* <Logo /> */}
 
             <Image
+              isZoomed
               alt="logo of ghf"
               src={config?.footerTexts?.footerImage}
               width={300}

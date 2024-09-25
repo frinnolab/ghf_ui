@@ -29,7 +29,6 @@ export default function UwezoPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
             const data: Project = {
               projectId: `${p?.projectId}`,
@@ -56,6 +55,7 @@ export default function UwezoPage() {
         });
     }
   }, [projects]);
+  
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center py-2 md:py-3">
