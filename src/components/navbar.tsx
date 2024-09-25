@@ -216,7 +216,7 @@ export const Navbar = () => {
           ))}
 
           <Divider />
-          <div>
+          <div className="flex flex-col gap-3">
             {currentProfile === null ? (
               <>
                 <Link color={"danger"} href={`/login`} size="lg">
@@ -228,6 +228,21 @@ export const Navbar = () => {
                 <Link color={"primary"} href={`/dashboard`} size="lg">
                   Dashboard
                 </Link>
+
+                <div>
+                  <Button
+                    className="text-sm font-normal text-default-600 bg-danger-300 border border-transparent hover:border-orange-500"
+                    variant="flat"
+                    onPress={() => {
+                      if (authed) {
+                        window.sessionStorage.clear();
+                        navigate("/login");
+                      }
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </div>
               </>
             )}
           </div>

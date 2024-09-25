@@ -274,7 +274,7 @@ export default function HomePage() {
         className="w-full flex flex-col items-center justify-center bg-default-50"
       >
         {/* Hero Section */}
-        <div className="h-[90dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
+        <div className="h-[40dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
           {/* Header Text */}
           <div
             ref={headerTextsRef}
@@ -302,7 +302,7 @@ export default function HomePage() {
         </div>
 
         {/* Who We're */}
-        <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-20 font-semibold cursor-default panel panel-intro absolute top-[50%] md:relative z-30">
+        <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-20 font-semibold cursor-default panel panel-intro md:relative z-30">
           <div className=" bg-default-200 rounded-2xl p-10 ">
             <h1 className="md:text-3xl text-2xl py-3">Who we are</h1>
 
@@ -380,7 +380,7 @@ export default function HomePage() {
         {/* Vision Section */}
         <div
           id="aboutInfo"
-          className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-5 md:p-10 bg-orange-500 h-screen panel"
+          className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-5 md:p-10 bg-orange-500 md:h-screen panel"
         >
           <div className="w-full flex flex-col  md:space-y-5">
             {/* Our vision */}
