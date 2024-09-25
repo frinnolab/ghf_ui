@@ -55,17 +55,17 @@ export default function UwezoPage() {
         });
     }
   }, [projects]);
-  
+
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center py-2 md:py-3">
-        <div className="h-screen w-full flex flex-col justify-center">
+      <section className="w-full flex flex-col items-center justify-center py-2 md:py-3">
+        <div className="sm:h-screen w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-10">
             <div className="w-full flex justify-between">
               <div></div>
 
-              <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70">
+              <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">
                   UWEZO PROJECTS
                 </h1>
@@ -83,23 +83,23 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col px-20  gap-5">
-          <h1 className=" text-3xl  font-semibold">OUR PROJECTS</h1>
+        <div className="w-full flex flex-col px-20  gap-5 relative pt-[50%] md:pt-[0%]">
+          <h1 className="text-2xl md:text-3xl  font-semibold">OUR PROJECTS</h1>
 
-          <div className="w-full flex flex-col gap-5">
+          <div className="w-full flex flex-col justify-center gap-5">
             {projects?.length === 0 ? (
               <>
                 <h1 className=" text-2xl ">No Projects at the momment</h1>
               </>
             ) : (
-              <div className="w-full flex flex-col gap-14">
+              <div className="w-full flex flex-col justify-center gap-10 md:gap-14">
                 {projects?.flatMap((p: Project, i) => (
                   <div
                     key={i}
-                    className="w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
+                    className="md:w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
                   >
                     <Image
-                      className={` w-screen h-[60dvh] object-cover`}
+                      className={` md:w-screen md:h-[60dvh] object-cover`}
                       src={
                         p?.thumbnailUrl !== "" || null
                           ? p?.thumbnailUrl
