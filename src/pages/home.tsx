@@ -10,7 +10,6 @@ import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
-import { useNavigate } from "react-router-dom";
 import { PartnerType } from "@/types";
 import {
   Donation,
@@ -34,7 +33,6 @@ export default function HomePage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
-  const navigate = useNavigate();
 
   const [isPartners, setIsPartners] = useState<boolean>(false);
   const [collabs, setCollabs] = useState<Partner[] | null>(null);
