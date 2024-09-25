@@ -43,14 +43,14 @@ export default function DocsPage() {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:p-10">
-        <div className="w-full flex flex-col items-center gap-5 min-h-[75dvh]">
+      <section className="flex flex-col items-center justify-center gap-4 p-5">
+        <div className="w-full flex flex-col items-center gap-5 md:p-10">
           <div className="inline-block max-w-lg text-center justify-center p-3">
             <h1 className={title()}>About Us</h1>
           </div>
           {/* Bio */}
-          <div className="bg-default-200 rounded-xl p-5 shadow">
-            <p className="text-2xl text-justify p-5">
+          <div className="bg-default-200 rounded-xl shadow">
+            <p className="text-2xl text-pretty md:text-justify p-5 md:py-20">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -79,7 +79,7 @@ export default function DocsPage() {
               </>
             ) : (
               <>
-                <div className={`p-5 w-full flex flex-wrap gap-5`}>
+                <div className={`p-5 w-full flex flex-col md:flex-row justify-center md:justify-start flex-wrap gap-5`}>
                   {members?.flatMap((m) => (
                     <TeamCard key={m?.teamId} member={m} />
                   ))}
@@ -97,7 +97,7 @@ export default function DocsPage() {
 function TeamCard({ member }: { member: TeamMember }) {
   return (
     <div
-      className={`flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end w-[30dvw]`}
+      className={`flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[30dvw]`}
     >
       <div>
         <Avatar
