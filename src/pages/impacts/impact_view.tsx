@@ -29,7 +29,6 @@ export default function ImpactView() {
       axios
         .get(`${api}/impacts/${impactId}`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
 
           const data: Impact = {
             impactId: `${res?.data["impactId"]}`,
@@ -100,7 +99,7 @@ export default function ImpactView() {
         <div className={`p-2`}>
           <Image
             radius="none"
-            className={`w-screen h-screen object-cover`}
+            className={`md:w-screen md:h-screen object-cover`}
             src={`${impact?.assetUrl !== "" || null ? impact?.assetUrl : siteConfig?.staticAssets?.staticLogo}`}
           />
         </div>
@@ -140,15 +139,15 @@ export default function ImpactView() {
 
           {/* Impact Assets */}
           <div
-            className={`w-full overflow-y-scroll h-[80dvh] p-3 scrollbar-hide`}
+            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-3 scrollbar-hide`}
           >
-            <h1 className="text-3xl">{impact?.title} assets</h1>
+            <h1 className="text-xl md:text-3xl">{impact?.title} assets</h1>
             {impactAssets === null || impactAssets?.length === 0 ? (
               <>
                 <p className=" text-center ">No Asset(s) for impact</p>
               </>
             ) : (
-              <div className={`w-full flex gap-5`}>
+              <div className={`w-full flex flex-col md:flex-row justify-center gap-5`}>
                 {impactAssets?.flatMap((d: ImpactAsset) => (
                   <div
                     key={d?.impactAssetId}

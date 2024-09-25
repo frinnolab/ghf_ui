@@ -30,7 +30,6 @@ const ImpactList = () => {
         .then((res: AxiosResponse) => {
           console.log(res.data);
           const data: Impact[] = Array.from(res?.data).flatMap((d: any) => {
-            console.log(d);
 
             const resData: Impact = {
               impactId: `${d?.impactId}`,
@@ -55,13 +54,13 @@ const ImpactList = () => {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <section className="flex flex-col items-center justify-center gap-4 md:py-5">
         <h1 className={title()}>Impacts</h1>
         {/* Impacts Content */}
         <div className="w-full flex flex-col px-20 gap-5 ">
           <h1 className=" text-2xl  font-semibold ">Community Impacts</h1>
 
-          <div className="w-full flex flex-col gap-5">
+          <div className="w-full flex flex-col justify-center gap-5">
             {impacts === null || impacts?.length === 0 ? (
               <>
                 <h1 className=" text-2xl text-center ">
@@ -69,11 +68,11 @@ const ImpactList = () => {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-wrap gap-10">
+              <div className="w-full flex flex-col md:flex-row md:flex-wrap justify-center md:justify-start gap-10">
                 {impacts?.flatMap((mp) => (
                   <div
                     key={mp?.impactId}
-                    className={`w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
+                    className={`md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
                   >
                     <Image
                       src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
