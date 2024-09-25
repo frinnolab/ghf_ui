@@ -45,7 +45,6 @@ export default function Publications() {
       axios
         .get(`${api}/publications`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const data: Publication[] = Array.from(res?.data).flatMap(
             (d: any) => {
               console.log(d);
@@ -71,16 +70,16 @@ export default function Publications() {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <section className="flex flex-col items-center justify-center gap-4 md:py-5">
         <h1 className={title()}>Publications</h1>
 
         {/* Content */}
         <div className="w-full flex flex-col px-10 gap-5 ">
           <h1 className=" text-2xl  font-semibold ">Newsletters & Reports</h1>
         </div>
-        <div className="w-full flex justify-between px-10">
+        <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
           {/* List */}
-          <div className="w-[80%] flex flex-col gap-5">
+          <div className="w-full md:w-[80%] flex flex-col gap-5">
             {pubs === null || pubs?.length === 0 ? (
               <>
                 <h1 className=" text-2xl text-center ">
@@ -88,11 +87,11 @@ export default function Publications() {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-wrap gap-10 ">
+              <div className="w-full flex flex-col md:flex-row md:flex-wrap justify-center md:justify-start gap-10">
                 {pubs?.flatMap((mp) => (
                   <div
                     key={mp?.publishId}
-                    className={`w-[30%] cursor-default flex flex-col rounded-2xl bg-default-200`}
+                    className={` md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-200`}
                   >
                     <div className={`p-3 flex flex-col gap-3`}>
                       <h1 className={`text-2xl`}>{mp?.title}</h1>
@@ -133,7 +132,7 @@ export default function Publications() {
           {/* List End */}
 
           {/* Side Bar */}
-          <div className="w-[20%] text-center p-3 rounded-xl bg-default-300">
+          <div className="md:w-[20%] text-center p-3 rounded-xl bg-default-300">
             <h1 className=" text-2xl text-center ">Summary</h1>
 
             <div className="flex flex-col gap-3 text-start">
