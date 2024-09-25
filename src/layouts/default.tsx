@@ -10,6 +10,7 @@ import {
   FaPhoneAlt,
 } from "react-icons/fa";
 import { FaSignsPost } from "react-icons/fa6";
+import { Image } from "@nextui-org/react";
 export default function DefaultLayout({
   children,
 }: {
@@ -22,8 +23,9 @@ export default function DefaultLayout({
       <main className="w-full px-0 flex-grow pt-16 bg-default-50">{children}</main>
       {/* FOOTER */}
 
-      <footer className="container flex flex-col gap-5  items-center justify-between p-3 md:pt-20">
-        <div className="w-full flex items-center justify-between">
+      <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20">
+
+        <div className="w-full flex flex-col-reverse md:flex-row gap-5 items-center justify-between">
           <Link
             className="flex justify-start items-center gap-1"
             color="foreground"
@@ -31,7 +33,7 @@ export default function DefaultLayout({
           >
             {/* <Logo /> */}
 
-            <img
+            <Image
               alt="logo of ghf"
               src={config?.footerTexts?.footerImage}
               width={300}
@@ -64,11 +66,12 @@ export default function DefaultLayout({
             </ul>
           </div>
         </div>
-        <div className="w-full flex">
+
+        <div className="w-full flex justify-center md:justify-start">
           <Link
             isExternal
             className="flex items-center gap-1 text-current"
-            href="#"
+            href="/"
           >
             <span className="text-default-600">Developed by</span>
             <p className="text-primary">PBM Technologies</p>

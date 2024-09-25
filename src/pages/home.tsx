@@ -111,7 +111,6 @@ export default function HomePage() {
     axios
       .get(`${api}/donations/types`)
       .then((res: AxiosResponse) => {
-        console.log(res?.data);
         data = Array.from(res?.data).flatMap((d: any) => {
           const dType: DonationType = {
             title: d?.title,
@@ -127,14 +126,12 @@ export default function HomePage() {
         return null;
       });
   };
+
   const fetchCurrencyTypes = () => {
     let data: DonationCurrencyType[] = [];
     axios
       .get(`${api}/donations/currencies`)
       .then((res: AxiosResponse) => {
-        console.log("currencies");
-        console.log(res?.data);
-
         data = Array.from(res?.data).flatMap((d: any) => {
           const dType: DonationCurrencyType = {
             title: d?.title,
@@ -157,8 +154,6 @@ export default function HomePage() {
       axios
         .get(`${api}/settings/summaryinfo`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
-
           setSummarInfo(() => {
             return {
               regions: {
@@ -183,8 +178,6 @@ export default function HomePage() {
               },
             };
           });
-
-          //setSummaries(res?.data);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -199,8 +192,6 @@ export default function HomePage() {
         .then((res: AxiosResponse) => {
           console.log(res.data);
           const data: Impact[] = Array.from(res?.data).flatMap((d: any) => {
-            console.log(d);
-
             const resData: Impact = {
               impactId: `${d?.impactId}`,
               assetUrl: d?.assetUrl ?? null,
@@ -228,7 +219,6 @@ export default function HomePage() {
       axios
         .get(`${api}/partners`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
           setIsPartners(true);
 
           //donors & Partners
@@ -290,13 +280,13 @@ export default function HomePage() {
         className="w-full flex flex-col items-center justify-center bg-default-50"
       >
         {/* Hero Section */}
-        <div className="h-screen w-full flex flex-col justify-center panel panel-main">
+        <div className="h-[90dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
           {/* Header Text */}
           <div
             ref={headerTextsRef}
-            className="w-full flex flex-col items-center gap-5 top-[85%] z-30 absolute p-10"
+            className=" flex flex-col items-center gap-5 md:top-[85%] top-[15%] z-30 absolute p-10"
           >
-            <div className="flex items-center gap-1 text-center text-xl font-semibold p-5 shadow-md rounded-xl bg-default-50/50">
+            <div className="w-full flex flex-col md:flex-row items-center gap-1 text-center lg:text-xl  font-semibold p-5 shadow-md rounded-xl bg-default-50/50">
               <h1>WE LIVE TO EMPOWER,</h1>
               <h1>DEVELOP</h1>
               <h1>AND INSPIRE YOUNG GENERATION</h1>
@@ -306,7 +296,7 @@ export default function HomePage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute">
+          <div className="w-full absolute md:top-[-1%] top-16">
             <Image
               radius="none"
               alt="Header img"
@@ -314,14 +304,15 @@ export default function HomePage() {
             />
             {/* <img alt="Header img" src="/assets/images/UCT_024_86_2.jpg" /> */}
           </div>
+
         </div>
 
         {/* Who We're */}
-        <motion.div className="w-full flex flex-col space-y-10 px-20 font-semibold cursor-default z-50 panel panel-intro">
+        <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-20 font-semibold cursor-default panel panel-intro absolute top-[50%] md:relative z-30">
           <div className=" bg-default-200 rounded-2xl p-10 ">
-            <h1 className="text-3xl py-3">Who we are</h1>
+            <h1 className="md:text-3xl text-2xl py-3">Who we are</h1>
 
-            <p className="text-xl text-justify">
+            <p className="md:text-xl text-justify">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -342,16 +333,16 @@ export default function HomePage() {
               What we do <GoArrowUpRight />{" "}
             </Link>
           </div>
-        </motion.div>
+        </div>
         {/* Who We're End */}
 
         {/* Data Summary Section */}
         <div
           id="infoStats"
-          className="w-full  flex flex-col justify-center items-center p-5 cursor-default panel panel-sum"
+          className="w-full md:h-screen  flex flex-col gap-5 md:gap-0 justify-center items-center p-5 md:p-0 cursor-default panel panel-sum"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
-          <div className="w-full flex  justify-between gap-10 p-10">
+          <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
             {/* Regions */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaMapMarkedAlt className="text-green-500" size={30} />
@@ -371,7 +362,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="w-full flex  justify-between gap-10 p-10">
+          <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
             {/* Schools */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaUniversity className="text-blue-500" size={30} />
@@ -388,18 +379,21 @@ export default function HomePage() {
               <h1 className=" text-2xl ">Students Impacted</h1>
             </div>
           </div>
+
         </div>
         {/* Data Summary Section End*/}
 
         {/* Vision Section */}
         <div
           id="aboutInfo"
-          className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-10 bg-orange-500 h-screen panel"
+          className="w-full flex flex-col md:flex-row gap-5 justify-between items-center p-5 md:p-10 bg-orange-500 h-screen panel"
         >
-          <div className="flex flex-col w-full space-y-5">
+          <div className="w-full flex flex-col  md:space-y-5">
             {/* Our vision */}
-            <div className="w-full flex flex-col space-y-5">
-              <h1 className="text-5xl py-5 font-semibold">Our vision</h1>
+            <div className="w-full flex flex-col md:space-y-5">
+              <h1 className="text-3xl md:text-5xl py-3 md:py-5 font-semibold">
+                Our vision
+              </h1>
 
               <p className="text-xl text-balance">
                 Great Hope Foundation envisions to build an empowered, developed
@@ -414,7 +408,9 @@ export default function HomePage() {
 
             {/* Our Mission */}
             <div className="w-full flex flex-col space-y-5">
-              <h1 className="text-5xl py-5 font-semibold">Our Mission</h1>
+              <h1 className="text-3xl md:text-5xl py-3 md:py-5 font-semibold">
+                Our Mission
+              </h1>
 
               <p className="text-xl text-balance">
                 Great Hope Foundation mission is to develop and implement
@@ -455,17 +451,15 @@ export default function HomePage() {
         <div
           className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
         >
-          <h1 className=" text-5xl ">Our Partners & Donors</h1>
+          <h1 className=" text-3xl md:text-5xl ">Our Partners & Donors</h1>
 
-          <div className="w-full flex justify-between items-center gap-5 p-5">
+          <div className="w-full flex flex-col md:flex-row justify-between items-center gap-5 p-5">
             {partners?.map((p: Partner, i) => (
-              <div key={i} className=" p-10 rounded-2xl text-center ">
+              <div key={i} className=" p-5 md:p-10 rounded-2xl text-center ">
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
-                  width={200}
-                  height={200}
-                  className={``}
+                  className={`h-[100px] w-[100px] md:h-[150px] md:w-[auto]`}
                   src={`${p?.logo}`}
                 />
               </div>
@@ -566,21 +560,19 @@ export default function HomePage() {
           className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
-            <h1 className=" text-5xl ">Collaborators Since 2016</h1>
-            <p className=" text-2xl text-default-500 ">
+            <h1 className="text-3xl md:text-5xl ">Collaborators Since 2016</h1>
+            <p className="md:text-2xl text-default-500 ">
               Happy to have worked with these organization since 2016
             </p>
           </div>
 
-          <div className="w-full flex justify-between items-center gap-5 p-5">
+          <div className="w-full flex flex-col md:flex-row justify-between items-center gap-3 md:gap-5 p-5">
             {collabs?.map((p: Partner, i) => (
-              <div key={i} className=" p-10 rounded-2xl text-center ">
+              <div key={i} className="p-5 md:p-10 rounded-2xl text-center ">
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
-                  width={200}
-                  height={200}
-                  className={``}
+                  className={`h-[100px] w-[100px] md:h-[150px] md:w-[150px]`}
                   src={`${p?.logo}`}
                 />
               </div>
@@ -591,11 +583,11 @@ export default function HomePage() {
 
         {/* Donations */}
         <div
-          className={`${"bg-default-200 w-full flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+          className={`${"w-full h-screen md:h-[auto] bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
-            <h1 className=" text-5xl ">Donations</h1>
-            <p className=" text-2xl text-default-500 ">
+            <h1 className="text-3xl  md:text-5xl ">Donations</h1>
+            <p className="text-xl md:text-2xl text-default-500 ">
               To pledge donation, please fill in the form.
             </p>
           </div>

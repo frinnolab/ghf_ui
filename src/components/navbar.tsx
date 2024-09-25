@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Avatar,
+  Image,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
@@ -37,8 +38,6 @@ export const Navbar = () => {
   const currentRoute = useLocation();
 
   useEffect(() => {
-    console.log(authed);
-
     if (currentProfile === null && authed?.profileId) {
       axios
         .get(`${api}/profiles/${authed?.profileId}`, {
@@ -48,8 +47,6 @@ export const Navbar = () => {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
-
           const data: Profile = {
             profileId: res.data?.profileId,
             firstname: res.data?.firstname ?? "",
@@ -70,6 +67,8 @@ export const Navbar = () => {
         return "Admin";
       case AuthRole.SuperAdmin:
         return "Super Admin";
+      case AuthRole.Alumni:
+        return "Alumni";
       default:
         return "User";
     }
@@ -77,7 +76,9 @@ export const Navbar = () => {
 
   return (
     <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
+      
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+
         <NavbarBrand className="gap-3 max-w-fit">
           <Link
             className="flex justify-start items-center gap-1"
@@ -86,7 +87,8 @@ export const Navbar = () => {
           >
             {/* <Logo /> */}
 
-            <img
+            <Image
+              isZoomed
               alt="logo of ghf"
               src="/assets/logos/GHF_LOGO.png"
               width={150}
@@ -97,6 +99,7 @@ export const Navbar = () => {
             {/* <p className="font-bold text-inherit">ACME</p> */}
           </Link>
         </NavbarBrand>
+
         <div className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
@@ -122,6 +125,7 @@ export const Navbar = () => {
         <NavbarItem>
           <ThemeSwitch />
         </NavbarItem>
+
         <NavbarItem className="flex gap-5">
           {authed?.profileId ? (
             <>
@@ -186,6 +190,7 @@ export const Navbar = () => {
             </>
           )}
         </NavbarItem>
+
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
