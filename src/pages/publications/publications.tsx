@@ -77,6 +77,7 @@ export default function Publications() {
         <div className="w-full flex flex-col px-10 gap-5 ">
           <h1 className=" text-2xl  font-semibold ">Newsletters & Reports</h1>
         </div>
+        
         <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
           {/* List */}
           <div className="w-full md:w-[80%] flex flex-col gap-5">

@@ -52,17 +52,17 @@ export default function BlogPage() {
   }, [blogs]);
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10 min-h-[50vh]">
+      <section className="flex flex-col items-center justify-center gap-2 md:py-5">
         <div className="inline-block max-w-lg text-center justify-center">
           <h1 className={title()}>Blogs</h1>
         </div>
 
-        <div className="w-full flex flex-col px-20 gap-5 ">
-          <h1 className=" text-2xl  font-semibold ">Blog News</h1>
+        <div className="w-full flex flex-col p-20 gap-5 ">
+          <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}
 
-          <div className="w-full flex flex-col gap-5">
+          <div className="w-full flex flex-col justify-center gap-5">
             {blogs?.length === 0 ? (
               <>
                 <h1 className=" text-2xl text-center ">
@@ -70,11 +70,11 @@ export default function BlogPage() {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-wrap gap-10 ">
+              <div className="w-full flex flex-wrap gap-5 md:gap-10">
                 {blogs?.flatMap((b: Blog) => (
                   <div
                     key={b?.blogId}
-                    className="w-[30%] flex flex-col justify-between border rounded-2xl "
+                    className="md:w-[30%] flex flex-col justify-between shadow bg-default-100 rounded-2xl "
                   >
                     <div className="w-full">
                       <Image

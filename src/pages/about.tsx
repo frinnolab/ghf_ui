@@ -16,7 +16,6 @@ export default function DocsPage() {
       axios
         .get(`${api}/teams/members/main`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
 
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {

@@ -101,7 +101,6 @@ export default function AlumniList() {
         .then((res: AxiosResponse) => {
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
-            console.log(d);
 
             const data: Profile = {
               profileId: d?.alumniProfile?.profileId,
@@ -136,9 +135,10 @@ export default function AlumniList() {
         });
     }
   }, [alumnis, isAlumni]);
+
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <section className="flex flex-col items-center justify-center gap-4 md:py-5">
         <h1 className={title()}>Alumni</h1>
 
         <div className="w-full flex flex-col px-20 gap-5 ">
@@ -155,11 +155,11 @@ export default function AlumniList() {
                 </h1>
               </div>
             ) : (
-              <div className="w-full flex flex-wrap gap-10">
+              <div className="w-full flex flex-col md:flex-row flex-wrap gap-10">
                 {alumnis?.flatMap((d) => (
                   <div
                     key={d?.alumniId}
-                    className={`flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end w-[25%]`}
+                    className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[25%]`}
                   >
                     <div>
                       <Avatar
@@ -228,11 +228,11 @@ export default function AlumniList() {
 
           {/* Registration */}
           <div
-            className={`${" rounded-2xl bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
+            className={`${" md:rounded-2xl md:bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
           >
             <h1 className=" text-2xl ">Register as Alumni here.</h1>
 
-            <div className=" shadow rounded-2xl bg-default-50 p-3 ">
+            <div className=" md:shadow md:rounded-2xl bg-default-50 p-3 ">
               
               <form
                 onSubmit={handleSubmit(onAlumniSubmit)}
@@ -377,7 +377,7 @@ export default function AlumniList() {
                     placeholder={`${alumni?.story ?? "Enter Brief story"}`}
                   />
 
-                  <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/>
+                  {/* <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/> */}
                 
                 </div>
 
