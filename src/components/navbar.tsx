@@ -22,6 +22,7 @@ import {
   DropdownItem,
   Avatar,
   Image,
+  Divider,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
@@ -76,9 +77,7 @@ export const Navbar = () => {
 
   return (
     <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
-      
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-
         <NavbarBrand className="gap-3 max-w-fit">
           <Link
             className="flex justify-start items-center gap-1"
@@ -190,7 +189,6 @@ export const Navbar = () => {
             </>
           )}
         </NavbarItem>
-
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
@@ -216,6 +214,23 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
+
+          <Divider />
+          <div>
+            {currentProfile === null ? (
+              <>
+                <Link color={"danger"} href={`/login`} size="lg">
+                  Login
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link color={"primary"} href={`/dashboard`} size="lg">
+                  Dashboard
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </NavbarMenu>
     </NextUINavbar>
