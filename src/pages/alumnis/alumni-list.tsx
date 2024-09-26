@@ -9,8 +9,6 @@ import { GoArrowUpRight, GoPersonFill, GoTrash } from "react-icons/go";
 import { AuthRole } from "@/types";
 import { Profile } from "../dashboard/profiles/dash-profiles-list";
 import { SubmitHandler, useForm } from "react-hook-form";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 
 export default function AlumniList() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -18,7 +16,6 @@ export default function AlumniList() {
   const navigate = useNavigate();
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [alumni] = useState<Alumni>();
-  const [quillValue, setQuillValue] = useState('');
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
   const {
     register,
