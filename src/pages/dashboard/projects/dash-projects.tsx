@@ -12,7 +12,7 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
@@ -128,9 +128,24 @@ export default function DashProjectsListPage() {
         handleSelectedRow(p);
         break;
       case actionTypes[2]:
-        alert(`Delete ${p.title}`);
+        handleDelete(p);
         break;
     }
+  };
+
+  const handleDelete = (i: Project) => {
+    axios
+      .delete(`${api}/projects/${i?.projectId}`, {
+        method: "DELETE",
+      })
+      .then((res: AxiosResponse) => {
+        if (res?.data) {
+          window.location.reload();
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+      });
   };
 
   return (

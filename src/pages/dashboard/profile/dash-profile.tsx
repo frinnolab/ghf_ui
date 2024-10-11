@@ -8,10 +8,15 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { AuthRole } from "@/types";
 import { GoTrash } from "react-icons/go";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 
 export default function DashProfilePage() {
   const api = `${import.meta.env.VITE_API_URL}`;
+  const route = useLocation();
   const authed = useAuthedProfile();
+  const [profileId] = useState<string | null>(()=>{
+    return route ? `${route?.state}` : null
+  });
   const [profile, setProfile] = useState<Profile | null>(null);
   const passRef = useRef<HTMLInputElement>(null);
   const coPassRef = useRef<HTMLInputElement>(null);
@@ -56,7 +61,7 @@ export default function DashProfilePage() {
           }, 2000);
         });
     }
-  }, [profile]);
+  }, [profile, profileId]);
 
   const roleName = (role: number) => {
     switch (role) {

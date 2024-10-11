@@ -14,8 +14,9 @@ import {
 import { useEffect, useState } from "react";
 import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
 import useAuthedProfile from "@/hooks/use-auth";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { AuthRole } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 export type Profile = {
   profileId?: string;
@@ -35,21 +36,25 @@ export default function DashProfilesListPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const nav = useNavigate();
+
 
   const handleSelectedRow = (p: Profile) => {
-    console.log(p);
+    nav(`/dashboard/profiles/${p?.profileId}`, {
+      state: p?.profileId,
+    });
   };
 
   const handleAction = (p: Profile, action: string) => {
     switch (action) {
       case actionTypes[0]:
-        alert(`Detail ${p.email}`);
+        handleSelectedRow(p);
         break;
       case actionTypes[1]:
-        alert(`Edit ${p.email}`);
+        handleSelectedRow(p);
         break;
       case actionTypes[2]:
-        alert(`Delete ${p.email}`);
+        handleDelete(p);
         break;
     }
   };
@@ -102,6 +107,23 @@ export default function DashProfilesListPage() {
         }, 2000);
       });
   }, [api]);
+
+
+  const handleDelete = (i: Profile) => {
+    axios
+      .delete(`${api}/profiles/${i?.profileId}`, {
+        method: "DELETE",
+      })
+      .then((res: AxiosResponse) => {
+        if (res?.data) {
+          window.location.reload();
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+      });
+  };
+  
 
   return (
     <DashboardLayout>

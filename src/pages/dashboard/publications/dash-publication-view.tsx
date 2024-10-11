@@ -17,9 +17,17 @@ import {
   Switch,
   Textarea,
 } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoFile, GoPencil, GoTrash } from "react-icons/go";
+import {
+  GoArrowLeft,
+  GoDownload,
+  GoEye,
+  GoFile,
+  GoPencil,
+  GoTrash,
+} from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+//var fileDownload = require('js-file-download');
 export default function DashPublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -45,6 +53,10 @@ export default function DashPublicationsView() {
       {
         key: PublishTypeEnum.Newsletter,
         value: "Newsletter",
+      },
+      {
+        key: PublishTypeEnum["Student Manual"],
+        value: "Student Manual",
       },
     ];
   });
@@ -239,33 +251,32 @@ export default function DashPublicationsView() {
     }
   };
 
-  // const downloadPubAsset = (assetId: string) => {
-  //   if (!isEdit) {
-  //     console.log("Enable Edit mode to download Asset(S)");
-  //   } else {
-  //     axios
-  //       .get(`${api}/publications/assets/${assetId}`, {
-  //         headers: {
-  //           Accept: "application/json",
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${authed?.token}`,
-  //         },
-  //       })
-  //       .then((res: AxiosResponse) => {
-  //         if (res) {
+  const downloadPubAsset = (assetId: string) => {
+    if (!isEdit) {
+      alert("Enable Edit mode to download Asset(S)");
+    } else {
+      axios
+        .get(`${api}/publications/assets/${assetId}`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+          responseType: "document",
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            console.log(res?.data);
 
-  //           console.log(res?.data);
-            
-  //           //window.location.reload();
-  //         }
-  //       })
-  //       .catch((err: AxiosError) => {
-  //         console.log(err.response);
+            //fileDownload(res?.data, '');
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
 
-  //         window.location.reload();
-  //       });
-  //   }
-  // };
+          window.location.reload();
+        });
+    }
+  };
 
   useEffect(() => {
     if (!publication) {
@@ -514,14 +525,14 @@ export default function DashPublicationsView() {
                       <h1>{d?.title}</h1>
 
                       <div className="flex justify-between items-center">
-                        <span   className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">
-                          {/* <GoDownload
+                        <span className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                          <GoDownload
                             size={20}
                             className=" text-primary-500"
                             onClick={() => {
                               downloadPubAsset(`${d?.assetId}`);
                             }}
-                          /> */}
+                          />
                         </span>
 
                         <span className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">

@@ -41,6 +41,7 @@ import AlumniList from "./pages/alumnis/alumni-list";
 import AlumniView from "./pages/alumnis/alumni-view";
 import DashAlumniList from "./pages/dashboard/alumnis/dash-alumni-list";
 import DashAlumniView from "./pages/dashboard/alumnis/dash-alumni-view";
+import DashboardProfilePage from "./pages/dashboard/profiles/dash-profile-view";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
       <Route element={<DashSummaryPage />} path="/dashboard" />
       {/* <Route element={<DashProgramsListPage />} path="/dashboard/programs"/> */}
       <Route element={<DashProfilesListPage />} path="/dashboard/profiles" />
+      <Route element={<DashboardProfilePage />} path="/dashboard/profiles/:id" />
       <Route element={<DashImpactsListPage />} path="/dashboard/impacts" />
       <Route element={<DashImpactView />} path="/dashboard/impacts/create" />
       <Route element={<DashImpactView />} path="/dashboard/impacts/:id" />

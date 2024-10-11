@@ -35,7 +35,7 @@ export default function DocsPage() {
           setHasMembers(true);
         })
         .catch((err: AxiosError) => {
-          console.log(err.response);
+          //console.log(err.response);
           setHasMembers(false);
         });
     }

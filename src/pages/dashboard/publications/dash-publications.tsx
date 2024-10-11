@@ -39,7 +39,6 @@ export default function DashPublications() {
         handleSelectedRow(p);
         break;
       case actionTypes[2]:
-        alert(`Delete ${p.title}`);
         handleDelete(p);
         break;
     }
@@ -64,8 +63,10 @@ export default function DashPublications() {
     switch (pubType) {
       case PublishTypeEnum.Report:
         return "Report";
-      default:
-        return "Newsltter";
+      case PublishTypeEnum.Newsletter:
+        return "Newsletter";
+      case PublishTypeEnum["Student Manual"]:
+        return "Student Manual";
     }
   };
 
@@ -76,11 +77,8 @@ export default function DashPublications() {
       axios
         .get(`${api}/publications`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const data: Publication[] = Array.from(res?.data).flatMap(
             (d: any) => {
-              console.log(d);
-
               const resData: Publication = {
                 publishId: `${d?.publishId}`,
                 title: d?.title,
@@ -214,5 +212,6 @@ export type PublicationAsset = {
 
 export enum PublishTypeEnum {
   Report = 0,
-  Newsletter,
+  Newsletter = 1,
+  "Student Manual" = 2,
 }

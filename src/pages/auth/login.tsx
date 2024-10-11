@@ -12,6 +12,16 @@ type loginRequest = {
   password?: string;
 };
 
+export type ResponseInfo = {
+  message?:string; 
+  status?:string;
+  delay?:number;
+}
+
+export type ErrorInfo = {
+  message?:string; 
+}
+
 export type loginResponse = {
   profileId?: string;
   email?: string;
@@ -22,6 +32,8 @@ export default function LoginPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
   const [, setResData] = useState<loginResponse | null>(null);
+  const [responseInfo, setResponseInfo] = useState<ResponseInfo|null>(null);
+  const [errorInfo, setErrorInfo] = useState<ErrorInfo|null>(null);
   const storage = window.sessionStorage;
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -50,7 +62,6 @@ export default function LoginPage() {
       password: passRef?.current?.value,
     };
 
-    console.log(data);
 
     axios
       .post(`${api}/auth/login`, data, {
