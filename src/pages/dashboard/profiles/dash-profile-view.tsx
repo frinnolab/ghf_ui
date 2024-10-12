@@ -55,6 +55,7 @@ const nav = useNavigate();
             email: res.data?.email ?? "",
             role: Number(res.data.roleType) ?? AuthRole.User,
             avatarUrl: res.data?.avatarUrl ?? "",
+            mobile: res.data?.mobile ?? "",
             position: res.data?.position ?? "",
           };
           setProfile(data);

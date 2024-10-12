@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
 import useAuthedProfile from "@/hooks/use-auth";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import { AuthRole } from "@/types";
 import { useNavigate } from "react-router-dom";
 
@@ -110,18 +110,34 @@ export default function DashProfilesListPage() {
 
 
   const handleDelete = (i: Profile) => {
-    axios
-      .delete(`${api}/profiles/${i?.profileId}`, {
-        method: "DELETE",
-      })
-      .then((res: AxiosResponse) => {
-        if (res?.data) {
-          window.location.reload();
+
+    if(i?.profileId === authed?.profileId){
+      alert(`Can't delete current user!.`);
+    }else{
+
+      if(Number(authed?.role) === Number(AuthRole?.SuperAdmin)){
+
+        if( Number(i?.role)  === Number(AuthRole?.SuperAdmin) ){
+          alert(`Can't delete current user!.`);
+        }else{
+          axios
+            .delete(`${api}/profiles/${i?.profileId}`, {
+              method: "DELETE",
+            })
+            .then((res: AxiosResponse) => {
+              if (res?.data) {
+                window.location.reload();
+              }
+            })
+            .catch((err: AxiosError) => {
+              console.log(err);
+            });
         }
-      })
-      .catch((err: AxiosError) => {
-        console.log(err);
-      });
+      }else{
+        alert(`No Permission to delete.`);
+      }
+      
+    }
   };
   
 
