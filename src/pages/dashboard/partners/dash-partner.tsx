@@ -53,13 +53,12 @@ export default function DashboardPartnerPage() {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<PartnerTypes>();
+  const [currentPartner, setCurrentPartner] = useState<string>('Partner');
 
   //Form State
   const { register, handleSubmit } = useForm<Partner>();
 
   const onFormSubmit: SubmitHandler<Partner> = (d) => {
-    console.log(d);
-
     if (partner === null) {
       handleSave(d);
     } else {
@@ -121,11 +120,6 @@ export default function DashboardPartnerPage() {
       if (selectedImage) {
         data.append("image", selectedImage);
       }
-
-      data.forEach((d) => {
-        console.log(d);
-      });
-
       axios
         .post(`${api}/partners`, data, {
           headers: {
@@ -134,9 +128,10 @@ export default function DashboardPartnerPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          //setSelectedImage(null);
-          console.log(res.data);
-          nav("/dashboard/partners");
+          if(res?.data){
+            setSelectedImage(null);
+            nav("/dashboard/partners");
+          }
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -168,7 +163,7 @@ export default function DashboardPartnerPage() {
         `${selectedStatus?.key === undefined ? partnersListTypes[0].key : selectedStatus?.key}`
       );
 
-      if (selectedImage) {
+      if (selectedImage !== null) {
         data.append("image", selectedImage);
       }
 
@@ -208,7 +203,6 @@ export default function DashboardPartnerPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const data: Partner = {
             partnerId: `${res.data["partnerId"]}`,
             name: `${res.data["name"] ?? ""}`,
@@ -227,6 +221,9 @@ export default function DashboardPartnerPage() {
           )[0];
 
           setSelectedStatus(pType);
+          setSelectedImage(null);
+
+          setCurrentPartner(`${pType?.value ?? ''}`);
         });
     }
   }, [partnerId]);
@@ -242,7 +239,7 @@ export default function DashboardPartnerPage() {
         >
           <GoArrowLeft size={20} />
         </Button>
-        <h1 className=" text-2xl ">{`${route?.state === null ? "Create" : ` ${isEdit ? " Edit" : "View"} Partner`}`}</h1>
+        <h1 className=" text-2xl ">{`${route?.state === null ? "Create" : ` ${isEdit ? " Edit" : "View"} ${currentPartner}`}`}</h1>
       </div>
       <Divider />
 
@@ -301,7 +298,7 @@ export default function DashboardPartnerPage() {
                 <label htmlFor="pType">Select Partner Type</label>
 
                 <Select
-                  disabled={!isEdit ? true : false}
+                  isDisabled={!isEdit ? true : false}
                   label={`Selected: ${typeName(Number(selectedStatus?.key))}`}
                   selectedKeys={`${selectedStatus?.key ?? partnersListTypes[0].key}`}
                   className="max-w-xs"
@@ -335,15 +332,8 @@ export default function DashboardPartnerPage() {
             <div className="w-full space-y-3">
               <Button
                 color="primary"
-                disabled={!isEdit ? true : false}
+                isDisabled={!isEdit ? true : false}
                 type="submit"
-                // onClick={() => {
-                //   if (partner == null) {
-                //     handleSave();
-                //   } else {
-                //     handleUpdate();
-                //   }
-                // }}
               >
                 {partnerId === null ? "Save" : "Update"}
               </Button>

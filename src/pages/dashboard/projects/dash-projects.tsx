@@ -126,7 +126,7 @@ export default function DashProjectsListPage() {
       case actionTypes[1]:
         handleSelectedRow(p);
         break;
-        case actionTypes[2]:
+      case actionTypes[2]:
         //alert(`Delete ${p.title}`);
         handleDelete(p);
         break;
