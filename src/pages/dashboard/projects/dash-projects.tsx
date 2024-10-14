@@ -124,10 +124,10 @@ export default function DashProjectsListPage() {
         handleSelectedRow(p);
         break;
       case actionTypes[1]:
-        //alert(`Edit ${p.title}`);
         handleSelectedRow(p);
         break;
-      case actionTypes[2]:
+        case actionTypes[2]:
+        //alert(`Delete ${p.title}`);
         handleDelete(p);
         break;
     }
@@ -136,6 +136,11 @@ export default function DashProjectsListPage() {
   const handleDelete = (i: Project) => {
     axios
       .delete(`${api}/projects/${i?.projectId}`, {
+        headers:{
+          Authorization:`Bearer ${authed?.token}`,
+          "Content-Type":'application/json',
+          Accept:'application/json'
+        },
         method: "DELETE",
       })
       .then((res: AxiosResponse) => {

@@ -19,7 +19,7 @@ export type SummaryInfo = {
 export default function DashSummaryPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(true);
 
   useEffect(() => {
     if (summaryInfo === null) {

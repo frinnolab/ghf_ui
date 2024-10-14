@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { GoEye, GoPencil, GoPlus, GoTrash } from "react-icons/go";
 import useAuthedProfile from "@/hooks/use-auth";
-import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { AuthRole } from "@/types";
 import { useNavigate } from "react-router-dom";
 
