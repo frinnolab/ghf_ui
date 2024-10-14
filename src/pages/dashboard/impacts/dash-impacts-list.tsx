@@ -58,7 +58,7 @@ const DashImpactsListPage = () => {
         handleSelectedRow(p);
         break;
       case actionTypes[2]:
-        alert(`Delete ${p.title}`);
+        setIsloading(true);
         handleDelete(p);
         break;
     }

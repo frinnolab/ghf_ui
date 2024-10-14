@@ -59,8 +59,6 @@ export default function DashImpactView() {
           Number(studentBoysRef?.current?.value)
       );
 
-      console.log(data);
-
       axios
         .post(`${api}/impacts`, data, {
           headers: {
@@ -70,11 +68,9 @@ export default function DashImpactView() {
           },
         })
         .then((res: AxiosResponse) => {
-          //setSelectedImage(null);
-          console.log(res);
-
-          setIsEdit(false);
-          nav(`/dashboard/impacts`);
+          if(res?.data){
+            nav(`/dashboard/impacts`);
+          }
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
