@@ -9,7 +9,7 @@ import {
   FaMapPin,
   FaPhoneAlt,
 } from "react-icons/fa";
-import { FaSignsPost } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaLinkedinIn, FaSignsPost, FaTwitter } from "react-icons/fa6";
 import { Image } from "@nextui-org/react";
 export default function DefaultLayout({
   children,
@@ -37,11 +37,41 @@ export default function DefaultLayout({
             <Image
               isZoomed
               alt="logo of ghf"
-              src={config?.footerTexts?.footerImage}
+              src={config?.staticAssets?.staticLogoLine}
               width={300}
             />
           </Link>
-          <div className="flex flex-col space-y-5"></div>
+
+          {/* Socials */}
+
+          <div className="flex flex-col space-y-10">
+            <h1 className=" text-2xl ">Connect with us</h1>
+
+            <ul className="space-y-3 text-lg">
+              <li className="flex items-center gap-5">
+                <a href={`${config?.socialLinks?.twitterX?.link}`} className="flex items-center gap-5">
+                  <FaTwitter /> {config?.socialLinks?.twitterX?.name}
+                </a>
+              </li>
+              <li className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.facebook?.link}`} className="flex items-center gap-5">
+                  <FaFacebook /> {config?.socialLinks?.facebook?.name}
+                </a>
+              </li>
+              <li className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.instagram?.link}`} className="flex items-center gap-5">
+                  <FaInstagram /> {config?.socialLinks?.instagram?.name}
+                </a>
+              </li>
+              <li className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.linkedin?.link}`} className="flex items-center gap-5">
+                  <FaLinkedinIn /> {config?.socialLinks?.linkedin?.name}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
 
           <div className="flex flex-col space-y-10">
             <h1 className=" text-2xl ">Get Intouch with us</h1>
@@ -67,6 +97,8 @@ export default function DefaultLayout({
               </li>
             </ul>
           </div>
+
+          {/* Contact End */}
         </div>
 
         <div className="w-full flex justify-center md:justify-start">

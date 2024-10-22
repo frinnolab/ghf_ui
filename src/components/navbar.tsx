@@ -89,7 +89,7 @@ export const Navbar = () => {
             <Image
               isZoomed
               alt="logo of ghf"
-              src="/assets/logos/GHF_LOGO.png"
+              src={`${siteConfig?.staticAssets?.staticLogoLine}`}
               width={150}
             />
 

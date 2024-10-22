@@ -16,7 +16,6 @@ export default function DocsPage() {
       axios
         .get(`${api}/teams/members/main`)
         .then((res: AxiosResponse) => {
-
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: TeamMember = {
@@ -35,7 +34,7 @@ export default function DocsPage() {
           setHasMembers(true);
         })
         .catch((err: AxiosError) => {
-          //console.log(err.response);
+          console.log(err.response);
           setHasMembers(false);
         });
     }
@@ -43,14 +42,14 @@ export default function DocsPage() {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 p-5">
-        <div className="w-full flex flex-col items-center gap-5 md:p-10">
+      <section className="flex flex-col items-center justify-center gap-4 cursor-default">
+        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[85dvh]">
           <div className="inline-block max-w-lg text-center justify-center p-3">
             <h1 className={title()}>About Us</h1>
           </div>
           {/* Bio */}
-          <div className="bg-default-200 rounded-xl shadow">
-            <p className="text-2xl text-pretty md:text-justify p-5 md:py-20">
+          <div className="rounded-2xl">
+            <p className=" text-2xl md:text-3xl text-pretty md:text-justify p-5 md:py-10">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -66,6 +65,46 @@ export default function DocsPage() {
 
         <Divider />
 
+        {/* Vision Section */}
+        <div
+          id="aboutInfo"
+          className="w-full md:min-h-[85dvh] flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 panel"
+        >
+          <div className="w-full flex flex-col justify-center items-center  md:space-y-5">
+            {/* Our vision */}
+            <div className="w-full flex flex-col md:space-y-3">
+              <h1 className="text-4xl md:text-6xl py-3 md:py-5 font-semibold">
+                Our vision
+              </h1>
+
+              <p className="text-2xl text-balance">
+                Great Hope Foundation envisions to build an empowered, developed
+                and responsible young generation that contribute significantly
+                to the social, economic and political development of the
+                continent. We believe youth have tremendous power to bring
+                positive change in the community once, appropriate platforms
+                have been developed for them to understand their potential and
+                bring the best out of it.
+              </p>
+            </div>
+
+            {/* Our Mission */}
+            <div className="w-full flex flex-col space-y-3">
+              <h1 className="text-4xl md:text-6xl py-3 md:py-5 font-semibold">
+                Our Mission
+              </h1>
+
+              <p className="text-2xl text-balance">
+                Great Hope Foundation mission is to develop and implement
+                programs innovatively, that assist young people to acquire
+                appropriate skills that can help them thrive in the labor market
+                through either self or formal employment.
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* Vision Section End*/}
+
         {/* Team */}
         <div className="w-full flex flex-col p-5">
           <div className={`text-center`}>
@@ -79,7 +118,9 @@ export default function DocsPage() {
               </>
             ) : (
               <>
-                <div className={`p-5 w-full flex flex-col md:flex-row justify-center md:justify-start flex-wrap gap-5`}>
+                <div
+                  className={`p-5 w-full flex flex-col md:flex-row justify-center md:justify-start flex-wrap gap-5`}
+                >
                   {members?.flatMap((m) => (
                     <TeamCard key={m?.teamId} member={m} />
                   ))}

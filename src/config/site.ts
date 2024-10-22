@@ -5,10 +5,14 @@ export const siteConfig = {
   description: "",
   navItems: [
     {
-      label: "Home",
+      label: "",
       href: "/",
     },
     {
+      label: "About Us",
+      href: "/about",
+    },
+    { 
       label: "What we do",
       href: "/whatwedo",
     },
@@ -27,10 +31,6 @@ export const siteConfig = {
     {
       label: "Blog",
       href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
     },
     // {
     //   label: "sappy",
@@ -117,6 +117,7 @@ export const siteConfig = {
   ],
   staticAssets:{
     staticLogo:'/assets/images/static/ghf_default.png',
+    staticLogoLine:'/assets/logos/ghf_default_line.png',
     staticIntroVideo:'/assets/videos/sample_videoP.mp4'
   },
   links: {
@@ -131,14 +132,29 @@ export const siteConfig = {
   },
 
   socialLinks:{
-    
+    twitterX:{
+      name:'X',
+      link:'https://x.com/Greathopetz'
+    },
+    linkedin:{
+      name:'Linkedin',
+      link:'https://www.linkedin.com/company/28136797/admin/dashboard/'
+    },
+    facebook:{
+      name:'facebook',
+      link:'https://www.facebook.com/greathopetz'
+    },
+    instagram:{
+      name:'instagram',
+      link:'https://www.instagram.com/greathopetz/'
+    },
   },
   
   footerTexts:{
     footerImage:'/assets/logos/GHF_LOGO.png',
     address:{
       country:"Tanzania",
-      city:"Dar es salaam",
+      city:"Ubungo Riverside,Dar es salaam",
       postoffice: "P.O.BOX 2466 DSM",
     },
     contact:{
