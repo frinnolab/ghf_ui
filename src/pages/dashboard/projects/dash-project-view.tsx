@@ -566,7 +566,7 @@ export default function DashProjectPage() {
                           size={20}
                           className=" text-danger-500"
                           onClick={() => {
-                            removeAsset(`${d?.projectId}`);
+                            removeAsset(`${d?.assetId}`);
                           }}
                         />
                       </span>

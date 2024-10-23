@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Project } from "../dashboard/projects/dash-projects";
+import { Project, ProjectAsset } from "../dashboard/projects/dash-projects";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
@@ -19,11 +19,17 @@ export default function UwezoDetailPage() {
     return null;
   });
 
+  //Assets
+  const [projectAssets, setProjectAssets] = useState<ProjectAsset[] | null>(
+    null
+  );
+  //Assets End
+
   const [project, setProject] = useState<Project | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     if (project === null) {
       axios
         .get(`${api}/projects/${projectId}`, {
@@ -58,6 +64,32 @@ export default function UwezoDetailPage() {
     }
   }, [project]);
 
+  //fetch assets
+  useEffect(() => {
+    if (project) {
+      axios
+        .get(`${api}/projects/assets/${projectId}`)
+        .then((res: AxiosResponse) => {
+          const datas: ProjectAsset[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: ProjectAsset = {
+                assetUrl: d?.assetUrl,
+                assetId: d?.assetId,
+                projectId: d?.projectId,
+              };
+
+              return [data];
+            }
+          );
+
+          setProjectAssets([...datas]);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
+    }
+  }, [project]);
+
   return (
     <div className="w-full flex flex-col">
       <div className="w-full p-5">
@@ -77,7 +109,6 @@ export default function UwezoDetailPage() {
       <Divider />
       <div className="w-full flex flex-col">
         <div className=" w-full flex gap-10 justify-between p-10">
-          
           <div className=" w-full space-y-3 ">
             <h1 className=" text-3xl font-semibold ">
               {project?.title?.toUpperCase() ?? ""}
@@ -135,7 +166,6 @@ export default function UwezoDetailPage() {
               }
             />
           </div>
-
         </div>
 
         {/* Contents */}
@@ -150,6 +180,31 @@ export default function UwezoDetailPage() {
             </p>
           </div>
         </div>
+
+        {/* Assets */}
+        <div
+          className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
+        >
+          <h1 className="text-xl md:text-3xl">{project?.title} assets</h1>
+
+          {projectAssets === null || projectAssets?.length === 0 ? (
+            <></>
+          ) : (
+            <div
+              className={`w-full flex flex-col md:flex-row justify-center gap-5`}
+            >
+              {projectAssets?.flatMap((d: ProjectAsset) => (
+                <div
+                  key={d?.assetId}
+                  className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+                >
+                  <Image src={d?.assetUrl} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Assets End */}
       </div>
     </div>
   );
