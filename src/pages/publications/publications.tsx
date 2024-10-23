@@ -142,7 +142,7 @@ export default function Publications() {
                           <h1>No Newsletters at the momment.</h1>
                         </>
                       ) : (
-                        <div className="w-full flex justify-start gap-5">
+                        <div className="w-full flex flex-wrap justify-start gap-5">
                           {pubs
                             ?.filter(
                               (p) =>
@@ -243,7 +243,7 @@ export default function Publications() {
                       )}
                     </Card>{" "}
                   </Tab>
-                  
+
 
                   <Tab key="manual" title="Student manuals">
                     <Card className={`w-full border-transparent`}>
