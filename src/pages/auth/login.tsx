@@ -32,8 +32,8 @@ export default function LoginPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
   const [, setResData] = useState<loginResponse | null>(null);
-  const [responseInfo, setResponseInfo] = useState<ResponseInfo|null>(null);
-  const [errorInfo, setErrorInfo] = useState<ErrorInfo|null>(null);
+  const [] = useState<ResponseInfo|null>(null);
+  const [] = useState<ErrorInfo|null>(null);
   const storage = window.sessionStorage;
 
   const emailRef = useRef<HTMLInputElement>(null);
