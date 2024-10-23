@@ -9,12 +9,9 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { title } from "@/components/primitives";
 import { Button } from "@nextui-org/button";
 import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
-const publicationTabTypes = [
-  "Newsletters",
-  "Student Manuals",
-  "Reports",
-];
+const publicationTabTypes = ["Newsletters", "Student Manuals", "Reports"];
 
 export default function Publications() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -88,11 +85,44 @@ export default function Publications() {
 
         {/* Tabs  */}
 
+        <div className="hidden w-full flex-col">
+          <Tabs aria-label="Options">
+            <Tab key="photos" title="Photos">
+              <Card>
+                <CardBody>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key="music" title="Music">
+              <Card>
+                <CardBody>
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                  irure dolor in reprehenderit in voluptate velit esse cillum
+                  dolore eu fugiat nulla pariatur.
+                </CardBody>
+              </Card>
+            </Tab>
+            <Tab key="videos" title="Videos">
+              <Card>
+                <CardBody>
+                  Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                  qui officia deserunt mollit anim id est laborum.
+                </CardBody>
+              </Card>
+            </Tab>
+          </Tabs>
+        </div>
+
         {/* Tabs End */}
-        
-        <div className="w-full hidden flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
+
+        <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
           {/* List */}
-          <div className="w-full md:w-[80%] flex flex-col gap-5">
+          <div className="w-full flex flex-col gap-5">
             {pubs === null || pubs?.length === 0 ? (
               <>
                 <h1 className=" text-2xl text-center ">
@@ -100,73 +130,183 @@ export default function Publications() {
                 </h1>
               </>
             ) : (
-              <div className="w-full flex flex-col md:flex-row md:flex-wrap justify-center md:justify-start gap-10">
-                {pubs?.flatMap((mp) => (
-                  <div
-                    key={mp?.publishId}
-                    className={` md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-200`}
-                  >
-                    <div className={`p-3 flex flex-col gap-3`}>
-                      <h1 className={`text-2xl`}>{mp?.title}</h1>
+              <div className="flex w-full flex-col">
+                <Tabs aria-label="Options">
 
-                      <div className="flex justify-between">
-                        <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
-                          <span className="text-xl">
-                            {setTypeIcon(Number(mp?.publishType))}
-                          </span>
+                  <Tab key="newsletters" title="Newsletters">
+                    <Card className={`w-full border-transparent`}>
+                      {pubs?.filter(
+                        (p) => p?.publishType === PublishTypeEnum.Newsletter
+                      ).length === 0 ? (
+                        <>
+                          <h1>No Newsletters at the momment.</h1>
+                        </>
+                      ) : (
+                        <div className="w-full flex justify-start gap-5">
+                          {pubs
+                            ?.filter(
+                              (p) =>
+                                p?.publishType === PublishTypeEnum.Newsletter
+                            )
+                            .flatMap((mp) => (
+                              <CardBody key={mp?.publishId}>
+                                <div
+                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
+                                >
+                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
+                                  <div className="flex justify-between">
+                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                      <span className="text-xl">
+                                        {setTypeIcon(Number(mp?.publishType))}
+                                      </span>
 
-                          <p className=" text-small ">
-                            {setTypeName(Number(mp?.publishType))}
-                          </p>
+                                      <p className=" text-small ">
+                                        {setTypeName(Number(mp?.publishType))}
+                                      </p>
+                                    </div>
+
+                                    <div></div>
+                                  </div>
+                                  <div className="p-1">
+                                    {" "}
+                                    <Button
+                                      variant="light"
+                                      color="primary"
+                                      className="flex items-center border border-primary-400 hover:border-transparent"
+                                      onClick={() => {
+                                        toDetail(mp);
+                                      }}
+                                    >
+                                      {" "}
+                                      View <GoArrowUpRight size={20} />{" "}
+                                    </Button>{" "}
+                                  </div>
+                                </div>
+                              </CardBody>
+                            ))}
                         </div>
+                      )}
+                    </Card>
+                  </Tab>
 
-                        <div></div>
-                      </div>
+                  <Tab key="reports" title="Reports">
+                    <Card className={`w-full border-transparent`}>
+                      {pubs?.filter(
+                        (p) => p?.publishType === PublishTypeEnum.Report
+                      ).length === 0 ? (
+                        <>
+                          <h1>No Reports at the momment.</h1>
+                        </>
+                      ) : (
+                        <div className="w-full flex justify-start gap-5">
+                          {pubs
+                            ?.filter(
+                              (p) => p?.publishType === PublishTypeEnum.Report
+                            )
+                            .flatMap((mp) => (
+                              <CardBody key={mp?.publishId}>
+                                <div
+                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
+                                >
+                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
+                                  <div className="flex justify-between">
+                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                      <span className="text-xl">
+                                        {setTypeIcon(Number(mp?.publishType))}
+                                      </span>
 
-                      <div className="p-1">
-                        <Button
-                          variant="light"
-                          color="primary"
-                          className="flex items-center border border-primary-400 hover:border-transparent"
-                          onClick={() => {
-                            toDetail(mp);
-                          }}
-                        >
-                          View {setTypeName(Number(mp?.publishType))}{" "}
-                          <GoArrowUpRight size={20} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                                      <p className=" text-small ">
+                                        {setTypeName(Number(mp?.publishType))}
+                                      </p>
+                                    </div>
+
+                                    <div></div>
+                                  </div>
+                                  <div className="p-1">
+                                    {" "}
+                                    <Button
+                                      variant="light"
+                                      color="primary"
+                                      className="flex items-center border border-primary-400 hover:border-transparent"
+                                      onClick={() => {
+                                        toDetail(mp);
+                                      }}
+                                    >
+                                      {" "}
+                                      View <GoArrowUpRight size={20} />{" "}
+                                    </Button>{" "}
+                                  </div>
+                                </div>
+                              </CardBody>
+                            ))}
+                        </div>
+                      )}
+                    </Card>{" "}
+                  </Tab>
+                  
+
+                  <Tab key="manual" title="Student manuals">
+                    <Card className={`w-full border-transparent`}>
+                      {pubs?.filter(
+                        (p) =>
+                          p?.publishType === PublishTypeEnum["Student Manual"]
+                      ).length === 0 ? (
+                        <>
+                          <h1>No Manuals at the momment.</h1>
+                        </>
+                      ) : (
+                        <div className="w-full flex justify-start gap-5">
+                          {pubs
+                            ?.filter(
+                              (p) =>
+                                p?.publishType ===
+                                PublishTypeEnum["Student Manual"]
+                            )
+                            .flatMap((mp) => (
+                              <CardBody key={mp?.publishId}>
+                                <div
+                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
+                                >
+                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
+                                  <div className="flex justify-between">
+                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                      <span className="text-xl">
+                                        {setTypeIcon(Number(mp?.publishType))}
+                                      </span>
+
+                                      <p className=" text-small ">
+                                        {setTypeName(Number(mp?.publishType))}
+                                      </p>
+                                    </div>
+
+                                    <div></div>
+                                  </div>
+                                  <div className="p-1">
+                                    {" "}
+                                    <Button
+                                      variant="light"
+                                      color="primary"
+                                      className="flex items-center border border-primary-400 hover:border-transparent"
+                                      onClick={() => {
+                                        toDetail(mp);
+                                      }}
+                                    >
+                                      {" "}
+                                      View <GoArrowUpRight size={20} />{" "}
+                                    </Button>{" "}
+                                  </div>
+                                </div>
+                              </CardBody>
+                            ))}
+                        </div>
+                      )}
+                    </Card>
+                  </Tab>
+                </Tabs>
               </div>
             )}
           </div>
           {/* List End */}
-
-          {/* Side Bar */}
-          <div className="md:w-[20%] text-center p-3 rounded-xl bg-default-300">
-            <h1 className=" text-2xl text-center ">Summary</h1>
-
-            <div className="flex flex-col gap-3 text-start">
-              <h1 className=" text-xl ">
-                Newsletter(s)-
-                {
-                  pubs?.filter(
-                    (p) => p?.publishType === PublishTypeEnum.Newsletter
-                  ).length
-                }
-              </h1>
-              <h1 className=" text-xl ">
-                Report(s)-
-                {
-                  pubs?.filter((p) => p?.publishType === PublishTypeEnum.Report)
-                    .length
-                }
-              </h1>
-            </div>
-          </div>
-          {/* Side Bar End */}
         </div>
 
         {/* Content End */}
