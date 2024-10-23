@@ -176,7 +176,7 @@ export default function DonationPage() {
           <div className="w-full flex flex-col px-20 gap-5 ">
             <h1 className=" text-2xl  font-semibold ">
               {" "}
-              Become a Donor for Uwezo projects
+              Become a Donor
             </h1>
           </div>
 
