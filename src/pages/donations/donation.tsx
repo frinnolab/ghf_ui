@@ -172,194 +172,199 @@ export default function DonationPage() {
         </div>
         {/* <h1 className={title()}>Donation</h1> */}
 
-        <div className="w-full flex flex-col px-20 gap-5 ">
-          <h1 className=" text-2xl  font-semibold "> Become a Donor for Uwezo projects</h1>
-        </div>
-
-        <div
-          className={`${" md:rounded-2xl md:bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
-        >
-          <div className={`w-full space-y-3 text-center`}>
-            <p className="text-xl md:text-2xl text-default-500 ">
-              To pledge donation, please fill in the form.
-            </p>
+        <div className="w-full px-10 flex flex-col gap-5">
+          <div className="w-full flex flex-col px-20 gap-5 ">
+            <h1 className=" text-2xl  font-semibold ">
+              {" "}
+              Become a Donor for Uwezo projects
+            </h1>
           </div>
 
-          <div className=" shadow rounded-2xl bg-default-50 p-5 ">
-            {isLoading ? (
-              <Spinner
-                className={` justify-center items-center `}
-                label="Submitting..."
-              />
-            ) : (
-              <form
-                onSubmit={handleSubmit(onDonationSubmit)}
-                className=" flex flex-col gap-3 p-5 space-y-2"
-              >
-                {/* Fullnames */}
-                <div className="w-full gap-5 flex justify-between items-center">
-                  {/* Fname */}
-                  <div className="w-full space-y-2">
-                    <label htmlFor="Firstname">Firstname</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${donation?.firstname ?? ""}`}
-                      {...register("firstname", { required: true })}
-                      placeholder={`${donation?.firstname ?? "Enter Firstname"}`}
-                    />
+          <div
+            className={`${" md:rounded-2xl md:bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
+          >
+            <div className={`w-full space-y-3 text-center`}>
+              <p className="text-xl md:text-2xl text-default-500 ">
+                To pledge donation, please fill in the form.
+              </p>
+            </div>
 
-                    {errors.firstname && (
-                      <span className="text-danger">
-                        Firstname field is required
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Lname */}
-                  <div className="w-full space-y-2">
-                    <label htmlFor="Lastname">Lastname</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${donation?.lastname ?? ""}`}
-                      {...register("lastname")}
-                      placeholder={`${donation?.lastname ?? "Enter Lastname"}`}
-                    />
-                  </div>
-                </div>
-
-                {/* Fullnames End*/}
-
-                {/* Contact */}
-                <div className="w-full gap-5 flex justify-between items-center">
-                  {/* Email */}
-                  <div className="w-full space-y-2">
-                    <label htmlFor="email">Email</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${donation?.email ?? ""}`}
-                      {...register("email", { required: true })}
-                      placeholder={`${donation?.email ?? "Enter email"}`}
-                    />
-
-                    {errors.email && (
-                      <span className="text-danger">
-                        Email field is required
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Mobile */}
-                  <div className="w-full space-y-2">
-                    <label htmlFor="mobile">Mobile</label>
-                    <Input
-                      isRequired
-                      type="text"
-                      defaultValue={`${donation?.mobile ?? ""}`}
-                      {...register("mobile")}
-                      placeholder={`${donation?.mobile ?? "Enter mobile"}`}
-                    />
-                  </div>
-                </div>
-
-                {/* Contact End*/}
-
-                {/* Types */}
-                <div className="w-full gap-5 flex justify-between items-center">
-                  {/* Type */}
-                  {donationTypes === null ? (
-                    <></>
-                  ) : (
+            <div className=" shadow rounded-2xl bg-default-50 p-5 ">
+              {isLoading ? (
+                <Spinner
+                  className={` justify-center items-center `}
+                  label="Submitting..."
+                />
+              ) : (
+                <form
+                  onSubmit={handleSubmit(onDonationSubmit)}
+                  className=" flex flex-col gap-3 p-5 space-y-2"
+                >
+                  {/* Fullnames */}
+                  <div className="w-full gap-5 flex justify-between items-center">
+                    {/* Fname */}
                     <div className="w-full space-y-2">
-                      <label htmlFor="donorType">Donor</label>
-                      <Select
-                        isRequired
-                        label="Select Donor Type"
-                        className="max-w-xs"
-                        onChange={(e) => {
-                          changeDonorType(e);
-                        }}
-                      >
-                        {donationTypes?.map((status) => (
-                          <SelectItem key={`${status.type}`}>
-                            {status.title}
-                          </SelectItem>
-                        ))}
-                      </Select>
+                      <label htmlFor="Firstname">Firstname</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${donation?.firstname ?? ""}`}
+                        {...register("firstname", { required: true })}
+                        placeholder={`${donation?.firstname ?? "Enter Firstname"}`}
+                      />
+
+                      {errors.firstname && (
+                        <span className="text-danger">
+                          Firstname field is required
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Company */}
-                  <div className="w-full space-y-2">
-                    <label htmlFor="company">Company</label>
-                    <Input
-                      type="text"
-                      defaultValue={`${donation?.company ?? ""}`}
-                      {...register("company")}
-                      placeholder={`${donation?.company ?? "Enter company"}`}
-                    />
-                  </div>
-                </div>
-
-                {/* Types End*/}
-
-                {/* Currencies */}
-                <div className="w-full gap-5 flex justify-between items-center">
-                  {/* Currency Type */}
-
-                  {currencyTypes === null ? (
-                    <></>
-                  ) : (
+                    {/* Lname */}
                     <div className="w-full space-y-2">
-                      <label htmlFor="currency">Currency</label>
-                      <Select
-                        isRequired
-                        label="Select Currency Type"
-                        className="max-w-xs"
-                        onChange={(e) => {
-                          changeDonorCurrType(e);
-                        }}
-                      >
-                        {currencyTypes?.map((status) => (
-                          <SelectItem key={`${status.type}`}>
-                            {status.shortName}
-                          </SelectItem>
-                        ))}
-                      </Select>
+                      <label htmlFor="Lastname">Lastname</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${donation?.lastname ?? ""}`}
+                        {...register("lastname")}
+                        placeholder={`${donation?.lastname ?? "Enter Lastname"}`}
+                      />
                     </div>
-                  )}
+                  </div>
 
-                  {/* Pledge */}
+                  {/* Fullnames End*/}
+
+                  {/* Contact */}
+                  <div className="w-full gap-5 flex justify-between items-center">
+                    {/* Email */}
+                    <div className="w-full space-y-2">
+                      <label htmlFor="email">Email</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${donation?.email ?? ""}`}
+                        {...register("email", { required: true })}
+                        placeholder={`${donation?.email ?? "Enter email"}`}
+                      />
+
+                      {errors.email && (
+                        <span className="text-danger">
+                          Email field is required
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Mobile */}
+                    <div className="w-full space-y-2">
+                      <label htmlFor="mobile">Mobile</label>
+                      <Input
+                        isRequired
+                        type="text"
+                        defaultValue={`${donation?.mobile ?? ""}`}
+                        {...register("mobile")}
+                        placeholder={`${donation?.mobile ?? "Enter mobile"}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact End*/}
+
+                  {/* Types */}
+                  <div className="w-full gap-5 flex justify-between items-center">
+                    {/* Type */}
+                    {donationTypes === null ? (
+                      <></>
+                    ) : (
+                      <div className="w-full space-y-2">
+                        <label htmlFor="donorType">Donor</label>
+                        <Select
+                          isRequired
+                          label="Select Donor Type"
+                          className="max-w-xs"
+                          onChange={(e) => {
+                            changeDonorType(e);
+                          }}
+                        >
+                          {donationTypes?.map((status) => (
+                            <SelectItem key={`${status.type}`}>
+                              {status.title}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Company */}
+                    <div className="w-full space-y-2">
+                      <label htmlFor="company">Company</label>
+                      <Input
+                        type="text"
+                        defaultValue={`${donation?.company ?? ""}`}
+                        {...register("company")}
+                        placeholder={`${donation?.company ?? "Enter company"}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Types End*/}
+
+                  {/* Currencies */}
+                  <div className="w-full gap-5 flex justify-between items-center">
+                    {/* Currency Type */}
+
+                    {currencyTypes === null ? (
+                      <></>
+                    ) : (
+                      <div className="w-full space-y-2">
+                        <label htmlFor="currency">Currency</label>
+                        <Select
+                          isRequired
+                          label="Select Currency Type"
+                          className="max-w-xs"
+                          onChange={(e) => {
+                            changeDonorCurrType(e);
+                          }}
+                        >
+                          {currencyTypes?.map((status) => (
+                            <SelectItem key={`${status.type}`}>
+                              {status.shortName}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Pledge */}
+                    <div className="w-full space-y-2">
+                      <label htmlFor="amount">Amount</label>
+                      <Input
+                        type="number"
+                        min={0}
+                        defaultValue={`${donation?.amountPledged ?? ""}`}
+                        {...register("amountPledged")}
+                        placeholder={`${donation?.amountPledged ?? "Enter Amount Pledge"}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Editor */}
                   <div className="w-full space-y-2">
-                    <label htmlFor="amount">Amount</label>
-                    <Input
-                      type="number"
-                      min={0}
-                      defaultValue={`${donation?.amountPledged ?? ""}`}
-                      {...register("amountPledged")}
-                      placeholder={`${donation?.amountPledged ?? "Enter Amount Pledge"}`}
+                    <label htmlFor="description">Description</label>
+                    <Textarea
+                      type="text"
+                      defaultValue={`${donation?.description ?? ""}`}
+                      {...register("description")}
+                      placeholder={`${donation?.description ?? "Enter Description"}`}
                     />
                   </div>
-                </div>
 
-                {/* Editor */}
-                <div className="w-full space-y-2">
-                  <label htmlFor="description">Description</label>
-                  <Textarea
-                    type="text"
-                    defaultValue={`${donation?.description ?? ""}`}
-                    {...register("description")}
-                    placeholder={`${donation?.description ?? "Enter Description"}`}
-                  />
-                </div>
-
-                {/* Actions */}
-                <div className="w-full space-y-2 flex items-center justify-end">
-                  <Button color="primary" type="submit">
-                    {"Submit"}
-                  </Button>
-                </div>
-              </form>
-            )}
+                  {/* Actions */}
+                  <div className="w-full space-y-2 flex items-center justify-end">
+                    <Button color="primary" type="submit">
+                      {"Submit"}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
