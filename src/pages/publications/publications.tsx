@@ -11,8 +11,6 @@ import { Button } from "@nextui-org/button";
 import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
-const publicationTabTypes = ["Newsletters", "Student Manuals", "Reports"];
-
 export default function Publications() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();

@@ -21,7 +21,6 @@ import {
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { siteConfig } from "@/config/site";
 export default function DashProjectPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -40,7 +39,6 @@ export default function DashProjectPage() {
   const [project, setProject] = useState<Project | null>(null);
   const dateStartRef = useRef<HTMLInputElement | null>(null);
   const dateEndRef = useRef<HTMLInputElement | null>(null);
-  const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [projectStatus] = useState<ProjectStatus[]>(() => {
     return [
