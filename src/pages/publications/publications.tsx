@@ -83,41 +83,6 @@ export default function Publications() {
 
         {/* Tabs  */}
 
-        <div className="hidden w-full flex-col">
-          <Tabs aria-label="Options">
-            <Tab key="photos" title="Photos">
-              <Card>
-                <CardBody>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </CardBody>
-              </Card>
-            </Tab>
-            <Tab key="music" title="Music">
-              <Card>
-                <CardBody>
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur.
-                </CardBody>
-              </Card>
-            </Tab>
-            <Tab key="videos" title="Videos">
-              <Card>
-                <CardBody>
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                  qui officia deserunt mollit anim id est laborum.
-                </CardBody>
-              </Card>
-            </Tab>
-          </Tabs>
-        </div>
-
-        {/* Tabs End */}
-
         <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
           {/* List */}
           <div className="w-full flex flex-col gap-5">
@@ -130,7 +95,6 @@ export default function Publications() {
             ) : (
               <div className="flex w-full flex-col">
                 <Tabs aria-label="Options">
-
                   <Tab key="newsletters" title="Newsletters">
                     <Card className={`w-full border-transparent`}>
                       {pubs?.filter(
@@ -140,49 +104,48 @@ export default function Publications() {
                           <h1>No Newsletters at the momment.</h1>
                         </>
                       ) : (
-                        <div className="w-full flex flex-wrap justify-start gap-5">
+                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
                           {pubs
                             ?.filter(
                               (p) =>
                                 p?.publishType === PublishTypeEnum.Newsletter
                             )
                             .flatMap((mp) => (
-                              <CardBody key={mp?.publishId}>
-                                <div
-                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
-                                >
-                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
-                                  <div className="flex justify-between">
-                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
-                                      <span className="text-xl">
-                                        {setTypeIcon(Number(mp?.publishType))}
-                                      </span>
+                              <div
+                                key={mp?.publishId}
+                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                              >
+                                <h1 className={`text-2xl`}>{mp?.title}</h1>
+                                <div className="flex justify-between">
+                                  <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                    <span className="text-xl">
+                                      {setTypeIcon(Number(mp?.publishType))}
+                                    </span>
 
-                                      <p className=" text-small ">
-                                        {setTypeName(Number(mp?.publishType))}
-                                      </p>
-                                    </div>
+                                    <p className=" text-small ">
+                                      {setTypeName(Number(mp?.publishType))}
+                                    </p>
+                                  </div>
 
-                                    <div></div>
-                                  </div>
-                                  <div className="p-1">
-                                    {" "}
-                                    <Button
-                                      variant="light"
-                                      color="primary"
-                                      className="flex items-center border border-primary-400 hover:border-transparent"
-                                      onClick={() => {
-                                        toDetail(mp);
-                                      }}
-                                    >
-                                      {" "}
-                                      View <GoArrowUpRight size={20} />{" "}
-                                    </Button>{" "}
-                                  </div>
+                                  <div></div>
                                 </div>
-                              </CardBody>
+                                <div className="w-full p-1  justify-end items-center ">
+                                  {" "}
+                                  <Button
+                                    variant="light"
+                                    color="primary"
+                                    className="flex items-center border border-primary-400 hover:border-transparent"
+                                    onClick={() => {
+                                      toDetail(mp);
+                                    }}
+                                  >
+                                    {" "}
+                                    View <GoArrowUpRight size={20} />{" "}
+                                  </Button>{" "}
+                                </div>
+                              </div>
                             ))}
-                        </div>
+                        </CardBody>
                       )}
                     </Card>
                   </Tab>
@@ -242,7 +205,6 @@ export default function Publications() {
                     </Card>{" "}
                   </Tab>
 
-
                   <Tab key="manual" title="Student manuals">
                     <Card className={`w-full border-transparent`}>
                       {pubs?.filter(
@@ -301,6 +263,8 @@ export default function Publications() {
                     </Card>
                   </Tab>
                 </Tabs>
+
+                {/* Tabs End */}
               </div>
             )}
           </div>
