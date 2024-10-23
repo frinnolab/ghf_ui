@@ -10,6 +10,12 @@ import { title } from "@/components/primitives";
 import { Button } from "@nextui-org/button";
 import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
 
+const publicationTabTypes = [
+  "Newsletters",
+  "Student Manuals",
+  "Reports",
+];
+
 export default function Publications() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
@@ -25,6 +31,8 @@ export default function Publications() {
     switch (pubType) {
       case PublishTypeEnum.Report:
         return "Report";
+      case PublishTypeEnum["Student Manual"]:
+        return "Manual";
       default:
         return "Newsletter";
     }
@@ -77,8 +85,12 @@ export default function Publications() {
         <div className="w-full flex flex-col px-10 gap-5 ">
           <h1 className=" text-2xl  font-semibold ">Newsletters & Reports</h1>
         </div>
+
+        {/* Tabs  */}
+
+        {/* Tabs End */}
         
-        <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
+        <div className="w-full hidden flex-col-reverse md:flex-row justify-between gap-5 md:gap-0 px-10">
           {/* List */}
           <div className="w-full md:w-[80%] flex flex-col gap-5">
             {pubs === null || pubs?.length === 0 ? (

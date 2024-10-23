@@ -1,6 +1,11 @@
 import useAuthedProfile from "@/hooks/use-auth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Project, ProjectStatus, projectStatusEnum } from "./dash-projects";
+import {
+  Project,
+  ProjectAsset,
+  ProjectStatus,
+  projectStatusEnum,
+} from "./dash-projects";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
@@ -50,6 +55,12 @@ export default function DashProjectPage() {
     ];
   });
 
+  //Assets
+  const [projectAssets, setProjectAssets] = useState<ProjectAsset[] | null>(
+    null
+  );
+  //Assets End
+
   //Form State
   const { register, handleSubmit } = useForm<Project>();
 
@@ -91,6 +102,32 @@ export default function DashProjectPage() {
 
           removeSelectedImage();
           setIsProject(true);
+        });
+    }
+  }, [project]);
+
+  //fetch assets
+  useEffect(() => {
+    if (project) {
+      axios
+        .get(`${api}/projects/assets/${projectId}`)
+        .then((res: AxiosResponse) => {
+          const datas: ProjectAsset[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: ProjectAsset = {
+                assetUrl: d?.assetUrl,
+                assetId: d?.assetId,
+                projectId: d?.projectId,
+              };
+
+              return [data];
+            }
+          );
+
+          setProjectAssets([...datas]);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
         });
     }
   }, [project]);
@@ -217,6 +254,85 @@ export default function DashProjectPage() {
     setSelectedStatus(statusVal);
   };
 
+  const handleAssetUpload = () => {
+    const asset = new FormData();
+
+    if (projectId) {
+      if (selectedImage === null) {
+        alert("No file chosen");
+      } else {
+        asset.append("_method", "POST");
+        asset.append("projectId", `${project?.projectId}`);
+        if (selectedImage) {
+          asset.append("image", selectedImage);
+        }
+
+        axios
+          .post(`${api}/projects/assets/${project?.projectId}`, asset, {
+            headers: {
+              Authorization: `Bearer ${authed?.token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res: AxiosResponse) => {
+            console.log(res.data);
+
+            const datas: ProjectAsset[] = Array.from(res?.data).flatMap(
+              (d: any) => {
+                const data: ProjectAsset = {
+                  assetUrl: d?.assetUrl,
+                  assetId: d?.assetId,
+                  projectId: d?.projectId,
+                };
+
+                return [data];
+              }
+            );
+
+            setProjectAssets([...datas]);
+            setSelectedImage(null);
+            window.location.reload();
+          })
+          .catch((err: AxiosError) => {
+            console.log(err?.response);
+
+            setSelectedImage(null);
+
+            window.location.reload();
+          });
+      }
+    } else {
+      alert("Create Impact before adding asset.");
+    }
+  };
+
+  const removeAsset = (assetId: string) => {
+    if (!isEdit) {
+      alert("Enable Edit mode to remove Asset(S)");
+    } else {
+
+      axios
+        .delete(`${api}/projects/assets/${assetId}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+
+          window.location.reload();
+        });
+    }
+  };
+
+
   return (
     <div className="w-full">
       <div className="w-full p-3 flex items-center gap-5">
@@ -253,7 +369,7 @@ export default function DashProjectPage() {
           {/* Form */}
           <form
             onSubmit={handleSubmit(onProjectSubmit)}
-            className="w-[60%] flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
+            className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
           >
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
@@ -393,47 +509,75 @@ export default function DashProjectPage() {
             </div>
           </form>
           {/* Form End */}
-          {/* Thumbnail */}
-          <div className="w-[30%] relative rounded-2xl p-5 flex flex-col justify-end">
-            {selectedImage ? (
-              <div className="w-full flex items-center justify-end">
-                <Image
-                  className={`w-[50%] self-end`}
-                  src={URL.createObjectURL(selectedImage)}
+
+          {/* Assets */}
+          <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
+            <div className={`w-full flex justify-between items-center`}>
+              {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
+              <div className="p-2 flex items-center">
+                <input
+                  disabled={!isEdit ? true : false}
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => {
+                    onChangePic(e);
+                  }}
                 />
-              </div>
-            ) : (
-              <div>
-                {project?.thumbnailUrl ? (
-                  <Image
-                    src={`${project?.thumbnailUrl ?? siteConfig?.staticAssets?.staticLogo}`}
+
+                <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
+                  <GoTrash
+                    size={20}
+                    className=" text-danger-500"
+                    onClick={removeSelectedImage}
                   />
-                ) : (
-                  <Image src={`${siteConfig?.staticAssets?.staticLogo}`} />
-                )}
+                </span>
               </div>
-            )}
 
-            <div className="p-3 flex items-center">
-              <input
-                disabled={isEdit ? false : true}
-                accept="image/*"
-                type="file"
-                ref={thumbRef}
-                onChange={(e) => {
-                  onChangePic(e);
+              <Button
+                color={`${project === null ? "default" : "primary"}`}
+                disabled={project === null}
+                onClick={() => {
+                  if (!isEdit) {
+                    alert("Enable Edit mode to Add Asset(S)");
+                  } else {
+                    handleAssetUpload();
+                  }
                 }}
-              />
-
-              <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-                <GoTrash
-                  size={20}
-                  className=" text-danger-500"
-                  onClick={removeSelectedImage}
-                />
-              </span>
+              >
+                {"Add Asset"}
+              </Button>
             </div>
+
+            <div className={`w-full overflow-y-scroll h-[50vh] p-2`}>
+              {projectAssets === null || projectAssets?.length === 0 ? (
+                <>
+                  <p className=" text-center ">No Asset(s)</p>
+                </>
+              ) : (
+                <div className={`w-full flex gap-3`}>
+                  {projectAssets?.flatMap((d: ProjectAsset) => (
+                    <div
+                      key={d?.projectId}
+                      className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                    >
+                      <Image width={150} src={d?.assetUrl} />
+                      <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                        <GoTrash
+                          size={20}
+                          className=" text-danger-500"
+                          onClick={() => {
+                            removeAsset(`${d?.projectId}`);
+                          }}
+                        />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
+          {/* Assets End */}
         </div>
         {/* Content End */}
       </div>

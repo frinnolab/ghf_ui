@@ -31,6 +31,12 @@ export type Project = {
   publisherId?: string;
 };
 
+export type ProjectAsset = {
+  assetId?:string;
+  projectId?:string;
+  assetUrl?:string;
+}
+
 export enum projectStatusEnum {
   Completed = 0,
   Ongoing,
