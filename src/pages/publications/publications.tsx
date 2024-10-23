@@ -116,6 +116,7 @@ export default function Publications() {
                                 className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
                               >
                                 <h1 className={`text-2xl`}>{mp?.title}</h1>
+
                                 <div className="flex justify-between">
                                   <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
                                     <span className="text-xl">
@@ -129,12 +130,13 @@ export default function Publications() {
 
                                   <div></div>
                                 </div>
-                                <div className="w-full p-1  justify-end items-center ">
-                                  {" "}
+
+                                <div className="w-full p-1  justify-between">
+                                  <div></div>
                                   <Button
                                     variant="light"
                                     color="primary"
-                                    className="flex items-center border border-primary-400 hover:border-transparent"
+                                    className=" flex items-center border border-primary-400 hover:border-transparent"
                                     onClick={() => {
                                       toDetail(mp);
                                     }}
@@ -159,48 +161,50 @@ export default function Publications() {
                           <h1>No Reports at the momment.</h1>
                         </>
                       ) : (
-                        <div className="w-full flex justify-start gap-5">
+                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
                           {pubs
                             ?.filter(
-                              (p) => p?.publishType === PublishTypeEnum.Report
+                              (p) =>
+                                p?.publishType === PublishTypeEnum.Report
                             )
                             .flatMap((mp) => (
-                              <CardBody key={mp?.publishId}>
-                                <div
-                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
-                                >
-                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
-                                  <div className="flex justify-between">
-                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
-                                      <span className="text-xl">
-                                        {setTypeIcon(Number(mp?.publishType))}
-                                      </span>
+                              <div
+                                key={mp?.publishId}
+                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                              >
+                                <h1 className={`text-2xl`}>{mp?.title}</h1>
 
-                                      <p className=" text-small ">
-                                        {setTypeName(Number(mp?.publishType))}
-                                      </p>
-                                    </div>
+                                <div className="flex justify-between">
+                                  <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                    <span className="text-xl">
+                                      {setTypeIcon(Number(mp?.publishType))}
+                                    </span>
 
-                                    <div></div>
+                                    <p className=" text-small ">
+                                      {setTypeName(Number(mp?.publishType))}
+                                    </p>
                                   </div>
-                                  <div className="p-1">
-                                    {" "}
-                                    <Button
-                                      variant="light"
-                                      color="primary"
-                                      className="flex items-center border border-primary-400 hover:border-transparent"
-                                      onClick={() => {
-                                        toDetail(mp);
-                                      }}
-                                    >
-                                      {" "}
-                                      View <GoArrowUpRight size={20} />{" "}
-                                    </Button>{" "}
-                                  </div>
+
+                                  <div></div>
                                 </div>
-                              </CardBody>
+
+                                <div className="w-full p-1  justify-between">
+                                  <div></div>
+                                  <Button
+                                    variant="light"
+                                    color="primary"
+                                    className=" flex items-center border border-primary-400 hover:border-transparent"
+                                    onClick={() => {
+                                      toDetail(mp);
+                                    }}
+                                  >
+                                    {" "}
+                                    View <GoArrowUpRight size={20} />{" "}
+                                  </Button>{" "}
+                                </div>
+                              </div>
                             ))}
-                        </div>
+                        </CardBody>
                       )}
                     </Card>{" "}
                   </Tab>
@@ -215,51 +219,50 @@ export default function Publications() {
                           <h1>No Manuals at the momment.</h1>
                         </>
                       ) : (
-                        <div className="w-full flex justify-start gap-5">
+                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
                           {pubs
                             ?.filter(
                               (p) =>
-                                p?.publishType ===
-                                PublishTypeEnum["Student Manual"]
+                                p?.publishType === PublishTypeEnum["Student Manual"]
                             )
                             .flatMap((mp) => (
-                              <CardBody key={mp?.publishId}>
-                                <div
-                                  className={`p-3 flex flex-col gap-3 border w-[30%] rounded`}
-                                >
-                                  <h1 className={`text-2xl`}>{mp?.title}</h1>
-                                  <div className="flex justify-between">
-                                    <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
-                                      <span className="text-xl">
-                                        {setTypeIcon(Number(mp?.publishType))}
-                                      </span>
+                              <div
+                                key={mp?.publishId}
+                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                              >
+                                <h1 className={`text-2xl`}>{mp?.title}</h1>
 
-                                      <p className=" text-small ">
-                                        {setTypeName(Number(mp?.publishType))}
-                                      </p>
-                                    </div>
+                                <div className="flex justify-between">
+                                  <div className="flex items-center gap-3 bg-default-300 p-2 rounded-xl">
+                                    <span className="text-xl">
+                                      {setTypeIcon(Number(mp?.publishType))}
+                                    </span>
 
-                                    <div></div>
+                                    <p className=" text-small ">
+                                      {setTypeName(Number(mp?.publishType))}
+                                    </p>
                                   </div>
-                                  <div className="p-1">
-                                    {" "}
-                                    <Button
-                                      variant="light"
-                                      color="primary"
-                                      className="flex items-center border border-primary-400 hover:border-transparent"
-                                      onClick={() => {
-                                        toDetail(mp);
-                                      }}
-                                    >
-                                      {" "}
-                                      View <GoArrowUpRight size={20} />{" "}
-                                    </Button>{" "}
-                                  </div>
+
+                                  <div></div>
                                 </div>
-                              </CardBody>
+
+                                <div className="w-full p-1  justify-between">
+                                  <div></div>
+                                  <Button
+                                    variant="light"
+                                    color="primary"
+                                    className=" flex items-center border border-primary-400 hover:border-transparent"
+                                    onClick={() => {
+                                      toDetail(mp);
+                                    }}
+                                  >
+                                    {" "}
+                                    View <GoArrowUpRight size={20} />{" "}
+                                  </Button>{" "}
+                                </div>
+                              </div>
                             ))}
-                        </div>
-                      )}
+                        </CardBody>                      )}
                     </Card>
                   </Tab>
                 </Tabs>
