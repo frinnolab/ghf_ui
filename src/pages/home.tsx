@@ -24,6 +24,8 @@ import {
   DonationType,
 } from "./dashboard/donations/dash-donations-list";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Blog } from "./dashboard/blog/dash-blogs";
+import { useNavigate } from "react-router-dom";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -47,6 +49,8 @@ export default function HomePage() {
   const [partners, setPartners] = useState<Partner[] | null>(null);
   const [donation] = useState<Donation | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const [blogs, setBlogs] = useState<Blog[] | null>(null);
 
   const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
     null
@@ -87,6 +91,36 @@ export default function HomePage() {
     );
 
     setSelectedselectedDonorCurrType(statusVal);
+  };
+  const fetchBlogs = () => {
+    if (blogs === null) {
+      axios
+        .get(`${api}/blogs?limit=3`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res: AxiosResponse) => {
+          const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
+            const data: Blog = {
+              blogId: b?.blogId,
+              authorId: b?.authorId,
+              title: b?.title ?? "",
+              description: b?.description ?? "",
+              thumbnailUrl: b?.thumbnailUrl ?? "",
+            };
+            return [data];
+          });
+
+          console.log(datas);
+
+          setBlogs(datas);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+        });
+    }
   };
 
   const onSaveDonor = (p: Donation) => {
@@ -266,6 +300,7 @@ export default function HomePage() {
 
   //fetch Donations
   useEffect(() => {
+    fetchBlogs();
     fetchCurrencyTypes();
     fetchDonationTypes();
   }, []);
@@ -430,30 +465,30 @@ export default function HomePage() {
           </div>
 
           <div className="w-full flex flex-col justify-center items-center space-y-5">
-            <h1 className="md:text-3xl text-2xl py-3">Who we are</h1>
+            <h1 className="md:text-3xl text-2xl py-3">Introduction</h1>
 
             <div className="flex flex-col gap-5">
-            <video
-              ref={introVideoRef}
-              style={{
-                borderRadius: "20px",
-              }}
-              width={1000}
-              src={siteConfig.staticAssets.staticIntroVideo}
-              onClick={playInftro}
-              muted
-              // controls
-            />
-            <div className=" w-full flex justify-start items-center gap-3 ">
-              <p className=" italic text-small ">A word from our founder</p>
-              <Button
-                variant="flat"
-                className=" px-10 py-5 "
+              <video
+                ref={introVideoRef}
+                style={{
+                  borderRadius: "20px",
+                }}
+                className=" md:w-[1000px] "
+                src={siteConfig.staticAssets.staticIntroVideo}
                 onClick={playInftro}
-              >
-                {isPaused ? "Play" : "Pause"}
-              </Button>
-            </div>
+                muted
+                // controls
+              />
+              <div className=" w-full flex justify-end items-center gap-3 ">
+                <p className=" italic text-small ">A word from our founder</p>
+                <Button
+                  variant="flat"
+                  className=" px-10 py-5 "
+                  onClick={playInftro}
+                >
+                  {isPaused ? "Play" : "Pause"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -509,7 +544,7 @@ export default function HomePage() {
 
         {/* Donations */}
         <div
-          className={`${"w-full h-screen md:h-[auto] bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+          className={`${"w-full h-screen md:h-[auto] bg-default-200  hidden gap-5 justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
             <h1 className="text-3xl  md:text-5xl ">Donations</h1>
@@ -696,6 +731,75 @@ export default function HomePage() {
           </div>
         </div>
         {/* Donations End */}
+
+        {/* Recent Projects */}
+        <div
+          className={`w-full ${blogs?.length === 0 || null ? "hidden" : "h-screen md:h-[auto] bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+        >
+          <div className={`w-full space-y-3 text-center`}>
+            <h1 className="text-3xl  md:text-5xl ">Recent Blogs</h1>
+            <p className="text-xl md:text-2xl text-default-500 ">
+              View our recent Blogs
+            </p>
+          </div>
+
+          <div className=" p-5 ">
+            {blogs === null ? (
+              <Spinner
+                className={` justify-center items-center `}
+                label="Loading..."
+              />
+            ) : (
+              <div className={`w-full flex flex-col gap-3`}>
+                <div
+                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex justify-end items-center gap-5"}`}
+                >
+                  {blogs?.map((p) => (
+                    <div
+                      className={`shadow w-[30%] rounded-xl bg-default-50`}
+                      key={p?.blogId}
+                    >
+                      <Image
+                        className="w-screen h-[30vh] object-cover"
+                        src={
+                          p?.thumbnailUrl !== "" || null
+                            ? p?.thumbnailUrl
+                            : siteConfig?.staticAssets?.staticLogo
+                        }
+                      />
+
+                      <div className={`w-full flex flex-col p-5`}>
+                        <h1 className=" text-xl font-semibold ">{p?.title}</h1>
+
+                        <div className="w-full p-1 flex justify-end">
+                          <Button
+                            variant="light"
+                            color="primary"
+                            className="flex items-center border border-primary-400 hover:border-transparent"
+                            onClick={() => {
+                              navigate(`blog/${p?.blogId}`, {
+                                state: `${p?.blogId}`,
+                              });
+                            }}
+                          >
+                            Read more <GoArrowUpRight size={20} />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end p-5">
+                  <a className=" text-primary " href="/blogs">
+                    View all blogs
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Recent Projects End */}
       </div>
     </DefaultLayout>
   );
