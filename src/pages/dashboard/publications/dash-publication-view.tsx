@@ -9,14 +9,7 @@ import {
 } from "./dash-publications";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
-import {
-  Divider,
-  Input,
-  Select,
-  SelectItem,
-  Switch,
-  Textarea,
-} from "@nextui-org/react";
+import { Divider, Input, Select, SelectItem, Switch } from "@nextui-org/react";
 import {
   GoArrowLeft,
   GoDownload,
@@ -26,6 +19,9 @@ import {
   GoTrash,
 } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Qformats, Qmodules } from "../blog/dash-blog-create";
 
 //var fileDownload = require('js-file-download');
 export default function DashPublicationsView() {
@@ -66,6 +62,7 @@ export default function DashPublicationsView() {
   const pubDateRef = useRef<HTMLInputElement | null>(null);
   const assetTitleRef = useRef<HTMLInputElement | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<PublicationStatus>();
+  const [quillValue, setQuillValue] = useState("");
 
   //Form State
   const { register, handleSubmit } = useForm<Publication>();
@@ -75,12 +72,9 @@ export default function DashPublicationsView() {
   const handleSave = (p: Publication) => {
     if (publication === null) {
       //Save
-
-      console.log(p);
-
       const data = {
         title: `${p?.title ?? ""}`,
-        description: `${p?.description ?? ""}`,
+        description: `${quillValue}`,
         publishDate: `${pubDateRef?.current?.value}`,
         publishType: `${selectedStatus?.key === undefined ? pubStatus[0].key : selectedStatus?.key}`,
         authorId: `${authed?.profileId ?? ""}`,
@@ -111,7 +105,7 @@ export default function DashPublicationsView() {
     if (publication) {
       const data = {
         title: `${p?.title ?? publication?.title}`,
-        description: `${p?.description ?? publication?.description}`,
+        description: `${quillValue ?? publication?.description}`,
         publishDate: `${pubDateRef?.current?.value ?? publication?.publishDate}`,
         publishType: `${selectedStatus?.key === undefined ? pubStatus[0].key : selectedStatus?.key}`,
         authorId: `${authed?.profileId ?? publication?.authorId}`,
@@ -289,7 +283,6 @@ export default function DashPublicationsView() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           const data: Publication = {
             publishId: `${res.data["publishId"]}`,
             title: `${res.data["title"]}`,
@@ -302,11 +295,10 @@ export default function DashPublicationsView() {
             (p) => p?.key === Number(data?.publishType)
           );
 
-          console.log(statusVal);
-
           setPublication(data);
 
           setSelectedStatus(statusVal);
+          setQuillValue(res?.data["description"]);
 
           removeSelectedImage();
         });
@@ -396,12 +388,20 @@ export default function DashPublicationsView() {
             {/* Editor */}
             <div className="w-full space-y-3">
               <label htmlFor="description">Description</label>
-              <Textarea
+              {/* <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
                 defaultValue={`${publication?.description ?? ""}`}
                 {...register("description")}
                 placeholder={`${publication?.description ?? "Enter Description"}`}
+              /> */}
+              <ReactQuill
+                placeholder={`${pubId ? publication?.description : "Enter description"}`}
+                theme="snow"
+                value={quillValue}
+                onChange={setQuillValue}
+                formats={Qformats}
+                modules={Qmodules}
               />
             </div>
 

@@ -26,7 +26,7 @@ export type Blog = {
   authorId?: string;
 };
 export default function DashBlogsListPage() {
-  const columns = ["Title", "Description", "Actions"];
+  const columns = ["Title", "Actions"];
   const actionTypes = ["detail", "edit", "delete"];
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isBlogs, setIsBlogs] = useState<boolean>(false);
@@ -163,9 +163,9 @@ export default function DashBlogsListPage() {
                   <TableCell onClick={() => handleSelectedRow(blog)}>
                     {blog?.title}
                   </TableCell>
-                  <TableCell onClick={() => handleSelectedRow(blog)}>
+                  {/* <TableCell onClick={() => handleSelectedRow(blog)}>
                     {blog?.description}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <div className="relative flex items-center gap-2">
                       <Tooltip content="View">

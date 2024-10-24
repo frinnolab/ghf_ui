@@ -1,5 +1,5 @@
 import { Button } from "@nextui-org/button";
-import { Divider, Image, Input, Switch, Textarea } from "@nextui-org/react";
+import { Divider, Image, Input, Switch } from "@nextui-org/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,6 +8,24 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import useAuthedProfile from "@/hooks/use-auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { siteConfig } from "@/config/site";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+export const Qformats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent','image'
+];
+
+export const Qmodules = {
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline','strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    ['image'],
+    ['clean']
+  ],
+}
 
 export default function DashBlogCreate() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -18,6 +36,7 @@ export default function DashBlogCreate() {
   //From Inputs
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [quillValue, setQuillValue] = useState<string>("");
 
   //From Inputs End
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -53,7 +72,6 @@ export default function DashBlogCreate() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
           const data: Blog = {
             blogId: res?.data["blogId"] ?? null,
             title: res?.data["title"] ?? null,
@@ -63,6 +81,7 @@ export default function DashBlogCreate() {
           };
 
           setBlog(data);
+          setQuillValue(res?.data['description']);
         });
     }
   }, [blogId]);
@@ -86,7 +105,7 @@ export default function DashBlogCreate() {
       data.append("_method", `POST`);
       data.append("authorId", `${authed?.profileId}`);
       data.append("title", `${d?.title}`);
-      data.append("description", `${d?.description}`);
+      data.append("description", `${quillValue}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
@@ -116,7 +135,7 @@ export default function DashBlogCreate() {
       data.append("_method", `PUT`);
       data.append("authorId", `${blog?.authorId ?? authed?.profileId}`);
       data.append("title", `${d?.title ?? blog?.title}`);
-      data.append("description", `${d?.description ?? blog?.description}`);
+      data.append("description", `${quillValue ?? blog?.description}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
@@ -195,11 +214,20 @@ export default function DashBlogCreate() {
             {/* Editor */}
             <div className="w-full space-y-3">
               <label htmlFor="description">Description</label>
-              <Textarea
+              {/* <Textarea
                 disabled={!isEdit ? true : false}
                 type="text"
                 {...register("description")}
                 placeholder={`${blog?.description ?? "Enter Description"}`}
+              /> */}
+
+              <ReactQuill
+                placeholder={`${blogId ? blog?.description : "Enter description"}`}
+                theme="snow"
+                value={quillValue}
+                onChange={setQuillValue}
+                formats={Qformats}
+                modules={Qmodules}
               />
             </div>
 

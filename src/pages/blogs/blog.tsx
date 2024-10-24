@@ -89,7 +89,7 @@ export default function BlogPage() {
                     <div className="p-5">
                       <h1 className="text-2xl font-semibold">{b?.title}</h1>
 
-                      <p>{b?.description}</p>
+                      {/* <p>{b?.description}</p> */}
                     </div>
 
                     <div className="p-1">
