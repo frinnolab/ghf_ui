@@ -81,9 +81,9 @@ export default function BlogDetailPage() {
 
           <div className=" space-y-5 ">
             <label htmlFor="description">Description</label>
-            <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
-              {blog?.description}
-            </p>
+            <div dangerouslySetInnerHTML={{__html: `${blog?.description}`}}>
+
+            </div>
           </div>
         </div>
         {/* <Divider /> */}

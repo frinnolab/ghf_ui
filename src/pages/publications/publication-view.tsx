@@ -42,9 +42,9 @@ export default function PublicationsView() {
 
           const data: Publication = {
             publishId: `${res.data["publishId"]}`,
-            title: `${res.data["title"]}`,
-            description: `${res.data["description"]}`,
-            publishType: Number(`${res.data["publishType"]}`),
+            title: res?.data["title"],
+            description: res?.data["description"],
+            publishType: Number(`${res.data["publishType"] ?? 0}`),
             publishDate: res?.data["publishDate"],
           };
 
@@ -112,7 +112,7 @@ export default function PublicationsView() {
         <div className=" space-y-5 ">
           <label htmlFor="description">Description</label>
           <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
-            {publication?.description}
+            {publication?.description ?? ""}
           </p>
         </div>
 

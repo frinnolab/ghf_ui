@@ -333,10 +333,6 @@ export default function HomePage() {
                 WE LIVE TO EMPOWER, DEVELOP AND INSPIRE YOUNG GENERATION TO
                 ACQUIRE ENTREPRENEURSHIP AND 21ST CENTURY SKILLS
               </h1>
-              {/* <h1>DEVELOP</h1>
-              <h1>AND INSPIRE YOUNG GENERATION</h1>
-              <h1>TO ACQUIRE ENTREPRENEURSHIP</h1>
-              <h1>AND 21ST CENTURY SKILLS</h1> */}
             </div>
           </div>
           {/* Header Text End*/}
@@ -347,7 +343,6 @@ export default function HomePage() {
               alt="Header img"
               src="/assets/images/static/MAIN_PAGE.jpg"
             />
-            {/* <img alt="Header img" src="/assets/images/UCT_024_86_2.jpg" /> */}
           </div>
         </div>
 
