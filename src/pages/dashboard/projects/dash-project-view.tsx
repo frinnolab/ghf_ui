@@ -21,6 +21,7 @@ import {
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { siteConfig } from "@/config/site";
 export default function DashProjectPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -36,10 +37,14 @@ export default function DashProjectPage() {
       return null;
     }
   });
+  const thumbRef = useRef<HTMLInputElement | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const dateStartRef = useRef<HTMLInputElement | null>(null);
   const dateEndRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedThumbImage, setSelectedThumbImage] = useState<File | null>(
+    null
+  );
   const [projectStatus] = useState<ProjectStatus[]>(() => {
     return [
       {
@@ -138,8 +143,17 @@ export default function DashProjectPage() {
     }
   };
 
+  const onChangeThumbPic = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedThumbImage(e.target.files[0]);
+    }
+  };
+
   const removeSelectedImage = () => {
     setSelectedImage(null);
+  };
+  const removeSelectedThumbImage = () => {
+    setSelectedThumbImage(null);
   };
 
   const onProjectSubmit: SubmitHandler<Project> = (d) => {
@@ -168,8 +182,8 @@ export default function DashProjectPage() {
       data.append("schoolsReached", `${d?.schoolsReached ?? 0}`);
       data.append("studentsReached", `${d?.studentsReached ?? 0}`);
 
-      if (selectedImage) {
-        data.append("image", selectedImage);
+      if (selectedThumbImage) {
+        data.append("image", selectedThumbImage);
       }
 
       axios
@@ -221,8 +235,8 @@ export default function DashProjectPage() {
         `${d?.studentsReached ?? project?.studentsReached}`
       );
 
-      if (selectedImage) {
-        data.append("image", selectedImage);
+      if (selectedThumbImage) {
+        data.append("image", selectedThumbImage);
       }
 
       axios
@@ -308,7 +322,6 @@ export default function DashProjectPage() {
     if (!isEdit) {
       alert("Enable Edit mode to remove Asset(S)");
     } else {
-
       axios
         .delete(`${api}/projects/assets/${assetId}`, {
           headers: {
@@ -329,7 +342,6 @@ export default function DashProjectPage() {
         });
     }
   };
-
 
   return (
     <div className="w-full">
@@ -369,6 +381,61 @@ export default function DashProjectPage() {
             onSubmit={handleSubmit(onProjectSubmit)}
             className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
           >
+            <div className="w-full space-y-3">
+              <label htmlFor="Thumbnail">Thumbnail</label>
+
+              <div className="w-full min-h-[10dvh] relative rounded-2xl p-5 flex flex-col items-center ">
+                {selectedThumbImage ? (
+                  <div className="w-full flex items-center p-5 justify-center">
+                    <Image
+                      width={100}
+                      src={URL.createObjectURL(selectedThumbImage)}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    {project?.thumbnailUrl ? (
+                      <div className="w-full flex items-center justify-center">
+                        <Image
+                          width={100}
+                          src={
+                            project?.thumbnailUrl ??
+                            siteConfig.staticAssets.staticLogo
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <Image
+                        width={100}
+                        src={siteConfig.staticAssets.staticLogo}
+                      />
+                    )}
+                  </div>
+                )}
+
+                <div className="p-3 flex items-center">
+                  <input
+                    disabled={isEdit ? false : true}
+                    accept="image/*"
+                    ref={thumbRef}
+                    type="file"
+                    onChange={(e) => {
+                      onChangeThumbPic(e);
+                    }}
+                  />
+
+                  <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                    <GoTrash
+                      size={20}
+                      className=" text-danger-500"
+                      onClick={removeSelectedThumbImage}
+                    />
+                  </span>
+                </div>
+              </div>
+              <Divider/>
+            </div>
+            
             <div className="w-full space-y-3">
               <label htmlFor="Title">Title</label>
               <Input
@@ -573,7 +640,6 @@ export default function DashProjectPage() {
                 </div>
               )}
             </div>
-
           </div>
           {/* Assets End */}
         </div>

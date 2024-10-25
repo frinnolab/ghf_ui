@@ -122,10 +122,13 @@ export default function DashProfilesListPage() {
         }else{
           axios
             .delete(`${api}/profiles/${i?.profileId}`, {
+              headers:{
+                "Authorization":`Bearer ${authed?.token}`
+              },
               method: "DELETE",
             })
             .then((res: AxiosResponse) => {
-              if (res?.data) {
+              if (res) {
                 window.location.reload();
               }
             })
