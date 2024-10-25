@@ -37,7 +37,6 @@ export default function DashProjectPage() {
       return null;
     }
   });
-  const thumbRef = useRef<HTMLInputElement | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const dateStartRef = useRef<HTMLInputElement | null>(null);
   const dateEndRef = useRef<HTMLInputElement | null>(null);
@@ -417,7 +416,6 @@ export default function DashProjectPage() {
                   <input
                     disabled={isEdit ? false : true}
                     accept="image/*"
-                    ref={thumbRef}
                     type="file"
                     onChange={(e) => {
                       onChangeThumbPic(e);
