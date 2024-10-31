@@ -43,6 +43,10 @@ import DashAlumniList from "./pages/dashboard/alumnis/dash-alumni-list";
 import DashAlumniView from "./pages/dashboard/alumnis/dash-alumni-view";
 import DashboardProfilePage from "./pages/dashboard/profiles/dash-profile-view";
 import DonationPage from "./pages/donations/donation";
+import CareersPage from "./pages/careers/Careers";
+import DashCareersList from "./pages/dashboard/careers/dash-careers";
+import DashCareerView from "./pages/dashboard/careers/dash-career-view";
+import CareerView from "./pages/careers/CareerView";
 
 function App() {
   return (
@@ -52,6 +56,8 @@ function App() {
       <Route element={<UwezoPage />} path="/whatwedo" />
       <Route element={<DonationPage />} path="/donation" />
       <Route element={<UwezoDetailPage />} path="/whatwedo/:id" />
+      <Route element={<CareersPage />} path="/careers" />
+      <Route element={<CareerView />} path="/careers/:id" />
       <Route element={<SappyPage />} path="/sappy" />
       <Route element={<SabbyPage />} path="/sabby" />
       <Route element={<ImpactList />} path="/impacts" />
@@ -75,6 +81,9 @@ function App() {
       <Route element={<DashImpactsListPage />} path="/dashboard/impacts" />
       <Route element={<DashImpactView />} path="/dashboard/impacts/create" />
       <Route element={<DashImpactView />} path="/dashboard/impacts/:id" />
+      <Route element={<DashCareersList />} path="/dashboard/careers" />
+      <Route element={<DashCareerView />} path="/dashboard/careers/create" />
+      <Route element={<DashCareerView />} path="/dashboard/careers/:id" />
       <Route element={<DashProjectsListPage />} path="/dashboard/projects" />
       <Route element={<DashDonations />} path="/dashboard/donations" />
       <Route element={<DashDonationView />} path="/dashboard/donations/:id" />

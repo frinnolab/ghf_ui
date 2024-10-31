@@ -151,6 +151,7 @@ export default function DashProjectPage() {
   const removeSelectedImage = () => {
     setSelectedImage(null);
   };
+
   const removeSelectedThumbImage = () => {
     setSelectedThumbImage(null);
   };

@@ -36,6 +36,10 @@ export const siteConfig = {
       label: "Blog",
       href: "/blog",
     },
+    {
+      label: "Careers",
+      href: "/careers",
+    },
     // {
     //   label: "sappy",
     //   href: "/sappy",
@@ -97,6 +101,10 @@ export const siteConfig = {
     {
       label: "Alumni",
       href: "/dashboard/alumni",
+    },
+    {
+      label: "Careers",
+      href: "/dashboard/careers",
     },
     {
       label: "My Profile",
