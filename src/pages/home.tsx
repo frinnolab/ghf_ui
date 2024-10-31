@@ -17,6 +17,7 @@ import { GoArrowUpRight } from "react-icons/go";
 import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
+import CountUp from "react-countup";
 import { PartnerType } from "@/types";
 import {
   Donation,
@@ -37,7 +38,6 @@ export default function HomePage() {
   const mainSectionRef = useRef(null);
   const headerTextsRef = useRef(null);
   const introVideoRef = useRef<HTMLVideoElement>(null);
-  const sumRegRef = useRef<HTMLHeadingElement | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
@@ -385,18 +385,31 @@ export default function HomePage() {
             {/* Regions */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaMapMarkedAlt className="text-green-500" size={30} />
-              <h1 className=" text-6xl" ref={sumRegRef}>
+              {/* <h1 className=" text-6xl" ref={sumRegRef}>
                 {summaryInfo?.regions?.value ?? 0}
-              </h1>
+              </h1> */}
+
+              <CountUp
+                className="text-6xl"
+                duration={5}
+                separator=" "
+                end={Number(summaryInfo?.regions?.value ?? 0)}
+              />
               <h1 className=" text-2xl ">Regions Reached</h1>
             </div>
 
             {/* Districts */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaMapPin className="text-red-500" size={30} />
-              <h1 className=" text-6xl ">
+              {/* <h1 className=" text-6xl ">
                 {summaryInfo?.districts?.value ?? 0}
-              </h1>
+              </h1> */}
+              <CountUp
+                className="text-6xl"
+                duration={5}
+                separator=" "
+                end={Number(summaryInfo?.districts?.value ?? 0)}
+              />
               <h1 className=" text-2xl ">Districts Reached</h1>
             </div>
           </div>
@@ -405,16 +418,28 @@ export default function HomePage() {
             {/* Schools */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaUniversity className="text-blue-500" size={30} />
-              <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1>
+              {/* <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1> */}
+              <CountUp
+                className="text-6xl"
+                duration={5}
+                separator=""
+                end={Number(summaryInfo?.schools?.value ?? 0)}
+              />
               <h1 className=" text-2xl ">Schools Reached</h1>
             </div>
 
             {/* Studentes */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
               <FaPeopleGroup className="text-orange-500" size={30} />
-              <h1 className=" text-6xl ">
+              {/* <h1 className=" text-6xl ">
                 {summaryInfo?.students?.value ?? 0}
-              </h1>
+              </h1> */}
+              <CountUp
+                className="text-6xl"
+                duration={5}
+                separator=""
+                end={Number(summaryInfo?.students?.value ?? 0)}
+              />
               <h1 className=" text-2xl ">Students Impacted</h1>
             </div>
           </div>

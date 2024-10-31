@@ -1,6 +1,6 @@
 {
   "name": "ghf-revamp",
-  "homepage": "http://dev.ghftz.or.tz/",
+  "homepage": ".",
   "private": true,
   "version": "0.0.0",
   "type": "module",
