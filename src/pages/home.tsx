@@ -391,7 +391,7 @@ export default function HomePage() {
 
               <CountUp
                 className="text-6xl"
-                duration={5}
+                duration={10}
                 separator=" "
                 end={Number(summaryInfo?.regions?.value ?? 0)}
               />
@@ -406,8 +406,8 @@ export default function HomePage() {
               </h1> */}
               <CountUp
                 className="text-6xl"
-                duration={5}
-                separator=" "
+                duration={10}
+                separator=","
                 end={Number(summaryInfo?.districts?.value ?? 0)}
               />
               <h1 className=" text-2xl ">Districts Reached</h1>
@@ -421,8 +421,8 @@ export default function HomePage() {
               {/* <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1> */}
               <CountUp
                 className="text-6xl"
-                duration={5}
-                separator=""
+                duration={10}
+                separator=","
                 end={Number(summaryInfo?.schools?.value ?? 0)}
               />
               <h1 className=" text-2xl ">Schools Reached</h1>
@@ -436,8 +436,8 @@ export default function HomePage() {
               </h1> */}
               <CountUp
                 className="text-6xl"
-                duration={5}
-                separator=""
+                duration={10}
+                separator=","
                 end={Number(summaryInfo?.students?.value ?? 0)}
               />
               <h1 className=" text-2xl ">Students Impacted</h1>

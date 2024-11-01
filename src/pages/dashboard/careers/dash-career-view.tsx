@@ -8,11 +8,14 @@ import {
   CareerType,
   CareerValidity,
 } from "./dash-careers";
-import axios, { AxiosError, AxiosResponse} from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import {
   Button,
   Divider,
   Input,
+  ModalFooter,
+  ModalContent,
+  Modal,
   Select,
   SelectItem,
   Spinner,
@@ -24,6 +27,9 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  ModalBody,
+  ModalHeader,
+  useDisclosure,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil } from "react-icons/go";
 import { AuthRole } from "@/types";
@@ -38,6 +44,7 @@ function DashCareerView() {
   const route = useLocation();
   const [isLoading, setIsloading] = useState<boolean>(false);
   const [isAppsLoading, setIsAppsLoading] = useState<boolean>(false);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   // const actionTypes = ["detail", "edit", "delete"];
   const [quillValue, setQuillValue] = useState<string>("");
@@ -51,6 +58,8 @@ function DashCareerView() {
   });
   const [career, setCareer] = useState<Career | null>(null);
   const [careerApps, setCareerApps] = useState<CareerApplication[]>([]);
+  const [selectedApplication, setSelectedApplication] =
+    useState<CareerApplication | null>(null);
 
   // const [careerStatuses] = useState<{ key: CareerStatus; value: string }[]>(
   //   () => {
@@ -322,12 +331,44 @@ function DashCareerView() {
       });
   };
 
-  // const handleSelectedRow = (p: Career) => {
-  //   console.log(p);
-  //   // nav(`/dashboard/careers/${p.careerId}`, {
-  //   //   state: p.careerId,
-  //   // });
-  // };
+  const handleSelectedRow = (p: CareerApplication) => {
+    console.log(p);
+    fetchCareerApplication(`${p?.careerAppId}`);
+  };
+
+  const fetchCareerApplication = (caId: string) => {
+    axios
+      .get(`${api}/careers/applications/${caId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res?.data) {
+          const data: CareerApplication = {
+            careerAppId: res?.data["careerAppId"],
+            careerId: res?.data["careerId"],
+            avatarUrl: res?.data["avatarUrl"],
+            email: res?.data["email"],
+            firstname: res?.data["firstname"],
+            lastname: res?.data["lastname"],
+            mobile: res?.data["mobile"],
+            biography: res?.data["biography"],
+            city: res?.data["city"],
+            country: res?.data["country"],
+            careerStatus: Number(res?.data["careerStatus"]),
+            careerRoleType: Number(res?.data["careerRoleType"]),
+          };
+
+          setSelectedApplication(data);
+          onOpen();
+        }
+      })
+      .catch((e: AxiosError) => {
+        console.log(e);
+      });
+  };
 
   // const handleAction = (p: Career, action: string) => {
   //   switch (action) {
@@ -546,19 +587,35 @@ function DashCareerView() {
                   >
                     {careerApps?.map((ca) => (
                       <TableRow className="w-full" key={ca?.careerAppId}>
-                        <TableCell onClick={() => {}}>
+                        <TableCell
+                          onClick={() => {
+                            handleSelectedRow(ca);
+                          }}
+                        >
                           {ca?.firstname}
                         </TableCell>
-                        <TableCell onClick={() => {}}>{ca?.email}</TableCell>
-                        <TableCell onClick={() => {}}>
+                        <TableCell
+                          onClick={() => {
+                            handleSelectedRow(ca);
+                          }}
+                        >
+                          {ca?.email}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => {
+                            handleSelectedRow(ca);
+                          }}
+                        >
                           {careerRoleText(Number(ca?.careerRoleType))}
                         </TableCell>
-                        <TableCell onClick={() => {}}>
-                          { careerStatusText (Number(ca?.careerStatus))}
+                        <TableCell
+                          onClick={() => {
+                            handleSelectedRow(ca);
+                          }}
+                        >
+                          {careerStatusText(Number(ca?.careerStatus))}
                         </TableCell>
-                        <TableCell onClick={() => {}}>
-                          {``}
-                        </TableCell>
+                        <TableCell onClick={() => {}}>{``}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -568,6 +625,51 @@ function DashCareerView() {
           )}
         </div>
       </div>
+
+      {/* Dialog */}
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          <ModalHeader>
+            <h2>Career Application Details</h2>
+          </ModalHeader>
+          <ModalBody>
+            <div>
+              <p>
+                <strong>First Name:</strong> {selectedApplication?.firstname}
+              </p>
+              <p>
+                <strong>Last Name:</strong> {selectedApplication?.lastname}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedApplication?.email}
+              </p>
+              <p>
+                <strong>City:</strong> {selectedApplication?.city}
+              </p>
+              <p>
+                <strong>Country:</strong> {selectedApplication?.country}
+              </p>
+              <p>
+                <strong>Mobile:</strong> {selectedApplication?.mobile}
+              </p>
+              <p>
+                <strong>Role Type:</strong>{" "}
+                {careerRoleText(Number(selectedApplication?.careerRoleType))}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {careerStatusText(Number(selectedApplication?.careerStatus))}
+              </p>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="solid" color="danger" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Dialog End */}
     </div>
   );
 }
