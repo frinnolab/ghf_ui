@@ -763,7 +763,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className=" p-5 ">
+          <div className="w-full p-5 ">
             {blogs === null ? (
               <Spinner
                 className={` justify-center items-center `}

@@ -163,6 +163,7 @@ const CareerView = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0,0);
     if (career === null && careerId) {
       setIsloading(true);
       fetchCareer(careerId);

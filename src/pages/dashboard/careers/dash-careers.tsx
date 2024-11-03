@@ -46,7 +46,6 @@ const DashCareersList = () => {
   const { register, handleSubmit } = useForm<Career>();
 
   const handleCreate: SubmitHandler<Career> = (data: Career) => {
-    console.log(quillValue);
 
     setIsloading(true);
 
@@ -168,11 +167,13 @@ const DashCareersList = () => {
           });
 
           setCareers(data);
+          setIsloading(false);
         }
       });
   };
 
   useEffect(() => {
+    setIsloading(true);
     fetchCareers();
   }, []);
   return (

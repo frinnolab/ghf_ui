@@ -8,7 +8,7 @@ import {
   CareerType,
   CareerValidity,
 } from "./dash-careers";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import {
   Button,
   Divider,
@@ -30,8 +30,9 @@ import {
   ModalBody,
   ModalHeader,
   useDisclosure,
+  Tooltip,
 } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoPencil } from "react-icons/go";
+import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { AuthRole } from "@/types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ReactQuill from "react-quill";
@@ -46,7 +47,7 @@ function DashCareerView() {
   const [isAppsLoading, setIsAppsLoading] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  // const actionTypes = ["detail", "edit", "delete"];
+  const actionTypes = ["detail", "edit", "delete"];
   const [quillValue, setQuillValue] = useState<string>("");
 
   const [careerId] = useState<string | null>(() => {
@@ -61,37 +62,45 @@ function DashCareerView() {
   const [selectedApplication, setSelectedApplication] =
     useState<CareerApplication | null>(null);
 
-  // const [careerStatuses] = useState<{ key: CareerStatus; value: string }[]>(
-  //   () => {
-  //     return [
-  //       {
-  //         key: CareerStatus.Pending,
-  //         value: "Pending",
-  //       },
-  //       {
-  //         key: CareerStatus.Denied,
-  //         value: "Denied",
-  //       },
-  //       {
-  //         key: CareerStatus.Accepted,
-  //         value: "Accepted",
-  //       },
-  //     ];
-  //   }
-  // );
+  const [careerStatuses] = useState<{ key: CareerStatus; value: string }[]>(
+    () => {
+      return [
+        {
+          key: CareerStatus.Pending,
+          value: "Pending",
+        },
+        {
+          key: CareerStatus.Denied,
+          value: "Denied",
+        },
+        {
+          key: CareerStatus.Accepted,
+          value: "Accepted",
+        },
+      ];
+    }
+  );
 
-  // const [, setSelectedStatus] = useState<{
-  //   key: CareerStatus;
-  //   value: string;
-  // }>();
+  const [selectedStatus, setSelectedStatus] = useState<{
+    key: CareerStatus;
+    value: string;
+  }>();
 
-  // const changeCareerStatus = (e: ChangeEvent<HTMLSelectElement>) => {
-  //   const statusVal = careerStatuses.find(
-  //     (p) => p?.key === Number(e.target.value)
-  //   );
+  const changeCareerStatus = (
+    e: ChangeEvent<HTMLSelectElement>,
+    ca: CareerApplication
+  ) => {
+    setSelectedApplication(ca);
+    const statusVal = careerStatuses.find(
+      (p) => p?.key === Number(e.target.value)
+    );
 
-  //   setSelectedStatus(statusVal);
-  // };
+    setSelectedStatus(statusVal);
+
+    setIsAppsLoading(true);
+
+    onUpdateStatus(ca, statusVal);
+  };
 
   // const [careerRoles] = useState<{ key: AuthRole; value: string }[]>(() => {
   //   return [
@@ -165,6 +174,159 @@ function DashCareerView() {
     value: string;
   }>();
 
+  const { register, handleSubmit } = useForm<Career>();
+
+  const handleCreate: SubmitHandler<Career> = (data: Career) => {
+    setIsloading(true);
+
+    const newData: Career = {
+      careerId: career?.careerId,
+      position: data?.position ?? career?.position,
+      description: data?.description ?? career?.description,
+      requirements: quillValue ?? career?.requirements,
+      careerType: Number(selectedCareerType?.key ?? career?.careerType),
+      careerValidity: Number(selectedValidity?.key ?? career?.careerValidity),
+    };
+
+    axios
+      .put(`${api}/careers/${career?.careerId}`, newData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          console.log(res?.data);
+          setIsloading(false);
+          window.location.reload();
+        }
+      })
+      .catch((e: AxiosError) => {
+        console.log(e);
+        setIsloading(false);
+        //window.location.reload();
+      });
+  };
+
+  const handleSelectedRow = (p: CareerApplication) => {
+    setIsAppsLoading(true);
+    fetchCareerApplication(`${p?.careerAppId}`);
+  };
+
+  const fetchCareerApplication = (caId: string) => {
+    axios
+      .get(`${api}/careers/applications/${caId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res?.data) {
+          const data: CareerApplication = {
+            careerAppId: res?.data["careerAppId"],
+            careerId: res?.data["careerId"],
+            avatarUrl: res?.data["avatarUrl"],
+            email: res?.data["email"],
+            firstname: res?.data["firstname"],
+            lastname: res?.data["lastname"],
+            mobile: res?.data["mobile"],
+            biography: res?.data["biography"],
+            city: res?.data["city"],
+            country: res?.data["country"],
+            careerStatus: Number(res?.data["careerStatus"]),
+            careerRoleType: Number(res?.data["careerRoleType"]),
+          };
+
+          setSelectedApplication(data);
+          onOpen();
+          setIsAppsLoading(false);
+        }
+      })
+      .catch((e: AxiosError) => {
+        console.log(e);
+      });
+  };
+
+  const onUpdateStatus = (
+    cap: CareerApplication,
+    cv?: {
+      key: CareerStatus;
+      value: string;
+    }
+  ) => {
+    const data: CareerApplication = {
+      careerAppId: cap?.careerAppId,
+      careerId: cap?.careerId,
+      avatarUrl: cap?.avatarUrl,
+      email: cap?.email,
+      firstname: cap?.firstname,
+      lastname: cap?.lastname,
+      mobile: cap?.mobile,
+      biography: cap?.biography,
+      city: cap?.city,
+      country: cap?.country,
+      careerStatus: Number(cv?.key),
+      careerRoleType: Number(cap.careerRoleType),
+    };
+
+    axios
+      .put(`${api}/careers/applications/${cap?.careerAppId}`, data, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          setIsAppsLoading(false);
+          window.location.reload();
+        }
+      })
+      .catch((e: AxiosError) => {
+        console.log(e.response?.statusText);
+        setIsAppsLoading(false);
+      });
+  };
+
+  const handleAction = (p: CareerApplication, action: string) => {
+    switch (action) {
+      case actionTypes[0]:
+        //Detail
+        handleSelectedRow(p);
+        break;
+      case actionTypes[1]:
+        handleSelectedRow(p);
+        //Detail
+        break;
+      case actionTypes[2]:
+        handleDelete(p);
+        break;
+    }
+  };
+
+  const handleDelete = (b: CareerApplication) => {
+    if (authed?.role !== AuthRole.SuperAdmin || AuthRole.Admin) {
+      alert(HttpStatusCode.Unauthorized);
+    } else {
+      axios
+        .delete(`${api}/careers/applications/${b?.careerAppId}`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response?.data ?? err.response?.statusText);
+        });
+    }
+  };
+
   const changeCareerValidity = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = careerValiditys.find(
       (p) => p?.key === Number(e.target.value)
@@ -212,44 +374,6 @@ function DashCareerView() {
           setSelectedValidity(careerValid);
 
           setIsloading(false);
-
-          // Fetch applications for this career
-          axios
-            .get(`${api}/careers/${cid}/applications`, {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authed?.token}`,
-              },
-            })
-            .then((appRes: AxiosResponse) => {
-              if (appRes?.data) {
-                console.log(appRes?.data);
-
-                const appData: CareerApplication[] = Array.from(
-                  appRes.data
-                ).map((app: any) => ({
-                  careerAppId: app.careerAppId,
-                  careerId: app.careerId,
-                  firstname: app.firstname,
-                  lastname: app.lastname,
-                  email: app.email,
-                  city: app.city,
-                  country: app.country,
-                  mobile: app.mobile,
-                  careerRoleType: app.careerRoleType,
-                  careerStatus: app.careerStatus,
-                  //   applicantId: app.applicantId,
-                  //   applicant: app.applicant,
-                  //   attachments: app.attachments
-                }));
-                setCareerApps(appData);
-                setIsAppsLoading(false);
-              }
-            })
-            .catch((err: AxiosError) => {
-              console.log(err.response?.data ?? err.response?.statusText);
-            });
         }
       })
       .catch((err: AxiosError) => {
@@ -257,33 +381,51 @@ function DashCareerView() {
       });
   };
 
-  // const careerTypeText = (cType: CareerType) => {
-  //   switch (cType) {
-  //     case CareerType.Employment:
-  //       return "Employment";
-  //     case CareerType.Volunteering:
-  //       return "Volunteering";
-  //   }
-  // };
+  const fetchCareerApps = (cid: string) => {
+    // Fetch applications for this career
+    axios
+      .get(`${api}/careers/${cid}/applications`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+        },
+      })
+      .then((appRes: AxiosResponse) => {
+        if (appRes?.data) {
+          const appData: CareerApplication[] = Array.from(appRes.data).map(
+            (app: any) => ({
+              careerAppId: app.careerAppId,
+              careerId: app.careerId,
+              firstname: app.firstname,
+              lastname: app.lastname,
+              email: app.email,
+              city: app.city,
+              country: app.country,
+              mobile: app.mobile,
+              careerRoleType: app.careerRoleType,
+              careerStatus: app.careerStatus,
+            })
+          );
+          setCareerApps(appData);
 
-  // const careerValidityText = (cvType: CareerValidity) => {
-  //   switch (cvType) {
-  //     case CareerValidity.Open:
-  //       return "Open";
-  //     case CareerValidity.Closed:
-  //       return "Closed";
-  //   }
-  // };
+          mapStatusType(appData);
+          setIsAppsLoading(false);
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response?.data ?? err.response?.statusText);
+      });
+  };
 
-  const careerStatusText = (cvType: CareerStatus) => {
-    switch (cvType) {
-      case CareerStatus.Accepted:
-        return "Accepted";
-      case CareerStatus.Denied:
-        return "Denied";
-      case CareerStatus.Pending:
-        return "Pending";
-    }
+  const mapStatusType = (capps: CareerApplication[]) => {
+    capps.forEach((d) => {
+      const statusVal = careerStatuses.find(
+        (p) => p?.key === Number(d?.careerStatus)
+      );
+
+      setSelectedStatus(statusVal);
+    });
   };
 
   const careerRoleText = (cvType: AuthRole) => {
@@ -295,122 +437,12 @@ function DashCareerView() {
     }
   };
 
-  const { register, handleSubmit } = useForm<Career>();
-
-  const handleCreate: SubmitHandler<Career> = (data: Career) => {
-    setIsloading(true);
-
-    const newData: Career = {
-      careerId: career?.careerId,
-      position: data?.position ?? career?.position,
-      description: data?.description ?? career?.description,
-      requirements: quillValue ?? career?.requirements,
-      careerType: Number(selectedCareerType?.key ?? career?.careerType),
-      careerValidity: Number(selectedValidity?.key ?? career?.careerValidity),
-    };
-
-    axios
-      .put(`${api}/careers/${career?.careerId}`, newData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authed?.token}`,
-        },
-      })
-      .then((res: AxiosResponse) => {
-        if (res) {
-          console.log(res?.data);
-          setIsloading(false);
-          window.location.reload();
-        }
-      })
-      .catch((e: AxiosError) => {
-        console.log(e);
-        setIsloading(false);
-        //window.location.reload();
-      });
-  };
-
-  const handleSelectedRow = (p: CareerApplication) => {
-    console.log(p);
-    fetchCareerApplication(`${p?.careerAppId}`);
-  };
-
-  const fetchCareerApplication = (caId: string) => {
-    axios
-      .get(`${api}/careers/applications/${caId}`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${authed?.token}`,
-        },
-      })
-      .then((res: AxiosResponse) => {
-        if (res?.data) {
-          const data: CareerApplication = {
-            careerAppId: res?.data["careerAppId"],
-            careerId: res?.data["careerId"],
-            avatarUrl: res?.data["avatarUrl"],
-            email: res?.data["email"],
-            firstname: res?.data["firstname"],
-            lastname: res?.data["lastname"],
-            mobile: res?.data["mobile"],
-            biography: res?.data["biography"],
-            city: res?.data["city"],
-            country: res?.data["country"],
-            careerStatus: Number(res?.data["careerStatus"]),
-            careerRoleType: Number(res?.data["careerRoleType"]),
-          };
-
-          setSelectedApplication(data);
-          onOpen();
-        }
-      })
-      .catch((e: AxiosError) => {
-        console.log(e);
-      });
-  };
-
-  // const handleAction = (p: Career, action: string) => {
-  //   switch (action) {
-  //     case actionTypes[0]:
-  //       //Detail
-  //       handleSelectedRow(p);
-  //       break;
-  //     case actionTypes[1]:
-  //       handleSelectedRow(p);
-  //       //Detail
-  //       break;
-  //     case actionTypes[2]:
-  //       handleDelete(p);
-  //       break;
-  //   }
-  // };
-
-  // const handleDelete = (b: Career) => {
-  //   if (authed?.role !== AuthRole.SuperAdmin || AuthRole.Admin) {
-  //     alert(HttpStatusCode.Unauthorized);
-  //   } else {
-  //     axios
-  //       .delete(`${api}/careers/${b?.careerId}`, {
-  //         headers: {
-  //           Accept: "application/json",
-  //           Authorization: `Bearer ${authed?.token}`,
-  //         },
-  //       })
-  //       .then(() => {
-  //         window.location.reload();
-  //       })
-  //       .catch((err: AxiosError) => {
-  //         console.log(err.response?.data ?? err.response?.statusText);
-  //       });
-  //   }
-  // };
-
   useEffect(() => {
-    if (career === null && careerId !== null) {
+    if (career === null && careerId) {
       setIsloading(true);
-      setIsAppsLoading(true);
       fetchCareer(careerId);
+      setIsAppsLoading(true);
+      fetchCareerApps(careerId);
     }
   }, [career, careerId]);
 
@@ -613,9 +645,48 @@ function DashCareerView() {
                             handleSelectedRow(ca);
                           }}
                         >
-                          {careerStatusText(Number(ca?.careerStatus))}
+                          {/* {careerStatusText(Number(ca?.careerStatus))} */}
+                          <Select
+                            aria-hidden={true}
+                            isDisabled={!isEdit ? true : false}
+                            label="Select Status"
+                            selectedKeys={`${selectedStatus?.key ?? careerStatuses[0].key}`}
+                            className="max-w-xs"
+                            defaultSelectedKeys={`${selectedApplication?.careerStatus ?? careerStatuses[0].key}`}
+                            onChange={(e) => {
+                              changeCareerStatus(e, ca);
+                            }}
+                          >
+                            {careerStatuses.map((status) => (
+                              <SelectItem key={`${status.key}`}>
+                                {status.value}
+                              </SelectItem>
+                            ))}
+                          </Select>
                         </TableCell>
-                        <TableCell onClick={() => {}}>{``}</TableCell>
+                        <TableCell>
+                          <div className="relative flex items-center gap-2">
+                            <Tooltip content="View">
+                              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                <GoEye
+                                  onClick={() =>
+                                    handleAction(ca, actionTypes[0])
+                                  }
+                                />
+                              </span>
+                            </Tooltip>
+
+                            <Tooltip color="danger" content="Delete">
+                              <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                                <GoTrash
+                                  onClick={() =>
+                                    handleAction(ca, actionTypes[2])
+                                  }
+                                />
+                              </span>
+                            </Tooltip>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -633,7 +704,7 @@ function DashCareerView() {
             <h2>Career Application Details</h2>
           </ModalHeader>
           <ModalBody>
-            <div>
+            <div className="w-full flex flex-col gap-3">
               <p>
                 <strong>First Name:</strong> {selectedApplication?.firstname}
               </p>
@@ -656,16 +727,18 @@ function DashCareerView() {
                 <strong>Role Type:</strong>{" "}
                 {careerRoleText(Number(selectedApplication?.careerRoleType))}
               </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {careerStatusText(Number(selectedApplication?.careerStatus))}
-              </p>
             </div>
           </ModalBody>
           <ModalFooter>
             <Button variant="solid" color="danger" onClick={onClose}>
               Close
             </Button>
+
+            {isEdit && (
+              <Button onClick={() => {}} color="primary">
+                Save Changes
+              </Button>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
