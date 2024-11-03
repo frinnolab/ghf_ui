@@ -487,13 +487,13 @@ export default function HomePage() {
           <div className="w-full flex flex-col justify-center items-center space-y-5">
             <h1 className="md:text-3xl text-2xl py-3">Introduction</h1>
 
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 md:drop-shadow-2xl">
               <video
                 ref={introVideoRef}
                 style={{
                   borderRadius: "20px",
                 }}
-                className=" md:w-[1000px] "
+                className=" md:w-[1000px]"
                 src={siteConfig.staticAssets.staticIntroVideo}
                 onClick={playInftro}
                 muted
