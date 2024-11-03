@@ -2,6 +2,7 @@ import DashboardLayout from "@/layouts/dash-layout";
 import { Divider, Spinner } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useEffect, useState } from "react";
+import CountUp from "react-countup";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup, FaSchool } from "react-icons/fa6";
 type summaryData = {
@@ -87,7 +88,13 @@ export default function DashSummaryPage() {
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full">
               <FaMapMarkedAlt size={30} />
 
-              <h1 className=" text-6xl ">{summaryInfo?.regions?.value ?? 0}</h1>
+              {/* <h1 className=" text-6xl ">{summaryInfo?.regions?.value ?? 0}</h1> */}
+              <CountUp
+                className="text-6xl"
+                duration={10}
+                separator=" "
+                end={Number(summaryInfo?.regions?.value ?? 0)}
+              />
               <h1 className="text-2xl">Total Regions Reached</h1>
             </div>
 
@@ -95,25 +102,47 @@ export default function DashSummaryPage() {
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full">
               <FaMapPin size={30} />
 
-              <h1 className=" text-6xl ">
+              {/* <h1 className=" text-6xl ">
                 {summaryInfo?.districts?.value ?? 0}
-              </h1>
+              </h1> */}
+
+              <CountUp
+                className="text-6xl"
+                duration={10}
+                separator=" "
+                end={Number(summaryInfo?.districts?.value ?? 0)}
+              />
+
               <h1 className="text-2xl">Total Districts Reached</h1>
             </div>
 
             {/* Schools */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full">
               <FaSchool size={30} />
-              <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1>
+              {/* <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1> */}
+
+              <CountUp
+                className="text-6xl"
+                duration={10}
+                separator=" "
+                end={Number(summaryInfo?.schools?.value ?? 0)}
+              />
               <h1 className="text-2xl">Total Schools Reached</h1>
             </div>
 
             {/* Students */}
             <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full">
               <FaPeopleGroup size={30} />
-              <h1 className=" text-6xl ">
+              {/* <h1 className=" text-6xl ">
                 {summaryInfo?.students?.value ?? 0}
-              </h1>
+              </h1> */}
+
+              <CountUp
+                className="text-6xl"
+                duration={5}
+                separator=","
+                end={Number(summaryInfo?.students?.value ?? 0)}
+              />
               <h1 className="text-2xl">Total Students Reached</h1>
             </div>
           </div>
