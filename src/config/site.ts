@@ -40,10 +40,10 @@ export const siteConfig = {
       label: "Careers",
       href: "/careers",
     },
-    // {
-    //   label: "sappy",
-    //   href: "/sappy",
-    // },
+    {
+      label: "sappy",
+      href: "/sappy",
+    },
     // {
     //   label: "sabby",
     //   href: "/sabby",
