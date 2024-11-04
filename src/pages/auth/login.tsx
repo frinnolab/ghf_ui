@@ -3,7 +3,7 @@ import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { Image, Spinner } from "@nextui-org/react";
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GoEye, GoEyeClosed, GoHome } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
