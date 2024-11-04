@@ -113,8 +113,6 @@ export default function HomePage() {
             return [data];
           });
 
-          console.log(datas);
-
           setBlogs(datas);
         })
         .catch((err: AxiosError) => {

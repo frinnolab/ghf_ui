@@ -49,22 +49,22 @@ export default function DefaultLayout({
 
             <ul className="space-y-3 text-lg">
               <li className="flex items-center gap-5">
-                <a href={`${config?.socialLinks?.twitterX?.link}`} className="flex items-center gap-5">
+                <a href={`${config?.socialLinks?.twitterX?.link}`} target="_blank" className="flex items-center gap-5">
                   <FaTwitter /> {config?.socialLinks?.twitterX?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.facebook?.link}`} className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.facebook?.link}`} target="_blank" className="flex items-center gap-5">
                   <FaFacebook /> {config?.socialLinks?.facebook?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.instagram?.link}`} className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.instagram?.link}`} target="_blank" className="flex items-center gap-5">
                   <FaInstagram /> {config?.socialLinks?.instagram?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.linkedin?.link}`} className="flex items-center gap-5">
+              <a href={`${config?.socialLinks?.linkedin?.link}`} target="_blank" className="flex items-center gap-5">
                   <FaLinkedinIn /> {config?.socialLinks?.linkedin?.name}
                 </a>
               </li>

@@ -1,10 +1,11 @@
 import useAuthedProfile from "@/hooks/use-auth";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import { Image } from "@nextui-org/react";
+import { Image, Spinner } from "@nextui-org/react";
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
 import { useEffect, useRef, useState } from "react";
-import { GoHome } from "react-icons/go";
+import { useForm } from "react-hook-form";
+import { GoEye, GoEyeClosed, GoHome } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
 type loginRequest = {
@@ -13,14 +14,14 @@ type loginRequest = {
 };
 
 export type ResponseInfo = {
-  message?:string; 
-  status?:string;
-  delay?:number;
-}
+  message?: string;
+  status?: string;
+  delay?: number;
+};
 
 export type ErrorInfo = {
-  message?:string; 
-}
+  message?: string;
+};
 
 export type loginResponse = {
   profileId?: string;
@@ -32,36 +33,34 @@ export default function LoginPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
   const [, setResData] = useState<loginResponse | null>(null);
-  const [] = useState<ResponseInfo|null>(null);
-  const [] = useState<ErrorInfo|null>(null);
+  const [] = useState<ResponseInfo | null>(null);
+  const [] = useState<ErrorInfo | null>(null);
   const storage = window.sessionStorage;
 
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passRef = useRef<HTMLInputElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const authed = useAuthedProfile();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<loginRequest>();
+
   useEffect(() => {
-    if(authed){
-      navigate('/dashboard');
+    if (authed) {
+      navigate("/dashboard");
     }
   }, []);
 
-  const handleLogin = () => {
-    if (emailRef?.current?.value === "") {
-      alert(`Email is required!.`);
-    }
-
-    if (passRef?.current?.value === "") {
-      alert(`Password is required!.`);
-    }
-
-    //
+  const handleLogin = (log: loginRequest) => {
     const data: loginRequest = {
-      email: emailRef?.current?.value,
-      password: passRef?.current?.value,
+      email: log?.email,
+      password: log?.password,
     };
-
 
     axios
       .post(`${api}/auth/login`, data, {
@@ -72,8 +71,6 @@ export default function LoginPage() {
       })
       .then((res: AxiosResponse) => {
         if (res.status === HttpStatusCode.Ok) {
-          console.log(res.data);
-
           const data = {
             profileId: `${res?.data["profileId"]}`,
             email: `${res?.data["email"]}`,
@@ -90,6 +87,7 @@ export default function LoginPage() {
           storage.setItem("profile", JSON.stringify(data));
 
           setTimeout(() => {
+            setIsloading(false);
             alert(`Logged in: ${res?.data?.email}`);
           }, 3000);
 
@@ -119,40 +117,88 @@ export default function LoginPage() {
 
       <section className="w-full flex flex-col md:flex-row items-center justify-center gap-10 p-5">
         {/* Login Form */}
-        <div className="w-full gap-5 flex flex-col px-10 space-y-5 font-semibold">
+        <div className="w-full gap-5 flex flex-col px-10 space-y-3 font-semibold">
           <h1 className=" text-3xl ">Welcome Back!</h1>
           <h3 className=" text-medium">Sign in to continue</h3>
 
-          {/* Email */}
+          {isLoading ? (
+            <>
+              <Spinner
+                className={` justify-center items-center `}
+                label="Signing in..."
+              />
+            </>
+          ) : (
+            <>
+              <form
+                onSubmit={handleSubmit(handleLogin)}
+                className="w-full flex flex-col gap-3 p-5 space-y-2"
+              >
+                {/* Email */}
 
-          <div className="w-full space-y-3">
-            <label htmlFor="email">Email</label>
-            <Input type="email" ref={emailRef} placeholder="Enter your email" />
-          </div>
+                <div className="w-full space-y-3">
+                  <label htmlFor="email">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    {...register("email", { required: true })}
+                  />
 
-          {/* Password */}
+                  {errors.email && (
+                    <span className="text-danger">Email field is required</span>
+                  )}
+                </div>
 
-          <div className="w-full space-y-3">
-            <label htmlFor="password">Password</label>
-            <Input
-              type="password"
-              ref={passRef}
-              placeholder="Enter your password"
-            />
-          </div>
+                {/* Password */}
 
-          {/* CTO */}
+                <div className="w-full space-y-3">
+                  <label htmlFor="password">Password</label>
+                  <Input
+                    {...register("password", { required: true })}
+                    placeholder="Enter your password"
+                    endContent={
+                      <button
+                        className="focus:outline-none"
+                        type="button"
+                        onClick={toggleVisibility}
+                        aria-label="toggle password visibility"
+                      >
+                        {isVisible ? (
+                          <GoEye className="text-2xl text-default-400 pointer-events-none" />
+                        ) : (
+                          <GoEyeClosed className="text-2xl text-default-400 pointer-events-none" />
+                        )}
+                      </button>
+                    }
+                    type={isVisible ? "text" : "password"}
+                  />
 
-          <div className="w-full space-y-3">
-            <label htmlFor=""></label>
-            <Button
-              className="w-full bg-orange-400"
-              variant="flat"
-              onClick={handleLogin}
-            >
-              Login
-            </Button>
-          </div>
+                  {errors.password && (
+                    <span className="text-danger">
+                      Password field is required
+                    </span>
+                  )}
+                </div>
+
+                {/* CTO */}
+
+                <div className="w-full space-y-3">
+                  <label htmlFor=""></label>
+                  <Button
+                    className="w-full bg-orange-400"
+                    variant="flat"
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                </div>
+
+                <div className="w-full flex justify-end gap-3 text-center">
+                  <p>Forgot password?</p> <a href="#" className="text-primary">Click here</a>
+                </div>
+              </form>
+            </>
+          )}
 
           <div className="w-full flex gap-3 justify-center items-center">
             <hr className="text-2xl w-full" />
