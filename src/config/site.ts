@@ -33,17 +33,17 @@ export const siteConfig = {
       href: "/alumni",
     },
     {
-      label: "Blog",
+      label: "Blogs",
       href: "/blog",
     },
     {
       label: "Careers",
       href: "/careers",
     },
-    {
-      label: "sappy",
-      href: "/sappy",
-    },
+    // {
+    //   label: "sappy",
+    //   href: "/sappy",
+    // },
     // {
     //   label: "sabby",
     //   href: "/sabby",

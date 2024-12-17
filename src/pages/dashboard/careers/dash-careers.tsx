@@ -106,6 +106,8 @@ const DashCareersList = () => {
   const handleDelete = (b: Career) => {
     if (authed?.role !== AuthRole.SuperAdmin || AuthRole.Admin) {
       alert(HttpStatusCode.Unauthorized);
+      console.log(HttpStatusCode);
+      
     } else {
       axios
         .delete(`${api}/careers/${b?.careerId}`, {

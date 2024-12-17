@@ -25,7 +25,10 @@ export default function AlumniList() {
 
   const toDetail = (b: Alumni) => {
     navigate(`/alumni/${b?.alumniId}`, {
-      state: `${b?.alumniId}`,
+      state: {
+        "alumniId":`${b?.alumniId}`,
+        "alumniProfileId":`${b?.alumniProfile?.profileId}`
+      },
     });
   };
 
@@ -52,7 +55,7 @@ export default function AlumniList() {
     data.append("participationYear", `${p?.participationYear ?? ""}`);
     data.append("currenctOccupation", `${p?.currenctOccupation ?? ""}`);
     data.append("story", `${p?.story ?? ""}`);
-    data.append("roleType", `${AuthRole.Alumni ?? ""}`);
+    data.append("roleType", `${AuthRole.Alumni}`);
     data.append("email", `${p?.alumniProfile?.email ?? ""}`);
     data.append("firstname", `${p?.alumniProfile?.firstname ?? ""}`);
     data.append("lastname", `${p?.alumniProfile?.lastname ?? ""}`);
@@ -61,6 +64,9 @@ export default function AlumniList() {
     if (selectedImage) {
       data.append("avatar", selectedImage);
     }
+
+    //console.log(JSON.stringify(data.forEach((d=>console.log(d)))));
+    
 
     axios
       .post(`${api}/alumnis`, data, {
@@ -96,6 +102,7 @@ export default function AlumniList() {
       axios
         .get(`${api}/alumnis`)
         .then((res: AxiosResponse) => {
+          
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
 
@@ -103,7 +110,7 @@ export default function AlumniList() {
               profileId: d?.alumniProfile?.profileId,
               firstname: d?.alumniProfile?.firstname ?? "",
               lastname: d?.alumniProfile?.lastname ?? "",
-              email: d?.alumniProfile?.email ?? "",
+              email:`${d?.alumniProfile?.email ?? ""}` ,
               role: Number(d?.alumniProfile.roleType) ?? AuthRole.Alumni,
               avatarUrl: d?.alumniProfile?.avatarUrl ?? "",
               position: d?.alumniProfile?.position ?? "",

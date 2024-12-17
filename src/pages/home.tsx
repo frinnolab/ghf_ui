@@ -92,6 +92,7 @@ export default function HomePage() {
 
     setSelectedselectedDonorCurrType(statusVal);
   };
+  
   const fetchBlogs = () => {
     if (blogs === null) {
       axios
@@ -809,7 +810,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex justify-end p-5">
-                  <a className=" text-primary " href="/blogs">
+                  <a className=" text-primary " href="/blog">
                     View all blogs
                   </a>
                 </div>
