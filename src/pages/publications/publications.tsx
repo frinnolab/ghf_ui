@@ -94,9 +94,9 @@ export default function Publications() {
               </>
             ) : (
               <div className="flex w-full flex-col">
-                <Tabs aria-label="Options">
+                <Tabs aria-label="Options" fullWidth size="lg" radius="sm" color="primary">
                   <Tab key="newsletters" title="Newsletters">
-                    <Card className={`w-full border-transparent`}>
+                    <Card className={`w-full border-transparent shadow-none`}>
                       {pubs?.filter(
                         (p) => p?.publishType === PublishTypeEnum.Newsletter
                       ).length === 0 ? (
@@ -153,7 +153,7 @@ export default function Publications() {
                   </Tab>
 
                   <Tab key="reports" title="Reports">
-                    <Card className={`w-full border-transparent`}>
+                    <Card className={`w-full border-transparent shadow-none`}>
                       {pubs?.filter(
                         (p) => p?.publishType === PublishTypeEnum.Report
                       ).length === 0 ? (
@@ -210,7 +210,7 @@ export default function Publications() {
                   </Tab>
 
                   <Tab key="manual" title="Student manuals">
-                    <Card className={`w-full border-transparent`}>
+                    <Card className={`w-full border-transparent shadow-none`}>
                       {pubs?.filter(
                         (p) =>
                           p?.publishType === PublishTypeEnum["Student Manual"]
