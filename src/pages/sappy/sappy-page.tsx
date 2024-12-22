@@ -23,11 +23,11 @@ const SappyPage = () => {
   const pinBoxRef = useRef<HTMLDivElement>(null);
   const slateBoxRef = useRef<HTMLDivElement>(null);
 
-  const tl = fx.timeline({
-    defaults: {
-      duration: 1,
-    },
-  });
+  // const tl = fx.timeline({
+  //   defaults: {
+  //     duration: 1,
+  //   },
+  // });
 
   const setupFx = () => {
     fx.set([cont1Ref?.current, cont2Ref?.current, cont3Ref?.current], {
@@ -43,8 +43,8 @@ const SappyPage = () => {
       x:window.innerWidth/2
     });
   };
-  const pinkBoxFx = () => {};
-  const slateBoxFx = () => {};
+  // const pinkBoxFx = () => {};
+  // const slateBoxFx = () => {};
 
   //Fx Setup
   useGSAP(() => {

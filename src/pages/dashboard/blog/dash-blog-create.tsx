@@ -12,20 +12,34 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 export const Qformats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'list', 'bullet', 'indent','image'
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "image",
 ];
 
 export const Qmodules = {
   toolbar: [
-    [{ 'header': [1, 2, false] }],
-    ['bold', 'italic', 'underline','strike', 'blockquote'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-    ['image'],
-    ['clean']
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["image"],
+    // ["video"],
+    // ["link"],
+    ["clean"],
   ],
-}
+};
 
 export default function DashBlogCreate() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -81,7 +95,7 @@ export default function DashBlogCreate() {
           };
 
           setBlog(data);
-          setQuillValue(res?.data['description']);
+          setQuillValue(res?.data["description"]);
         });
     }
   }, [blogId]);
@@ -153,8 +167,10 @@ export default function DashBlogCreate() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
-          window.location.reload();
+          if(res?.data){
+
+            window.location.reload();
+          }
         })
         .catch((err: AxiosError) => {
           //setSelectedImage(null);
@@ -174,7 +190,7 @@ export default function DashBlogCreate() {
       </div>
       <Divider />
 
-      <div className="w-full flex flex-col p-10 gap-5">
+      <div className="w-full flex flex-col p-10 gap-5 h-[50dvh]">
         <div className={` flex justify-end items-center gap-5 `}>
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
@@ -212,7 +228,7 @@ export default function DashBlogCreate() {
             </div>
 
             {/* Editor */}
-            <div className="w-full space-y-3">
+            <div className="w-full space-y-3 overflow-hidden scrollbar-hide">
               <label htmlFor="description">Description</label>
               {/* <Textarea
                 disabled={!isEdit ? true : false}
@@ -221,14 +237,24 @@ export default function DashBlogCreate() {
                 placeholder={`${blog?.description ?? "Enter Description"}`}
               /> */}
 
-              <ReactQuill
-                placeholder={`${blogId ? blog?.description : "Enter description"}`}
-                theme="snow"
-                value={quillValue}
-                onChange={setQuillValue}
-                formats={Qformats}
-                modules={Qmodules}
-              />
+              <div
+                className={`w-full h-[30dvh]`}
+              >
+                <ReactQuill
+                  placeholder={`${blogId ? blog?.description : "Enter description"}`}
+                  theme="snow"
+                  style={{
+                    "height":"30dvh",
+                    "overflow":"scroll",
+                    "overflowX":"hidden"
+                  }}
+                  value={quillValue}
+                  onChange={setQuillValue}
+                  formats={Qformats}
+                  
+                  modules={Qmodules}
+                />
+              </div>
             </div>
 
             {/* Actions */}
@@ -245,7 +271,8 @@ export default function DashBlogCreate() {
           {/* Form End */}
           {/* Thumbnail */}
 
-          <div className="w-full min-h-[30dvh] relative rounded-2xl p-5 flex flex-col items-center ">
+          <div className="w-full min-h-[30dvh] relative rounded-2xl p-5 flex flex-col items-center gap-3 ">
+            <h1>Thumbnail Image</h1>
             {selectedImage ? (
               <div className="w-full flex items-center p-5 justify-center">
                 <Image src={URL.createObjectURL(selectedImage)} />
@@ -292,3 +319,4 @@ export default function DashBlogCreate() {
     </div>
   );
 }
+

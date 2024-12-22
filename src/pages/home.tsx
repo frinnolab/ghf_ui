@@ -546,9 +546,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full flex flex-col md:flex-row justify-between items-center gap-3 md:gap-5 p-5">
+          <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center gap-3 md:gap-5 p-5">
             {collabs?.map((p: Partner, i) => (
-              <div key={i} className="p-5 md:p-10 rounded-2xl text-center ">
+              <div key={i} className="w-[20%] p-5 md:p-10 rounded-2xl text-center ">
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image

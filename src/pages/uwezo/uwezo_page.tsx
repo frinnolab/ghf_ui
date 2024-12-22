@@ -112,7 +112,7 @@ export default function UwezoPage() {
                       <h1 className=" text-2xl font-semibold ">
                         {p?.title?.toLocaleUpperCase()}
                       </h1>
-                      <p className="text-xl">{p?.description}</p>
+                      {/* <p className="text-xl">{p?.description}</p> */}
                       <div className={` `}>
                         <Button
                           variant="light"

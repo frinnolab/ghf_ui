@@ -8,6 +8,7 @@ import { Divider, Image } from "@nextui-org/react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { siteConfig } from "@/config/site";
+import ReactPlayer from "react-player/youtube";
 
 export default function UwezoDetailPage() {
   const route = useLocation();
@@ -175,9 +176,13 @@ export default function UwezoDetailPage() {
           <div className=" space-y-3">
             <h1 className=" text-2xl ">Description</h1>
             <Divider />
-            <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
+            {/* <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
               {project?.description}
-            </p>
+            </p> */}
+
+            <div
+              dangerouslySetInnerHTML={{ __html: `${project?.description}` }}
+            ></div>
           </div>
         </div>
 
@@ -199,10 +204,45 @@ export default function UwezoDetailPage() {
                   className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
                 >
                   <Image src={d?.assetUrl} />
+                  {/* <ReactPlayer url={d?.videoUrl} controls /> */}
+
                 </div>
               ))}
             </div>
           )}
+
+          {/* Video Assets */}
+
+          <div
+            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
+          >
+            <h1 className="text-xl md:text-3xl">Video Assets</h1>
+            {/* <video
+              src="https://youtube.com/watch?v=C0DPdy98e4c"
+              autoPlay
+              controls
+              width={350}
+              height={350}
+            ></video> */}
+
+            {projectAssets === null || projectAssets?.length === 0 ? (
+              <></>
+            ) : (
+              <div
+                className={`w-full flex flex-col md:flex-row justify-center gap-5`}
+              >
+                {projectAssets?.flatMap((d: ProjectAsset) => (
+                  <div
+                    key={d?.assetId}
+                    className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+                  >
+                    <ReactPlayer url={d?.videoUrl} controls />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Video Assets End */}
         </div>
         {/* Assets End */}
       </div>

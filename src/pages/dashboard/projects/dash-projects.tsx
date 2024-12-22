@@ -32,10 +32,11 @@ export type Project = {
 };
 
 export type ProjectAsset = {
-  assetId?:string;
-  projectId?:string;
-  assetUrl?:string;
-}
+  assetId?: string;
+  projectId?: string;
+  assetUrl?: string;
+  videoUrl?: string;
+};
 
 export enum projectStatusEnum {
   Completed = 0,
@@ -50,7 +51,7 @@ export type ProjectStatus = {
 export default function DashProjectsListPage() {
   const columns = [
     "Title",
-    "Description",
+    // "Description",
     "Regions Reached",
     "Districts Reached",
     "Schools Reached",
@@ -142,10 +143,10 @@ export default function DashProjectsListPage() {
   const handleDelete = (i: Project) => {
     axios
       .delete(`${api}/projects/${i?.projectId}`, {
-        headers:{
-          Authorization:`Bearer ${authed?.token}`,
-          "Content-Type":'application/json',
-          Accept:'application/json'
+        headers: {
+          Authorization: `Bearer ${authed?.token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         method: "DELETE",
       })
@@ -208,9 +209,9 @@ export default function DashProjectsListPage() {
                   <TableCell onClick={() => handleSelectedRow(project)}>
                     {project?.title}
                   </TableCell>
-                  <TableCell onClick={() => handleSelectedRow(project)}>
-                    {project?.description}
-                  </TableCell>
+                  {/* <TableCell className="w-4 line-clamp-1 text-red-400" onClick={() => handleSelectedRow(project)}>
+                      {project?.description}
+                  </TableCell> */}
                   <TableCell onClick={() => handleSelectedRow(project)}>
                     {project?.regionsReached}
                   </TableCell>

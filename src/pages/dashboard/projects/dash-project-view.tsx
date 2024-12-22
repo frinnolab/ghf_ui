@@ -17,11 +17,13 @@ import {
   Select,
   SelectItem,
   Switch,
-  Textarea,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { siteConfig } from "@/config/site";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Qformats, Qmodules } from "../blog/dash-blog-create";
 export default function DashProjectPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -38,9 +40,12 @@ export default function DashProjectPage() {
     }
   });
   const [project, setProject] = useState<Project | null>(null);
-  const dateStartRef = useRef<HTMLInputElement | null>(null);
   const dateEndRef = useRef<HTMLInputElement | null>(null);
+  const dateStartRef = useRef<HTMLInputElement | null>(null);
+  const videoUrlRef = useRef<HTMLInputElement | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [quillValue, setQuillValue] = useState<string>("");
   const [selectedThumbImage, setSelectedThumbImage] = useState<File | null>(
     null
   );
@@ -82,7 +87,7 @@ export default function DashProjectPage() {
           const data: Project = {
             projectId: `${res.data["projectId"]}`,
             title: `${res.data["title"]}`,
-            description: `${res.data["description"]}`,
+            // description: `${res.data["description"]}`,
             regionsReached: Number(`${res?.data["regionsReached"]}`) ?? 0,
             districtsReached: Number(`${res.data["districtsReached"]}`) ?? 0,
             schoolsReached: Number(`${res.data["schoolsReached"]}`) ?? 0,
@@ -101,6 +106,7 @@ export default function DashProjectPage() {
           setProject(data);
 
           setSelectedStatus(statusVal);
+          setQuillValue(res.data["description"]);
 
           removeSelectedImage();
           setIsProject(true);
@@ -172,7 +178,7 @@ export default function DashProjectPage() {
       data.append("_method", `POST`);
       data.append("publisherProfileId", `${authed?.profileId}`);
       data.append("title", `${d?.title ?? ""}`);
-      data.append("description", `${d?.description ?? ""}`);
+      data.append("description", `${quillValue ?? ""}`);
       data.append(
         "status",
         `${selectedStatus?.key === undefined ? projectStatus[1].key : selectedStatus?.key}`
@@ -213,7 +219,7 @@ export default function DashProjectPage() {
       data.append("_method", `PUT`);
       data.append("publisherProfileId", `${authed?.profileId}`);
       data.append("title", `${d?.title ?? project?.title}`);
-      data.append("description", `${d?.description ?? project?.description}`);
+      data.append("description", `${quillValue ?? project?.description}`);
       data.append(
         "status",
         `${selectedStatus?.key === undefined || selectedStatus?.key === null ? projectStatus[1].key : selectedStatus?.key}`
@@ -278,6 +284,10 @@ export default function DashProjectPage() {
         if (selectedImage) {
           asset.append("image", selectedImage);
         }
+        if (videoUrl) {
+          asset.append("videoUrl", `${videoUrl}`);
+        }
+        
 
         axios
           .post(`${api}/projects/assets/${project?.projectId}`, asset, {
@@ -382,7 +392,7 @@ export default function DashProjectPage() {
             className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
           >
             <div className="w-full space-y-3">
-              <label htmlFor="Thumbnail">Thumbnail</label>
+              <label htmlFor="Thumbnail">Thumbnail Image</label>
 
               <div className="w-full min-h-[10dvh] relative rounded-2xl p-5 flex flex-col items-center ">
                 {selectedThumbImage ? (
@@ -432,10 +442,10 @@ export default function DashProjectPage() {
                   </span>
                 </div>
               </div>
-              <Divider/>
+              <Divider />
             </div>
-            
-            <div className="w-full space-y-3">
+
+            <div className="w-full space-y-2">
               <label htmlFor="Title">Title</label>
               <Input
                 disabled={!isEdit ? true : false}
@@ -443,18 +453,6 @@ export default function DashProjectPage() {
                 defaultValue={`${project?.title ?? ""}`}
                 {...register("title")}
                 placeholder={`${project?.title?.toUpperCase() ?? "Enter Title"}`}
-              />
-            </div>
-
-            {/* Editor */}
-            <div className="w-full space-y-3">
-              <label htmlFor="description">Description</label>
-              <Textarea
-                disabled={!isEdit ? true : false}
-                type="text"
-                defaultValue={`${project?.description ?? ""}`}
-                {...register("description")}
-                placeholder={`${project?.description ?? "Enter Description"}`}
               />
             </div>
 
@@ -561,6 +559,34 @@ export default function DashProjectPage() {
             </div>
             {/* Type Stats End */}
 
+            {/* Editor */}
+            <div className="w-full space-y-1">
+              <label htmlFor="description">Description</label>
+              {/* <Textarea
+                disabled={!isEdit ? true : false}
+                type="text"
+                defaultValue={`${project?.description ?? ""}`}
+                {...register("description")}
+                placeholder={`${project?.description ?? "Enter Description"}`}
+              /> */}
+
+              <ReactQuill
+                placeholder={`${quillValue ?? "Enter description"}`}
+                theme="snow"
+                style={{
+                  height: "25dvh",
+                  overflow: "scroll",
+                  overflowX: "hidden",
+                }}
+                value={quillValue}
+                onChange={setQuillValue}
+                formats={Qformats}
+                modules={Qmodules}
+              />
+              {/* <div className={`w-full`}>
+              </div> */}
+            </div>
+
             {/* Actions */}
             <div className="w-full space-y-3 flex items-center">
               <Button
@@ -578,23 +604,52 @@ export default function DashProjectPage() {
           <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
             <div className={`w-full flex justify-between items-center`}>
               {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
-              <div className="p-2 flex items-center">
-                <input
-                  disabled={!isEdit ? true : false}
-                  accept="image/*"
-                  type="file"
-                  onChange={(e) => {
-                    onChangePic(e);
-                  }}
-                />
+              <div className="flex flex-col">
+              {/* Image asset */}
+                <div>
+                  <h1>Add image Asset</h1>
+                  <div className="p-2 flex items-center">
+                    <input
+                      disabled={!isEdit ? true : false}
+                      accept="image/*"
+                      type="file"
+                      onChange={(e) => {
+                        onChangePic(e);
+                      }}
+                    />
 
-                <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
-                  <GoTrash
-                    size={20}
-                    className=" text-danger-500"
-                    onClick={removeSelectedImage}
-                  />
-                </span>
+                    <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
+                      <GoTrash
+                        size={20}
+                        className=" text-danger-500"
+                        onClick={removeSelectedImage}
+                      />
+                    </span>
+                  </div>
+                </div>
+              {/* Image asset */}
+                <div>
+                  <h1>Add Video Asset link</h1>
+                  <div className="p-2 flex items-center">
+                    <Input
+                      disabled={!isEdit ? true : false}
+                      type="text"
+                      ref={videoUrlRef}
+                      onChange={(e)=>{
+                        setVideoUrl(e?.target?.value)
+                      }}
+                      placeholder={`${videoUrl !== '' ? videoUrl : 'Paste video link'}`}
+                    />
+
+                    <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
+                      <GoTrash
+                        size={20}
+                        className=" text-danger-500"
+                        onClick={()=> setVideoUrl('') }
+                      />
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <Button
@@ -619,6 +674,9 @@ export default function DashProjectPage() {
                 </>
               ) : (
                 <div className={`w-full flex gap-3`}>
+                  <div className="flex w-full flex-col">
+                    
+                  </div>
                   {projectAssets?.flatMap((d: ProjectAsset) => (
                     <div
                       key={d?.projectId}
