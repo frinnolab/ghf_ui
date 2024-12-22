@@ -682,6 +682,8 @@ export default function DashProjectPage() {
 
                   <div className="flex w-full flex-col">
                     <Tabs
+                    fullWidth
+                    color="primary"
                       aria-label="Options"
                       selectedKey={selected}
                       onSelectionChange={() => {
