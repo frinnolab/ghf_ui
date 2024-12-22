@@ -6,13 +6,20 @@ import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
 import { Divider, Image } from "@nextui-org/react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
-import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
+import {
+  FaCameraRetro,
+  FaMapPin,
+  FaPeopleGroup,
+  FaVideo,
+} from "react-icons/fa6";
 import { siteConfig } from "@/config/site";
 import ReactPlayer from "react-player/youtube";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
 export default function UwezoDetailPage() {
   const route = useLocation();
   const api = `${import.meta.env.VITE_API_URL}`;
+  const [selected, setSelected] = useState("photos");
   const [projectId] = useState<string | null>(() => {
     if (route?.state) {
       return `${route?.state}`;
@@ -75,6 +82,7 @@ export default function UwezoDetailPage() {
             (d: any) => {
               const data: ProjectAsset = {
                 assetUrl: d?.assetUrl,
+                videoUrl: d?.videoUrl,
                 assetId: d?.assetId,
                 projectId: d?.projectId,
               };
@@ -108,8 +116,9 @@ export default function UwezoDetailPage() {
       </div>
 
       <Divider />
-      <div className="w-full flex flex-col">
+      <div className="w-full flex flex-col justify-center">
         <div className=" w-full flex gap-10 justify-between p-10">
+          
           <div className=" w-full space-y-3 ">
             <h1 className=" text-3xl font-semibold ">
               {project?.title?.toUpperCase() ?? ""}
@@ -157,9 +166,9 @@ export default function UwezoDetailPage() {
             </div>
           </div>
 
-          <div className="w-full">
+          <div className="w-full flex justify-center items-center">
             <Image
-              className={` w-[50vw] object-cover`}
+              className={` w-[80%] object-cover`}
               src={
                 project?.thumbnailUrl !== "" || null
                   ? project?.thumbnailUrl
@@ -186,6 +195,7 @@ export default function UwezoDetailPage() {
           </div>
         </div>
 
+        <Divider />
         {/* Assets */}
         <div
           className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
@@ -198,51 +208,81 @@ export default function UwezoDetailPage() {
             <div
               className={`w-full flex flex-col md:flex-row justify-center gap-5`}
             >
-              {projectAssets?.flatMap((d: ProjectAsset) => (
-                <div
-                  key={d?.assetId}
-                  className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+              <div className="flex w-full flex-col">
+                <Tabs
+                  fullWidth
+                  size="lg"
+                  radius="md"
+                  variant="light"
+                  color="primary"
+                  className="w-full"
+                  aria-label="Options"
+                  selectedKey={selected}
+                  onSelectionChange={() => {
+                    if (selected === "photos") {
+                      setSelected("videos");
+                    } else {
+                      setSelected("photos");
+                    }
+                  }}
                 >
-                  <Image src={d?.assetUrl} />
-                  {/* <ReactPlayer url={d?.videoUrl} controls /> */}
+                  <Tab
+                    className="w-full"
+                    key="photos"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <FaCameraRetro />
+                        <span>Photos</span>
+                      </div>
+                    }
+                  >
+                    <Card className="w-full shadow-none">
+                      <CardBody className="w-full flex flex-wrap">
+                        {projectAssets?.flatMap((d: ProjectAsset) => (
+                          <div
+                            key={d?.assetId}
+                            className={`w-[20%] p-2 rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+                          >
+                            <Image src={d?.assetUrl} radius="none" />
+                            {/* <ReactPlayer url={d?.videoUrl} controls /> */}
+                          </div>
+                        ))}
+                      </CardBody>
+                    </Card>
+                  </Tab>
 
-                </div>
-              ))}
+                  <Tab
+                    className="w-full"
+                    key="videos"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <FaVideo />
+                        <span>Videos</span>
+                      </div>
+                    }
+                  >
+                    <Card className="w-full shadow-none">
+                      <CardBody className="w-full flex flex-wrap">
+                        {projectAssets?.flatMap((d: ProjectAsset) => (
+                          <div
+                            key={d?.assetId}
+                            className={` p-2 shadow rounded-xl flex items-center gap-1 P-2`}
+                          >
+                            <ReactPlayer
+                              width={300}
+                              height={300}
+                              url={d?.videoUrl}
+                              controls
+                            />
+                          </div>
+                        ))}
+                      </CardBody>
+                    </Card>
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
           )}
-
-          {/* Video Assets */}
-
-          <div
-            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
-          >
-            <h1 className="text-xl md:text-3xl">Video Assets</h1>
-            {/* <video
-              src="https://youtube.com/watch?v=C0DPdy98e4c"
-              autoPlay
-              controls
-              width={350}
-              height={350}
-            ></video> */}
-
-            {projectAssets === null || projectAssets?.length === 0 ? (
-              <></>
-            ) : (
-              <div
-                className={`w-full flex flex-col md:flex-row justify-center gap-5`}
-              >
-                {projectAssets?.flatMap((d: ProjectAsset) => (
-                  <div
-                    key={d?.assetId}
-                    className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
-                  >
-                    <ReactPlayer url={d?.videoUrl} controls />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          {/* Video Assets End */}
         </div>
         {/* Assets End */}
       </div>

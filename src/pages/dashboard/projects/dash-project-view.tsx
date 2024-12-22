@@ -24,6 +24,9 @@ import { siteConfig } from "@/config/site";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Qformats, Qmodules } from "../blog/dash-blog-create";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { FaPlayCircle } from "react-icons/fa";
+import { FaCameraRetro, FaVideo } from "react-icons/fa6";
 export default function DashProjectPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -40,6 +43,7 @@ export default function DashProjectPage() {
     }
   });
   const [project, setProject] = useState<Project | null>(null);
+  const [selected, setSelected] = useState("photos");
   const dateEndRef = useRef<HTMLInputElement | null>(null);
   const dateStartRef = useRef<HTMLInputElement | null>(null);
   const videoUrlRef = useRef<HTMLInputElement | null>(null);
@@ -124,6 +128,7 @@ export default function DashProjectPage() {
             (d: any) => {
               const data: ProjectAsset = {
                 assetUrl: d?.assetUrl,
+                videoUrl: d?.videoUrl,
                 assetId: d?.assetId,
                 projectId: d?.projectId,
               };
@@ -287,7 +292,6 @@ export default function DashProjectPage() {
         if (videoUrl) {
           asset.append("videoUrl", `${videoUrl}`);
         }
-        
 
         axios
           .post(`${api}/projects/assets/${project?.projectId}`, asset, {
@@ -605,7 +609,7 @@ export default function DashProjectPage() {
             <div className={`w-full flex justify-between items-center`}>
               {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
               <div className="flex flex-col">
-              {/* Image asset */}
+                {/* Image asset */}
                 <div>
                   <h1>Add image Asset</h1>
                   <div className="p-2 flex items-center">
@@ -627,7 +631,7 @@ export default function DashProjectPage() {
                     </span>
                   </div>
                 </div>
-              {/* Image asset */}
+                {/* Image asset */}
                 <div>
                   <h1>Add Video Asset link</h1>
                   <div className="p-2 flex items-center">
@@ -635,17 +639,17 @@ export default function DashProjectPage() {
                       disabled={!isEdit ? true : false}
                       type="text"
                       ref={videoUrlRef}
-                      onChange={(e)=>{
-                        setVideoUrl(e?.target?.value)
+                      onChange={(e) => {
+                        setVideoUrl(e?.target?.value);
                       }}
-                      placeholder={`${videoUrl !== '' ? videoUrl : 'Paste video link'}`}
+                      placeholder={`${videoUrl !== "" ? videoUrl : "Paste video link"}`}
                     />
 
                     <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
                       <GoTrash
                         size={20}
                         className=" text-danger-500"
-                        onClick={()=> setVideoUrl('') }
+                        onClick={() => setVideoUrl("")}
                       />
                     </span>
                   </div>
@@ -673,27 +677,87 @@ export default function DashProjectPage() {
                   <p className=" text-center ">No Asset(s)</p>
                 </>
               ) : (
-                <div className={`w-full flex gap-3`}>
+                <div className={`w-full flex flex-col gap-3`}>
+                  <h1>ASSETS</h1>
+
                   <div className="flex w-full flex-col">
-                    
-                  </div>
-                  {projectAssets?.flatMap((d: ProjectAsset) => (
-                    <div
-                      key={d?.projectId}
-                      className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                    <Tabs
+                      aria-label="Options"
+                      selectedKey={selected}
+                      onSelectionChange={() => {
+                        if (selected === "photos") {
+                          setSelected("videos");
+                        } else {
+                          setSelected("photos");
+                        }
+                      }}
                     >
-                      <Image width={150} src={d?.assetUrl} />
-                      <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
-                        <GoTrash
-                          size={20}
-                          className=" text-danger-500"
-                          onClick={() => {
-                            removeAsset(`${d?.assetId}`);
-                          }}
-                        />
-                      </span>
-                    </div>
-                  ))}
+                      <Tab
+                        className="w-full"
+                        key="photos"
+                        title={
+                          <div className="flex items-center space-x-2">
+                            <FaCameraRetro />
+                            <span>Photos</span>
+                          </div>
+                        }
+                      >
+                        <Card className="w-full shadow-none">
+                          <CardBody className="w-full flex flex-wrap">
+                            {projectAssets?.flatMap((d: ProjectAsset) => (
+                              <div
+                                key={d?.projectId}
+                                className={`w-[15%] shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                              >
+                                <Image width={150} src={d?.assetUrl} />
+                                <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                                  <GoTrash
+                                    size={20}
+                                    className=" text-danger-500"
+                                    onClick={() => {
+                                      removeAsset(`${d?.assetId}`);
+                                    }}
+                                  />
+                                </span>
+                              </div>
+                            ))}
+                          </CardBody>
+                        </Card>
+                      </Tab>
+
+                      <Tab
+                        key="videos"
+                        title={
+                          <div className="flex items-center space-x-2">
+                            <FaVideo />
+                            <span>Videos</span>
+                          </div>
+                        }
+                      >
+                        <Card className="w-full shadow-none">
+                          <CardBody className="w-full flex flex-wrap">
+                            {projectAssets?.flatMap((d: ProjectAsset) => (
+                              <div
+                                key={d?.projectId}
+                                className={`w-[15%] shadow rounded-2xl flex flex-col justify-between items-center gap-1`}
+                              >
+                                <FaPlayCircle size={30} />
+                                <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                                  <GoTrash
+                                    size={20}
+                                    className=" text-danger-500"
+                                    onClick={() => {
+                                      removeAsset(`${d?.assetId}`);
+                                    }}
+                                  />
+                                </span>
+                              </div>
+                            ))}
+                          </CardBody>
+                        </Card>
+                      </Tab>
+                    </Tabs>
+                  </div>
                 </div>
               )}
             </div>

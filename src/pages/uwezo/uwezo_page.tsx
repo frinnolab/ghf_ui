@@ -83,7 +83,7 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col px-20  gap-5 relative pt-[50%] md:pt-[0%]">
+        <div className="w-full flex flex-col px-20  gap-5 relative md:pt-[0%]">
           <h1 className="text-2xl md:text-3xl  font-semibold">OUR PROJECTS</h1>
 
           <div className="w-full flex flex-col justify-center gap-5">
