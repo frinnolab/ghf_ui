@@ -27,6 +27,7 @@ export type Impact = {
   studentGirls?: number;
   studentBoys?: number;
   studentsTotal?: number;
+  schoolsTotal?: number;
 };
 
 export type ImpactAsset = {
@@ -36,7 +37,7 @@ export type ImpactAsset = {
 };
 const DashImpactsListPage = () => {
   const actionTypes = ["detail", "edit", "delete"];
-  const columns = ["Title", "School Name", "Total students", "Actions"];
+  const columns = ["Title", "Total Schools", "Total students", "Actions"];
   const nav = useNavigate();
   const api = `${import.meta.env.VITE_API_URL}`;
   const [impacts, setImpacts] = useState<Impact[]>([]);
@@ -94,6 +95,7 @@ const DashImpactsListPage = () => {
               title: d?.title,
               schoolName: d?.schoolName,
               studentsTotal: Number(d?.studentsTotal),
+              schoolsTotal: Number(d?.schoolsTotal),
             };
             return [resData];
           });
@@ -161,7 +163,7 @@ const DashImpactsListPage = () => {
                   </TableCell>
 
                   <TableCell onClick={() => handleSelectedRow(impact)}>
-                    {impact?.schoolName}
+                    {impact?.schoolsTotal ?? 0}
                   </TableCell>
 
                   <TableCell onClick={() => handleSelectedRow(impact)}>

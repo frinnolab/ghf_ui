@@ -40,6 +40,7 @@ export default function ImpactView() {
             studentBoys: Number(`${res?.data["studentBoys"]}`),
             studentGirls: Number(`${res?.data["studentGirls"]}`),
             studentsTotal: Number(`${res?.data["studentsTotal"]}`),
+            schoolsTotal: Number(`${res?.data["schoolsTotal"]}`),
             description: res?.data["description"],
           };
 
@@ -116,9 +117,9 @@ export default function ImpactView() {
           <div>
             <span className={`flex items-center text-xl gap-3`}>
               <FaUniversity className="text-blue-500" />
-              <p className={`text-md`}>{impact?.schoolName}</p>
+              <p className={`text-md`}>{impact?.schoolsTotal ?? 0}</p>
             </span>
-            <span className={`flex items-center text-xl gap-3`}>
+            <span className={`items-center text-xl gap-3 hidden`}>
               <FaMapMarkedAlt className="text-green-500" />
               <p className={`text-md`}>{impact?.schoolRegion}</p>
             </span>

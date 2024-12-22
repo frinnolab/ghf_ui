@@ -38,6 +38,7 @@ const ImpactList = () => {
               schoolName: d?.schoolName,
               schoolRegion: d?.schoolRegion,
               studentsTotal: Number(d?.studentsTotal),
+              schoolsTotal: Number(d?.schoolsTotal),
             };
             return [resData];
           });
@@ -82,9 +83,9 @@ const ImpactList = () => {
                       
                       <span className={`flex items-center gap-3`}>
                         <FaUniversity className="text-blue-500" />
-                        <p className={`text-md`}>{mp?.schoolName}</p>
+                        <p className={`text-md`}>{mp?.schoolsTotal ?? 0}</p>
                       </span>
-                      <span className={`flex items-center gap-3`}>
+                      <span className={`items-center gap-3 hidden`}>
                         <FaMapMarkedAlt className="text-green-500" />
                         <p className={`text-md`}>{mp?.schoolRegion}</p>
                       </span>

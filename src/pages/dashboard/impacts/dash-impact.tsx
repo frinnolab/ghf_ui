@@ -18,6 +18,7 @@ export default function DashImpactView() {
   const schoolDistrictRef = useRef<HTMLInputElement>(null);
   const studentGirlsRef = useRef<HTMLInputElement>(null);
   const studentBoysRef = useRef<HTMLInputElement>(null);
+  const schoolTotalRef = useRef<HTMLInputElement>(null);
   const [studentsTotal, setStudentsTotal] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
@@ -49,6 +50,7 @@ export default function DashImpactView() {
         schoolName: `${schoolNameRef?.current?.value ?? ""}`,
         studentBoys: Number(studentBoysRef?.current?.value) ?? 0,
         studentGirls: Number(studentGirlsRef?.current?.value) ?? 0,
+        schoolsTotal: Number(schoolTotalRef?.current?.value) ?? 0,
         studentsTotal:
           Number(studentGirlsRef?.current?.value ?? 0) +
           Number(studentBoysRef?.current?.value ?? 0),
@@ -99,16 +101,24 @@ export default function DashImpactView() {
             ? impact?.schoolDistrict
             : schoolDistrictRef?.current?.value,
         schoolName:
-          schoolNameRef?.current?.value === null
+          schoolNameRef?.current?.value === null 
             ? impact?.schoolName
             : schoolNameRef?.current?.value,
+
         studentBoys: Number(
-          studentBoysRef?.current?.value === null
+          studentBoysRef?.current?.value === null || ""
             ? impact?.studentBoys ?? 0
             : studentBoysRef?.current?.value
         ),
+
+        schoolsTotal: Number(
+          schoolTotalRef?.current?.value === null || ""
+            ? impact?.schoolsTotal ?? 0
+            : schoolTotalRef?.current?.value
+        ),
+
         studentGirls: Number(
-          studentGirlsRef?.current?.value === null
+          studentGirlsRef?.current?.value === null || ""
             ? impact?.studentGirls ?? 0
             : studentGirlsRef?.current?.value
         ),
@@ -250,6 +260,7 @@ export default function DashImpactView() {
             studentBoys: Number(`${res?.data["studentBoys"]}`),
             studentGirls: Number(`${res?.data["studentGirls"]}`),
             studentsTotal: Number(`${res?.data["studentsTotal"]}`),
+            schoolsTotal: Number(`${res?.data["schoolsTotal"]}`),
             description: res?.data["description"],
           };
 
@@ -347,6 +358,15 @@ export default function DashImpactView() {
             </div>
 
             <div className="w-full space-y-3">
+              <label htmlFor="SchoolReached">School(s) Reached</label>
+              <Input
+                disabled={!isEdit ? true : false}
+                type="number"
+                ref={schoolTotalRef}
+                placeholder={`${impact?.schoolsTotal ?? "0"}`}
+              />
+            </div>
+            <div className="w-full space-y-3 hidden">
               <label htmlFor="SchoolName">School Name</label>
               <Input
                 disabled={!isEdit ? true : false}
@@ -356,7 +376,7 @@ export default function DashImpactView() {
               />
             </div>
 
-            <div className="w-full flex justify-between gap-8">
+            <div className="w-full  justify-between gap-8 hidden">
               <div className="w-full space-y-3">
                 <label htmlFor="SchoolRegion">School Region</label>
                 <Input
