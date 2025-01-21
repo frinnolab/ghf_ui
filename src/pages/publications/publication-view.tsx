@@ -8,6 +8,7 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
 import { Divider } from "@nextui-org/react";
+import fileDownload from 'js-file-download';
 
 export default function PublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -38,8 +39,6 @@ export default function PublicationsView() {
       axios
         .get(`${api}/publications/${publishId}`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
-
           const data: Publication = {
             publishId: `${res.data["publishId"]}`,
             title: res?.data["title"],
@@ -82,7 +81,32 @@ export default function PublicationsView() {
         });
     }
   }, [publication]);
-  
+
+  function downloadPubAsset(assetId: string, filename:string = '') {
+    axios({
+      headers:{
+        "Content-Type": "application/octet-stream"
+      },
+      url: `${api}/publications/assets/${assetId}`, //your url
+      method: "GET",
+      responseType: `document`, // important
+    }).then((res:AxiosResponse) => {
+      fileDownload(res?.data, filename);
+      // // create file link in browser's memory
+      // const href = URL.createObjectURL(response.data);
+
+      // // create "a" HTML element with href to file & click
+      // const link = document.createElement("a");
+      // link.href = href;
+      // link.setAttribute("download", ""); //or any other extension
+      // document.body.appendChild(link);
+      // link.click();
+
+      // // clean up "a" element & remove ObjectURL
+      // document.body.removeChild(link);
+      // URL.revokeObjectURL(href);
+    });
+  }
 
   return (
     <div className="w-full">
@@ -142,7 +166,7 @@ export default function PublicationsView() {
                       size={20}
                       className=" text-primary-500"
                       onClick={() => {
-                        // downloadPubAsset(`${d?.assetId}`);
+                        downloadPubAsset(`${d?.assetId}`, `${publication?.title}`);
                       }}
                     />
                   </Button>

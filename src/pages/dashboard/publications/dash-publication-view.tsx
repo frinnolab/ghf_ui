@@ -170,6 +170,8 @@ export default function DashPublicationsView() {
   const handleAssetUpload = () => {
     const asset = new FormData();
 
+    console.log(selectedImage)
+
     if (publication) {
       if (selectedImage === null) {
         alert("No file chosen");
@@ -177,6 +179,7 @@ export default function DashPublicationsView() {
         asset.append("_method", "POST");
         asset.append("title", `${assetTitleRef?.current?.value ?? ""}`);
         asset.append("publishId", `${publication?.publishId}`);
+        asset.append("type", `${selectedImage?.type}`);
         if (selectedImage) {
           asset.append("doc", selectedImage);
         }
@@ -222,7 +225,7 @@ export default function DashPublicationsView() {
 
   const removePubAsset = (assetId: string) => {
     if (!isEdit) {
-      console.log("Enable Edit mode to remove Asset(S)");
+      alert("Enable Edit mode to remove Asset(S)");
     } else {
       axios
         .delete(`${api}/publications/assets/${assetId}`, {

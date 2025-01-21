@@ -59,6 +59,12 @@ export default function DashProfilesListPage() {
     }
   };
 
+  const handleAddProfile = ()=>{
+    nav(`/dashboard/profiles/create`, {
+      state: null
+    });
+  }
+
   const roleName = (role: number) => {
     switch (role) {
       case AuthRole.Admin:
@@ -151,7 +157,7 @@ export default function DashProfilesListPage() {
         <div className="w-full flex justify-between ">
           <h1 className=" text-2xl ">Manage Profiles</h1>
 
-          <Button variant="solid" color="primary" className="hidden">
+          <Button variant="solid" color="primary" onPress={handleAddProfile}>
             Add{" "}
             <span>
               <GoPlus size={20} />

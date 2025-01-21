@@ -27,6 +27,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Blog } from "./dashboard/blog/dash-blogs";
 import { useNavigate } from "react-router-dom";
+import { CompanyInfo } from "./dashboard/settings/dash-settings";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -39,9 +40,11 @@ export default function HomePage() {
   const headerTextsRef = useRef(null);
   const introVideoRef = useRef<HTMLVideoElement>(null);
   const [isPaused, setIsPaused] = useState<boolean>(true);
+  // const [isInfoloading, setIsInfoloading] = useState<boolean>(true);
   const api = `${import.meta.env.VITE_API_URL}`;
   const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
 
   const [isPartners, setIsPartners] = useState<boolean>(false);
   const [collabs, setCollabs] = useState<Partner[] | null>(null);
@@ -93,6 +96,68 @@ export default function HomePage() {
     setSelectedselectedDonorCurrType(statusVal);
   };
   
+  
+  const fetchCompanyinfo = () => {
+    if (companyInfo === null) {
+      setIsloading(true);
+
+      axios
+        .get(`${api}/settings/companyinfo`)
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+
+          setCompanyInfo(res?.data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+          setCompanyInfo(null);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
+        });
+    }
+  };
+  const fetchSummaryinfo = () => {
+    if (summaryInfo === null) {
+      axios
+        .get(`${api}/settings/summaryinfo`)
+        .then((res: AxiosResponse) => {
+          setSummarInfo(() => {
+            return {
+              regions: {
+                label: "Total Regions",
+                value: `${res?.data["totalRegions"] ?? 0}`,
+              },
+              districts: {
+                label: "Total Districts",
+                value: `${res?.data["totalDistricts"] ?? 0}`,
+              },
+              schools: {
+                label: "Total Schools",
+                value: `${res?.data["totalSchools"]}`,
+              },
+              students: {
+                label: "Total Students",
+                value: `${res?.data["totalStudents"]}`,
+              },
+              projects: {
+                label: "Total Projects",
+                value: `${res?.data["totalProjects"]}`,
+              },
+            };
+          });
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+        });
+    }
+  };
+
   const fetchBlogs = () => {
     if (blogs === null) {
       axios
@@ -198,41 +263,15 @@ export default function HomePage() {
       });
   };
 
+
+
   useEffect(() => {
-    if (summaryInfo === null) {
-      axios
-        .get(`${api}/settings/summaryinfo`)
-        .then((res: AxiosResponse) => {
-          setSummarInfo(() => {
-            return {
-              regions: {
-                label: "Total Regions",
-                value: `${res?.data["totalRegions"] ?? 0}`,
-              },
-              districts: {
-                label: "Total Districts",
-                value: `${res?.data["totalDistricts"] ?? 0}`,
-              },
-              schools: {
-                label: "Total Schools",
-                value: `${res?.data["totalSchools"]}`,
-              },
-              students: {
-                label: "Total Students",
-                value: `${res?.data["totalStudents"]}`,
-              },
-              projects: {
-                label: "Total Projects",
-                value: `${res?.data["totalProjects"]}`,
-              },
-            };
-          });
-        })
-        .catch((err: AxiosError) => {
-          console.log(err.response);
-        });
-    }
-  }, [summaryInfo]);
+    //setIsInfoloading(true);
+    fetchCompanyinfo();
+    fetchSummaryinfo();
+    //setIsInfoloading(false);
+
+  }, [summaryInfo, companyInfo]);
 
   useEffect(() => {
     if (impacts === null) {
@@ -493,7 +532,7 @@ export default function HomePage() {
                   borderRadius: "20px",
                 }}
                 className=" md:w-[1000px]"
-                src={siteConfig.staticAssets.staticIntroVideo}
+                src={companyInfo?.introVideoUrl ??  siteConfig.staticAssets.staticIntroVideo}
                 onClick={playInftro}
                 muted
                 // controls
@@ -762,7 +801,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full p-5 ">
+          <div className="w-full p-5 flex justify-center ">
             {blogs === null ? (
               <Spinner
                 className={` justify-center items-center `}

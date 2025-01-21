@@ -77,6 +77,7 @@ function App() {
       <Route element={<DashSummaryPage />} path="/dashboard" />
       {/* <Route element={<DashProgramsListPage />} path="/dashboard/programs"/> */}
       <Route element={<DashProfilesListPage />} path="/dashboard/profiles" />
+      <Route element={<DashboardProfilePage />} path="/dashboard/profiles/create" />
       <Route element={<DashboardProfilePage />} path="/dashboard/profiles/:id" />
       <Route element={<DashImpactsListPage />} path="/dashboard/impacts" />
       <Route element={<DashImpactView />} path="/dashboard/impacts/create" />

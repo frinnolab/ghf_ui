@@ -5,21 +5,15 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
 import { Divider, Image } from "@nextui-org/react";
-import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
-import {
-  FaCameraRetro,
-  FaMapPin,
-  FaPeopleGroup,
-  FaVideo,
-} from "react-icons/fa6";
+
 import { siteConfig } from "@/config/site";
 import ReactPlayer from "react-player/youtube";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+// import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
 export default function UwezoDetailPage() {
   const route = useLocation();
   const api = `${import.meta.env.VITE_API_URL}`;
-  const [selected, setSelected] = useState("photos");
+  // const [selected, setSelected] = useState("photos");
   const [projectId] = useState<string | null>(() => {
     if (route?.state) {
       return `${route?.state}`;
@@ -117,70 +111,27 @@ export default function UwezoDetailPage() {
 
       <Divider />
       <div className="w-full flex flex-col justify-center">
-        <div className=" w-full flex gap-10 justify-between p-10">
-          
-          <div className=" w-full space-y-3 ">
-            <h1 className=" text-3xl font-semibold ">
-              {project?.title?.toUpperCase() ?? ""}
-            </h1>
-
-            {/* Impact */}
-            <div className=" space-y-3 w-full">
-              <h1 className=" text-2xl ">PROJECT REACH</h1>
-
-              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
-                <h1>Regions Reached:</h1>
-
-                <span className="flex items-center gap-5 text-4xl text-green-500">
-                  <FaMapMarkedAlt />
-                  {project?.regionsReached ?? 0}
-                </span>
-              </div>
-
-              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
-                <h1>Districts Reached:</h1>
-
-                <span className="flex items-center gap-5 text-4xl text-red-500">
-                  <FaMapPin />
-                  {project?.districtsReached ?? 0}
-                </span>
-              </div>
-
-              <div className=" text-xl p-5 bg-default-200 rounded-2xl">
-                <h1>Schools Reached:</h1>
-
-                <span className="flex items-center gap-5 text-4xl text-blue-500">
-                  <FaUniversity />
-                  {project?.schoolsReached ?? 0}
-                </span>
-              </div>
-
-              <div className=" text-xl p-5 bg-default-200 rounded-2xl ">
-                <h1>Students Reached:</h1>
-
-                <span className="flex items-center gap-5 text-4xl text-orange-500">
-                  <FaPeopleGroup />
-                  {project?.studentsReached ?? 0}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full flex justify-center items-center">
-            <Image
-              className={` w-[80%] object-cover`}
-              src={
-                project?.thumbnailUrl !== "" || null
-                  ? project?.thumbnailUrl
-                  : siteConfig?.staticAssets?.staticLogo
-              }
-            />
-          </div>
+        {/* New Container */}
+        <div className="w-full">
+          <Image
+            radius="none"
+            className={`w-[100dvw] object-fill`}
+            src={
+              project?.thumbnailUrl !== "" || null
+                ? project?.thumbnailUrl
+                : siteConfig?.staticAssets?.staticLogo
+            }
+          />
         </div>
+        {/* New Container End */}
 
         {/* Contents */}
 
         <div className="w-full flex flex-col gap-5 p-10">
+          <h1 className=" text-3xl font-semibold ">
+            {project?.title?.toUpperCase() ?? ""}
+          </h1>
+
           {/* Description */}
           <div className=" space-y-3">
             <h1 className=" text-2xl ">Description</h1>
@@ -209,7 +160,21 @@ export default function UwezoDetailPage() {
               className={`w-full flex flex-col md:flex-row justify-center gap-5`}
             >
               <div className="flex w-full flex-col">
-                <Tabs
+                {projectAssets?.flatMap((d: ProjectAsset) => (
+                  <div
+                    key={d?.assetId}
+                    className={` p-2 flex items-center gap-1 P-2`}
+                  >
+                    <ReactPlayer
+                      width={300}
+                      height={300}
+                      url={d?.videoUrl}
+                      controls
+                    />
+                  </div>
+                ))}
+
+                {/* <Tabs
                   fullWidth
                   size="lg"
                   radius="md"
@@ -244,7 +209,6 @@ export default function UwezoDetailPage() {
                             className={`w-[20%] p-2 rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
                           >
                             <Image src={d?.assetUrl} radius="none" />
-                            {/* <ReactPlayer url={d?.videoUrl} controls /> */}
                           </div>
                         ))}
                       </CardBody>
@@ -279,7 +243,7 @@ export default function UwezoDetailPage() {
                       </CardBody>
                     </Card>
                   </Tab>
-                </Tabs>
+                </Tabs> */}
               </div>
             </div>
           )}

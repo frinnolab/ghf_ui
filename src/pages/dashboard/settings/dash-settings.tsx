@@ -295,8 +295,6 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
         data.append("videoAsset", selectedVideo);
       }
 
-      console.log(company?.id);
-
       axios
         .post(`${api}/settings/companyassets/${company?.id}`, data, {
           headers: {
