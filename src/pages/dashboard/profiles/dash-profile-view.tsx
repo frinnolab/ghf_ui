@@ -156,7 +156,7 @@ export default function DashboardProfilePage() {
     data.append("lastname", `${d?.lastname ?? profile?.lastname}`);
     data.append("mobile", `${d?.mobile ?? profile?.mobile}`);
     data.append("position", `${d?.position ?? profile?.position}`);
-    data.append("role", `${d?.role ?? profile?.role}`);
+    data.append("role", `${selectedRoleType?.key}`);
 
     if (selectedImage) {
       data.append("avatar", selectedImage);
