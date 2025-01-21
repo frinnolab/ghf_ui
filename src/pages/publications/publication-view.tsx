@@ -82,16 +82,16 @@ export default function PublicationsView() {
     }
   }, [publication]);
 
-  function downloadPubAsset(assetId: string, filename:string = '') {
+  function downloadPubAsset(assetId: string, filename:string = '', type:string) {
     axios({
       headers:{
         "Content-Type": "application/octet-stream"
       },
       url: `${api}/publications/assets/${assetId}`, //your url
       method: "GET",
-      responseType: `document`, // important
+      responseType: "document", // important
     }).then((res:AxiosResponse) => {
-      fileDownload(res?.data, filename);
+      fileDownload(res?.data, filename, type);
       // // create file link in browser's memory
       // const href = URL.createObjectURL(response.data);
 
@@ -166,7 +166,7 @@ export default function PublicationsView() {
                       size={20}
                       className=" text-primary-500"
                       onClick={() => {
-                        downloadPubAsset(`${d?.assetId}`, `${publication?.title}`);
+                        downloadPubAsset(`${d?.assetId}`, `${publication?.title}`, `${d?.assetType}` );
                       }}
                     />
                   </Button>

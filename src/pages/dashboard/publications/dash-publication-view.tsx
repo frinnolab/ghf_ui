@@ -179,10 +179,13 @@ export default function DashPublicationsView() {
         asset.append("_method", "POST");
         asset.append("title", `${assetTitleRef?.current?.value ?? ""}`);
         asset.append("publishId", `${publication?.publishId}`);
-        asset.append("type", `${selectedImage?.type}`);
+        asset.append("type", selectedImage?.type);
         if (selectedImage) {
           asset.append("doc", selectedImage);
         }
+
+        //console.log(asset.get('type'));
+        
 
         axios
           .post(`${api}/publications/assets`, asset, {
@@ -219,7 +222,7 @@ export default function DashPublicationsView() {
           });
       }
     } else {
-      alert("Create Impact before adding asset.");
+      alert("Create Publication before adding asset.");
     }
   };
 
@@ -248,17 +251,21 @@ export default function DashPublicationsView() {
     }
   };
 
-  const downloadPubAsset = (assetId: string) => {
+  const downloadPubAsset = (assetId: string, assetType:string = '') => {
+    console.log(assetType);
+    
     if (!isEdit) {
       alert("Enable Edit mode to download Asset(S)");
     } else {
       axios
         .get(`${api}/publications/assets/${assetId}`, {
           headers: {
-            Accept: "application/json",
+            // Accept: "application/json",
             Authorization: `Bearer ${authed?.token}`,
+            "Content-Disposition": "attachment;",
+            "Content-Type": "application/octet-stream"
           },
-          responseType: "document",
+          responseType:"document"
         })
         .then((res: AxiosResponse) => {
           if (res) {
@@ -286,6 +293,8 @@ export default function DashPublicationsView() {
           },
         })
         .then((res: AxiosResponse) => {
+          //console.log(res?.data);
+          
           const data: Publication = {
             publishId: `${res.data["publishId"]}`,
             title: `${res.data["title"]}`,
@@ -301,7 +310,7 @@ export default function DashPublicationsView() {
           setPublication(data);
 
           setSelectedStatus(statusVal);
-          setQuillValue(res?.data["description"]);
+          setQuillValue(res?.data["description"] ?? '');
 
           removeSelectedImage();
         });
@@ -314,6 +323,10 @@ export default function DashPublicationsView() {
       axios
         .get(`${api}/publications/assets/${publication?.publishId}`)
         .then((res: AxiosResponse) => {
+
+          console.log(res?.data);
+          
+
           const datas: PublicationAsset[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: PublicationAsset = {
@@ -321,6 +334,7 @@ export default function DashPublicationsView() {
                 assetId: d?.assetId,
                 publishId: d?.publishId,
                 title: d?.title,
+                assetType: d?.assetType
               };
 
               return [data];
@@ -533,7 +547,7 @@ export default function DashPublicationsView() {
                             size={20}
                             className=" text-primary-500"
                             onClick={() => {
-                              downloadPubAsset(`${d?.assetId}`);
+                              downloadPubAsset(`${d?.assetId}`, `${d?.assetType}`);
                             }}
                           />
                         </span>

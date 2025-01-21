@@ -1,3 +1,4 @@
+import useAuthedProfile from "@/hooks/use-auth";
 import DashboardLayout from "@/layouts/dash-layout";
 import { Button } from "@nextui-org/button";
 import {
@@ -23,6 +24,8 @@ export default function DashPublications() {
   const [publications, setPublication] = useState<Publication[]>([]);
   const [hasPubs, setHasPub] = useState<boolean>(false);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const authed = useAuthedProfile();
+
 
   const handleSelectedRow = (p: Publication) => {
     nav(`/dashboard/publications/${p?.publishId}`, {
@@ -47,6 +50,9 @@ export default function DashPublications() {
   const handleDelete = (i: Publication) => {
     axios
       .delete(`${api}/publications/${i?.publishId}`, {
+        headers:{
+          "Authorization": `Bearer ${authed?.token}`,
+        },
         method: "DELETE",
       })
       .then((res: AxiosResponse) => {
@@ -208,6 +214,7 @@ export type PublicationAsset = {
   assetId?: string;
   assetUrl?: string;
   title?: string;
+  assetType?: string;
 };
 
 export enum PublishTypeEnum {
