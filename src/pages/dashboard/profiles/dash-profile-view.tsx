@@ -36,9 +36,12 @@ export default function DashboardProfilePage() {
   const passRef = useRef<HTMLInputElement>(null);
   const coPassRef = useRef<HTMLInputElement>(null);
   const thumbRef = useRef<HTMLInputElement | null>(null);
-  const [selectedRoleType, setSelectedRoleType] = useState<RoleTypeOption>();
   const [roleTypeOptions] = useState<RoleTypeOption[]>(() => {
     return [
+      {
+        key: AuthRole.SuperAdmin,
+        value: "SuperAdmin",
+      },
       {
         key: AuthRole.Admin,
         value: "Admin",
@@ -52,10 +55,6 @@ export default function DashboardProfilePage() {
         value: "Employee",
       },
       {
-        key: AuthRole.SuperAdmin,
-        value: "SuperAdmin",
-      },
-      {
         key: AuthRole.User,
         value: "User",
       },
@@ -65,6 +64,9 @@ export default function DashboardProfilePage() {
       },
     ];
   });
+
+  const [selectedRoleType, setSelectedRoleType] = useState<RoleTypeOption>();
+
 
   const nav = useNavigate();
 
@@ -83,6 +85,7 @@ export default function DashboardProfilePage() {
       if (profileId === null) {
         //Creaate new
         setIsloading(false);
+        setSelectedRoleType(roleTypeOptions[4]);
       } else {
         axios
           .get(`${api}/profiles/${profileId}`, {
@@ -91,7 +94,8 @@ export default function DashboardProfilePage() {
               "Content-Type": "application/json",
             },
           })
-          .then((res: AxiosResponse) => {
+          .then((res: AxiosResponse) => {     
+            
             const data: Profile = {
               profileId: res.data?.profileId,
               firstname: res.data?.firstname ?? "",
@@ -173,6 +177,7 @@ export default function DashboardProfilePage() {
         data.append("password", `${d?.email ?? profile?.email}`);
       }
     }
+    
 
     if (profileId === null) {
       //Create new profile
@@ -186,7 +191,8 @@ export default function DashboardProfilePage() {
         .then(() => {
           setProfile(null);
           setSelectedImage(null);
-          window.location.reload();
+          nav(`/dashboard/profiles`);
+          // window.location.reload();
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -203,7 +209,7 @@ export default function DashboardProfilePage() {
         .then(() => {
           setProfile(null);
           setSelectedImage(null);
-          window.location.reload();
+          nav(`/dashboard/profiles`);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
