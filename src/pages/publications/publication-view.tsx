@@ -8,7 +8,7 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
 import { Divider } from "@nextui-org/react";
-import fileDownload from 'js-file-download';
+import fileDownload from "js-file-download";
 
 export default function PublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -82,15 +82,19 @@ export default function PublicationsView() {
     }
   }, [publication]);
 
-  function downloadPubAsset(assetId: string, filename:string = '', type:string) {
+  function downloadPubAsset(
+    assetId: string,
+    filename: string = "",
+    type: string
+  ) {
     axios({
-      headers:{
-        "Content-Type": "application/octet-stream"
+      headers: {
+        "Content-Type": "application/octet-stream",
       },
       url: `${api}/publications/assets/${assetId}`, //your url
       method: "GET",
       responseType: "document", // important
-    }).then((res:AxiosResponse) => {
+    }).then((res: AxiosResponse) => {
       fileDownload(res?.data, filename, type);
       // // create file link in browser's memory
       // const href = URL.createObjectURL(response.data);
@@ -135,9 +139,10 @@ export default function PublicationsView() {
 
         <div className=" space-y-5 ">
           <label htmlFor="description">Description</label>
-          <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
-            {publication?.description ?? ""}
-          </p>
+          <div
+            className=" text-xl text-balance p-5 bg-default-200 rounded-2xl "
+            dangerouslySetInnerHTML={{ __html: `${publication?.description}` }}
+          ></div>
         </div>
 
         {/* Assets */}
@@ -166,7 +171,11 @@ export default function PublicationsView() {
                       size={20}
                       className=" text-primary-500"
                       onClick={() => {
-                        downloadPubAsset(`${d?.assetId}`, `${publication?.title}`, `${d?.assetType}` );
+                        downloadPubAsset(
+                          `${d?.assetId}`,
+                          `${publication?.title}`,
+                          `${d?.assetType}`
+                        );
                       }}
                     />
                   </Button>
