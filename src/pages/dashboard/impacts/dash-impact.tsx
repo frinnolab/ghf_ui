@@ -1,12 +1,20 @@
 import useAuthedProfile from "@/hooks/use-auth";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Impact, ImpactAsset } from "./dash-impacts-list";
+import { Impact, ImpactAsset, ImpactReport } from "./dash-impacts-list";
 import { Button } from "@nextui-org/button";
-import { Image } from "@nextui-org/react";
+import { Image, Tab, Tabs } from "@nextui-org/react";
 import { Divider, Input, Switch, Textarea } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
+import {
+  GoArrowLeft,
+  GoDownload,
+  GoEye,
+  GoFile,
+  GoPencil,
+  GoTrash,
+} from "react-icons/go";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import fileDownload from "js-file-download";
 
 export default function DashImpactView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -21,10 +29,12 @@ export default function DashImpactView() {
   const schoolTotalRef = useRef<HTMLInputElement>(null);
   const [studentsTotal, setStudentsTotal] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedReport, setSelectedReport] = useState<File | null>(null);
 
   const authed = useAuthedProfile();
   const nav = useNavigate();
   const route = useLocation();
+  const reportTitleRef = useRef<HTMLInputElement>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [impactId] = useState<string | null>(() => {
     if (route?.state !== null) {
@@ -35,6 +45,9 @@ export default function DashImpactView() {
   });
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
+  const [impactReports, setImpacReports] = useState<ImpactReport[] | null>(
+    null
+  );
 
   const handleBack = () => nav("/dashboard/impacts");
 
@@ -70,7 +83,7 @@ export default function DashImpactView() {
           },
         })
         .then((res: AxiosResponse) => {
-          if(res?.data){
+          if (res?.data) {
             nav(`/dashboard/impacts`);
           }
         })
@@ -101,7 +114,7 @@ export default function DashImpactView() {
             ? impact?.schoolDistrict
             : schoolDistrictRef?.current?.value,
         schoolName:
-          schoolNameRef?.current?.value === null 
+          schoolNameRef?.current?.value === null
             ? impact?.schoolName
             : schoolNameRef?.current?.value,
 
@@ -123,7 +136,6 @@ export default function DashImpactView() {
             : studentGirlsRef?.current?.value
         ),
       };
-
 
       axios
         .put(`${api}/impacts/${impact?.impactId}`, data, {
@@ -162,7 +174,6 @@ export default function DashImpactView() {
         if (selectedImage) {
           asset.append("image", selectedImage);
         }
-
 
         axios
           .post(`${api}/impacts/assets/${impact?.impactId}`, asset, {
@@ -224,7 +235,6 @@ export default function DashImpactView() {
     if (!isEdit) {
       alert("Enable Edit mode to remove Asset(S)");
     } else {
-
       axios
         .delete(`${api}/impacts/assets/${impactAssetId}`, {
           headers: {
@@ -245,6 +255,134 @@ export default function DashImpactView() {
         });
     }
   };
+
+  // Impact Report
+  const handleReportUpload = () => {
+    const asset = new FormData();
+
+    if (impactId) {
+      if (selectedReport === null) {
+        alert("No file chosen");
+      } else {
+        asset.append("_method", "POST");
+        asset.append("impactId", `${impact?.impactId}`);
+        asset.append("title", `${impact?.impactId}`);
+        if (selectedReport) {
+          asset.append("doc", selectedReport);
+        }
+
+        axios
+          .post(`${api}/impacts/reports/${impact?.impactId}`, asset, {
+            headers: {
+              Authorization: `Bearer ${authed?.token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res: AxiosResponse) => {
+            console.log(res.data);
+
+            const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
+              (d: any) => {
+                const data: ImpactAsset = {
+                  assetUrl: d?.assetUrl,
+                  impactAssetId: d?.assetId,
+                  impactId: d?.impactId,
+                };
+
+                return [data];
+              }
+            );
+
+            setImpactAssets([...datas]);
+            setSelectedImage(null);
+            window.location.reload();
+          })
+          .catch((err: AxiosError) => {
+            console.log(err?.response);
+
+            setSelectedImage(null);
+
+            //alert(`${err?.response?.data}`);
+
+            window.location.reload();
+          });
+      }
+    } else {
+      alert("Create Impact before adding asset.");
+    }
+  };
+
+  const downloadReport = (reportId: string, assetType: string = "") => {
+    console.log(assetType);
+
+    if (!isEdit) {
+      alert("Enable Edit mode to download Asset(S)");
+    } else {
+      axios
+        .get(`${api}/impacts/reports/${reportId}`, {
+          headers: {
+            // Accept: "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+            "Content-Disposition": "attachment;",
+            "Content-Type": "application/octet-stream",
+          },
+          responseType: "document",
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            console.log(res?.data);
+
+            fileDownload(res?.data, "");
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+
+          window.location.reload();
+        });
+    }
+  };
+
+  const onChangeReport = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedReport(e.target.files[0]);
+    }
+  };
+
+  const removeSelectedreport = () => {
+    if (!isEdit) {
+      alert("Enable Edit mode to remove Asset(S)");
+    } else {
+      setSelectedReport(null);
+      window.location.reload();
+    }
+  };
+
+  const removeImpactReport = (impactReportId: string) => {
+    if (!isEdit) {
+      alert("Enable Edit mode to remove Asset(S)");
+    } else {
+      axios
+        .delete(`${api}/impacts/reports/${impactReportId}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+
+          window.location.reload();
+        });
+    }
+  };
+  // Impact Report End
 
   useEffect(() => {
     if (impactId) {
@@ -298,9 +436,35 @@ export default function DashImpactView() {
     }
   }, [impact]);
 
+  //fetch reports
+  useEffect(() => {
+    if (impact) {
+      axios
+        .get(`${api}/impacts/reports/${impactId}`)
+        .then((res: AxiosResponse) => {
+          const datas: ImpactReport[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: ImpactReport = {
+                reportUrl: d?.reportUrl,
+                impactReportId: d?.impactReportId,
+                impactId: d?.impactId,
+                title: d?.title,
+              };
+
+              return [data];
+            }
+          );
+
+          setImpacReports([...datas]);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
+    }
+  }, [impact]);
+
   return (
     <div className="w-full">
-
       <div className="w-full p-3 flex items-center gap-5">
         <Button variant="light" onClick={handleBack}>
           <GoArrowLeft size={20} />
@@ -310,9 +474,7 @@ export default function DashImpactView() {
       <Divider />
 
       <div className="w-full flex flex-col p-5 gap-5">
-        
         <div className={`w-full flex justify-between items-center gap-5 `}>
-
           <div>
             <h1
               className={` ${impactId === null ? "hidden" : ""} text-start text-xl`}
@@ -340,7 +502,6 @@ export default function DashImpactView() {
               title={`${isEdit ? "Edit mode" : "View mode"}`}
             ></Switch>
           </div>
-
         </div>
 
         {/* Content */}
@@ -452,75 +613,187 @@ export default function DashImpactView() {
 
           {/* From End */}
 
-          {/* Asets */}
-          <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
-            <div className={`w-full flex justify-between items-center`}>
-              {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
-              <div className="p-2 flex items-center">
-                <input
-                  disabled={!isEdit ? true : false}
-                  accept="image/*"
-                  type="file"
-                  onChange={(e) => {
-                    onChangePic(e);
-                  }}
-                />
+          {/* Asset & Reports */}
+          <div className="w-full flex flex-col">
+            <Tabs
+              aria-label="Options"
+              fullWidth
+              size="lg"
+              radius="sm"
+              color="primary"
+            >
+              <Tab key="reports" title="Reports">
+                {/* Reports */}
+                <div className="w-full flex flex-col gap-3">
+                  <div className={`w-full flex justify-between items-center`}>
+                    <div className="p-2 flex items-center">
+                      <div className="flex flex-col gap-5">
+                        <Input
+                          ref={reportTitleRef}
+                          placeholder={`Report title`}
+                          disabled={!isEdit ? true : false}
+                        />
 
-                <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
-                  <GoTrash
-                    size={20}
-                    className=" text-danger-500"
-                    onClick={removeSelectedImage}
-                  />
-                </span>
-              </div>
+                        {/* Report file */}
+                        <div className="flex">
+                          <input
+                            disabled={!isEdit ? true : false}
+                            accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+                        text/plain, application/pdf"
+                            type="file"
+                            onChange={(e) => {
+                              onChangeReport(e);
+                            }}
+                          />
+                          <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
+                            <GoTrash
+                              size={20}
+                              className=" text-danger-500"
+                              onClick={removeSelectedreport}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                      {/* Report file End */}
+                    </div>
 
-              <Button
-                color={`${impact === null ? "default" : "primary"}`}
-                disabled={impact === null}
-                onClick={() => {
-                  if (!isEdit) {
-                    alert("Enable Edit mode to Add Asset(S)");
-                  } else {
-                    handleAssetUpload();
-                  }
-                }}
-              >
-                {"Add Asset"}
-              </Button>
-            </div>
-
-            <div className={`w-full overflow-y-scroll h-[50vh] p-2`}>
-              {impactAssets === null || impactAssets?.length === 0 ? (
-                <>
-                  <p className=" text-center ">No Asset</p>
-                </>
-              ) : (
-                <div className={`w-full flex gap-3`}>
-                  {impactAssets?.flatMap((d: ImpactAsset) => (
-                    <div
-                      key={d?.impactAssetId}
-                      className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                    <Button
+                      color={`${impact === null ? "default" : "primary"}`}
+                      disabled={impact === null}
+                      onClick={() => {
+                        if (!isEdit) {
+                          alert("Enable Edit mode to Add Asset(S)");
+                        } else {
+                          handleReportUpload();
+                        }
+                      }}
                     >
-                      <Image width={150} src={d?.assetUrl} />
-                      <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                      {"Add Report"}
+                    </Button>
+                  </div>
+
+                  <div className={`w-full overflow-y-scroll h-[30vh] p-2`}>
+                    {impactReports === null || impactReports?.length === 0 ? (
+                      <>
+                        <p className=" text-center ">No Reports</p>
+                      </>
+                    ) : (
+                      <div className={`w-full flex gap-3`}>
+                        {impactReports?.flatMap((d: ImpactReport) => (
+                          <div
+                            key={d?.impactReportId}
+                            className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                          >
+                            {/* <Image width={150} src={d?.assetUrl} /> */}
+                            <GoFile />
+                            <p>{d?.title}</p>
+
+                            <div className="flex gap-2">
+                              <span className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                                <GoDownload
+                                  size={20}
+                                  className=" text-primary-500"
+                                  onClick={() => {
+                                    downloadReport(`${d?.impactReportId}`, ``);
+                                  }}
+                                />
+                              </span>
+
+                              <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                                <GoTrash
+                                  size={20}
+                                  className=" text-danger-500"
+                                  onClick={() => {
+                                    removeImpactReport(`${d?.impactReportId}`);
+                                  }}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Image  */}
+                </div>
+                {/* Reports End */}
+              </Tab>
+
+              <Tab key="assets" title="Assets">
+                {/* Asets */}
+                <div className="w-full flex flex-col gap-5 p-3">
+                  <div className={`w-full flex justify-between items-center`}>
+                    {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
+                    <div className="p-2 flex items-center">
+                      <input
+                        disabled={!isEdit ? true : false}
+                        accept="image/*"
+                        type="file"
+                        onChange={(e) => {
+                          onChangePic(e);
+                        }}
+                      />
+
+                      <span className="flex items-center p-1 hover:bg-default-400 hover:rounded-full">
                         <GoTrash
                           size={20}
                           className=" text-danger-500"
-                          onClick={() => {
-                            removeImpactAsset(`${d?.impactAssetId}`);
-                          }}
+                          onClick={removeSelectedImage}
                         />
                       </span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
 
-            {/* Image  */}
+                    <Button
+                      color={`${impact === null ? "default" : "primary"}`}
+                      disabled={impact === null}
+                      onClick={() => {
+                        if (!isEdit) {
+                          alert("Enable Edit mode to Add Asset(S)");
+                        } else {
+                          handleAssetUpload();
+                        }
+                      }}
+                    >
+                      {"Add Asset"}
+                    </Button>
+                  </div>
+
+                  <div className={`w-full overflow-y-scroll h-[50vh] p-2`}>
+                    {impactAssets === null || impactAssets?.length === 0 ? (
+                      <>
+                        <p className=" text-center ">No Asset</p>
+                      </>
+                    ) : (
+                      <div className={`w-full flex gap-3`}>
+                        {impactAssets?.flatMap((d: ImpactAsset) => (
+                          <div
+                            key={d?.impactAssetId}
+                            className={`shadow rounded-2xl flex flex-col justify-between items-center gap-1 P-2`}
+                          >
+                            <Image width={150} src={d?.assetUrl} />
+                            <span className=" self-end flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                              <GoTrash
+                                size={20}
+                                className=" text-danger-500"
+                                onClick={() => {
+                                  removeImpactAsset(`${d?.impactAssetId}`);
+                                }}
+                              />
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Image  */}
+                </div>
+                {/* Asets End */}
+              </Tab>
+            </Tabs>
           </div>
-          {/* Asets End */}
+          {/* Asset & Reports End */}
         </div>
         {/* Content End*/}
       </div>

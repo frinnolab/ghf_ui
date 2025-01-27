@@ -347,6 +347,7 @@ export default function HomePage() {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
       introVideoRef?.current?.play();
+
     } else {
       introVideoRef?.current?.pause();
       setIsPaused(true);
@@ -535,7 +536,7 @@ export default function HomePage() {
                 src={companyInfo?.introVideoUrl ??  siteConfig.staticAssets.staticIntroVideo}
                 onClick={playInftro}
                 muted
-                // controls
+                controls
               />
               <div className=" w-full flex justify-end items-center gap-3 ">
                 <p className=" italic text-small ">A word from our founder</p>

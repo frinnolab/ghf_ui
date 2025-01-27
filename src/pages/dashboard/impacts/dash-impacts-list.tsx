@@ -35,6 +35,14 @@ export type ImpactAsset = {
   impactAssetId?: string;
   assetUrl?: string;
 };
+
+
+export type ImpactReport = {
+  impactId?: string;
+  impactReportId?: string;
+  reportUrl?: string;
+  title?: string;
+};
 const DashImpactsListPage = () => {
   const actionTypes = ["detail", "edit", "delete"];
   const columns = ["Title", "Total Schools", "Total students", "Actions"];

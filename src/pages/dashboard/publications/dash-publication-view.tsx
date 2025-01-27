@@ -22,6 +22,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Qformats, Qmodules } from "../blog/dash-blog-create";
+import fileDownload from "js-file-download";
 
 //var fileDownload = require('js-file-download');
 export default function DashPublicationsView() {
@@ -271,7 +272,7 @@ export default function DashPublicationsView() {
           if (res) {
             console.log(res?.data);
 
-            //fileDownload(res?.data, '');
+            fileDownload(res?.data, '');
           }
         })
         .catch((err: AxiosError) => {
