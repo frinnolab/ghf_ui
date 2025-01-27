@@ -95,6 +95,7 @@ export default function UwezoDetailPage() {
 
   return (
     <div className="w-full flex flex-col">
+      
       <div className="w-full p-5">
         <Button
           className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
@@ -159,7 +160,7 @@ export default function UwezoDetailPage() {
             <div
               className={`w-full flex flex-col md:flex-row justify-center gap-5`}
             >
-              <div className="flex w-full flex-col">
+              <div className="w-full flex flex-wrap">
                 {projectAssets?.flatMap((d: ProjectAsset) => (
                   <div
                     key={d?.assetId}

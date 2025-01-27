@@ -16,9 +16,12 @@ import {
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { GoEye, GoTrash } from "react-icons/go";
 import { AuthRole } from "@/types";
+import useAuthedProfile from "@/hooks/use-auth";
 
 export default function DashAlumniList() {
   const actionTypes = ["detail", "edit", "delete"];
+  const authed = useAuthedProfile();
+
   const columns = ["Firstname", "Lastname", "School", "Year", "Actions"];
   const nav = useNavigate();
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -28,7 +31,10 @@ export default function DashAlumniList() {
 
   const handleSelectedRow = (p: Alumni) => {
     nav(`/dashboard/alumni/${p?.alumniId}`, {
-      state: p?.alumniId,
+      state:{
+        'alumniId':`${p?.alumniId}`,
+        'alumniProfileId':`${p?.profileId}`
+      },
     });
   };
 
@@ -50,6 +56,9 @@ export default function DashAlumniList() {
     axios
       .delete(`${api}/alumnis/${i?.alumniId}`, {
         method: "DELETE",
+        headers:{
+          "Authorization":`Bearer ${authed?.token}`
+        }
       })
       .then((res: AxiosResponse) => {
         if (res?.data) {
@@ -69,7 +78,6 @@ export default function DashAlumniList() {
         .then((res: AxiosResponse) => {
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
-            console.log(d);
 
             const data: Profile = {
               profileId: d?.alumniProfile?.profileId,
