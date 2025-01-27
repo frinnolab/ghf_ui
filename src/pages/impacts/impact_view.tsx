@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Impact, ImpactAsset } from "../dashboard/impacts/dash-impacts-list";
+import {
+  Impact,
+  ImpactAsset,
+  ImpactReport,
+} from "../dashboard/impacts/dash-impacts-list";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
-import { GoArrowLeft } from "react-icons/go";
+import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
 import { Divider, Image } from "@nextui-org/react";
 import { siteConfig } from "@/config/site";
 import { FaUniversity, FaMapMarkedAlt } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
+import fileDownload from "js-file-download";
 
 export default function ImpactView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -22,6 +27,9 @@ export default function ImpactView() {
 
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
+  const [impactReports, setImpacReports] = useState<ImpactReport[] | null>(
+    null
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,7 +37,6 @@ export default function ImpactView() {
       axios
         .get(`${api}/impacts/${impactId}`)
         .then((res: AxiosResponse) => {
-
           const data: Impact = {
             impactId: `${res?.data["impactId"]}`,
             assetUrl: res?.data["assetUrl"] ?? null,
@@ -78,6 +85,60 @@ export default function ImpactView() {
     }
   }, [impact]);
 
+  //fetch reports
+  useEffect(() => {
+    if (impact) {
+      axios
+        .get(`${api}/impacts/reports/${impactId}`)
+        .then((res: AxiosResponse) => {
+          const datas: ImpactReport[] = Array.from(res?.data).flatMap(
+            (d: any) => {
+              const data: ImpactReport = {
+                reportUrl: d?.reportUrl,
+                impactReportId: d?.impactReportId,
+                impactId: d?.impactId,
+                title: d?.title,
+              };
+
+              return [data];
+            }
+          );
+
+          setImpacReports([...datas]);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
+    }
+  }, [impact]);
+
+  const downloadReport = (reportId: string, filename:string, assetType: string = "") => {
+    console.log(assetType);
+
+    axios
+      .get(`${api}/impacts/reports/${reportId}`, {
+        headers: {
+          // Accept: "application/json",
+          // Authorization: `Bearer ${authed?.token}`,
+          "Content-Disposition": "attachment;",
+          "Content-Type": "application/octet-stream",
+        },
+        responseType: "document",
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          console.log(res?.data);
+
+          fileDownload(res?.data,filename, "");
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+
+        window.location.reload();
+      });
+  };
+
   return (
     <div className="w-full">
       <div className="w-full p-5">
@@ -95,7 +156,7 @@ export default function ImpactView() {
       </div>
 
       <Divider />
-      
+
       <div className="w-full flex flex-col gap-5 p-10">
         <div className={`p-2`}>
           <Image
@@ -138,9 +199,53 @@ export default function ImpactView() {
             </p>
           </div>
 
+          {/* Impact Report */}
+          <div
+            className={`w-full ${impactAssets === null  ? "flex flex-col gap-5 p-3 scrollbar-hide" : "hidden"}  `}
+          >
+            <h1 className="text-xl md:text-3xl">{impact?.title} Reports</h1>
+
+            {impactReports === null || impactReports?.length === 0 ? (
+              <>
+                <p className=" text-center "></p>
+              </>
+            ) : (
+              <div
+                className={`w-full flex flex-col md:flex-row justify-center gap-5`}
+              >
+                {impactReports?.flatMap((d: ImpactReport) => (
+                  <div
+                    key={d?.impactReportId}
+                    className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+                  >
+                    <GoFile size={20} />
+
+                    <h1 className=" text-2xl ">{d?.title}</h1>
+
+                    <Button>
+                      <GoDownload
+                        size={20}
+                        className=" text-primary-500"
+                        onClick={() => {
+                          downloadReport(
+                            `${d?.impactReportId}`,
+                            `${d?.title}`,
+                          );
+                        }}
+                      />
+                    </Button>
+                    {/* <Image src={d?.assetUrl} /> */}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Impact Report End */}
+
           {/* Impact Assets */}
           <div
-            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-3 scrollbar-hide`}
+            className={`w-full ${impactAssets === null || impactAssets?.length > 0 ? "flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-3 scrollbar-hide" : "hidden"}  `}
           >
             <h1 className="text-xl md:text-3xl">{impact?.title} assets</h1>
             {impactAssets === null || impactAssets?.length === 0 ? (
@@ -148,13 +253,15 @@ export default function ImpactView() {
                 <p className=" text-center ">No Asset(s) for impact</p>
               </>
             ) : (
-              <div className={`w-full flex flex-col md:flex-row justify-center gap-5`}>
+              <div
+                className={`w-full flex flex-col md:flex-row gap-5`}
+              >
                 {impactAssets?.flatMap((d: ImpactAsset) => (
                   <div
                     key={d?.impactAssetId}
                     className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
                   >
-                    <Image src={d?.assetUrl} />
+                    <Image width={350} height={350} src={d?.assetUrl} />
                   </div>
                 ))}
               </div>

@@ -266,7 +266,7 @@ export default function DashImpactView() {
       } else {
         asset.append("_method", "POST");
         asset.append("impactId", `${impact?.impactId}`);
-        asset.append("title", `${impact?.impactId}`);
+        asset.append("title", `${reportTitleRef?.current?.value ?? ""}`);
         if (selectedReport) {
           asset.append("doc", selectedReport);
         }
