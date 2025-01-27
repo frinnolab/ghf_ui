@@ -21,7 +21,9 @@ export const Qformats = [
   "list",
   "bullet",
   "indent",
+  "link",
   "image",
+  "video",
 ];
 
 export const Qmodules = {
@@ -35,8 +37,8 @@ export const Qmodules = {
       { indent: "+1" },
     ],
     ["image"],
-    // ["video"],
-    // ["link"],
+    ["video"],
+    ["link"],
     ["clean"],
   ],
 };
@@ -167,8 +169,7 @@ export default function DashBlogCreate() {
           },
         })
         .then((res: AxiosResponse) => {
-          if(res?.data){
-
+          if (res?.data) {
             window.location.reload();
           }
         })
@@ -237,21 +238,18 @@ export default function DashBlogCreate() {
                 placeholder={`${blog?.description ?? "Enter Description"}`}
               /> */}
 
-              <div
-                className={`w-full h-[30dvh]`}
-              >
+              <div className={`w-full h-[30dvh]`}>
                 <ReactQuill
                   placeholder={`${blogId ? blog?.description : "Enter description"}`}
                   theme="snow"
                   style={{
-                    "height":"30dvh",
-                    "overflow":"scroll",
-                    "overflowX":"hidden"
+                    height: "30dvh",
+                    overflow: "scroll",
+                    overflowX: "hidden",
                   }}
                   value={quillValue}
                   onChange={setQuillValue}
                   formats={Qformats}
-                  
                   modules={Qmodules}
                 />
               </div>
@@ -319,4 +317,3 @@ export default function DashBlogCreate() {
     </div>
   );
 }
-
