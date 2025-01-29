@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -82,33 +83,19 @@ export default function PublicationsView() {
     }
   }, [publication]);
 
-  function downloadPubAsset(
-    assetId: string,
-    filename: string = "",
-    type: string
-  ) {
+  function downloadPubAsset2(assetId: string, filename: string = "", type: "") {
     axios({
       headers: {
         "Content-Type": "application/octet-stream",
       },
-      url: `${api}/publications/assets/${assetId}`, //your url
+      url: `${api}/publications/assets/${publishId}/${assetId}`, //your url
       method: "GET",
-      responseType: "document", // important
+      responseType: "blob", // important
     }).then((res: AxiosResponse) => {
-      fileDownload(res?.data, filename, type);
-      // // create file link in browser's memory
-      // const href = URL.createObjectURL(response.data);
+      console.log(res);
 
-      // // create "a" HTML element with href to file & click
-      // const link = document.createElement("a");
-      // link.href = href;
-      // link.setAttribute("download", ""); //or any other extension
-      // document.body.appendChild(link);
-      // link.click();
-
-      // // clean up "a" element & remove ObjectURL
-      // document.body.removeChild(link);
-      // URL.revokeObjectURL(href);
+      const contentType = res.headers["content-type"];
+      fileDownload(res?.data, filename, contentType);
     });
   }
 
@@ -171,11 +158,7 @@ export default function PublicationsView() {
                       size={20}
                       className=" text-primary-500"
                       onClick={() => {
-                        downloadPubAsset(
-                          `${d?.assetId}`,
-                          `${publication?.title}`,
-                          `${d?.assetType}`
-                        );
+                        downloadPubAsset2(`${d?.assetId}`, `${d?.title}`, "");
                       }}
                     />
                   </Button>

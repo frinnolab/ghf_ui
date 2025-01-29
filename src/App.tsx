@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+/* eslint-disable prettier/prettier */
 import { Route, Routes } from "react-router-dom";
 
 // import Dashy from "./pages/dashboard/dashy";

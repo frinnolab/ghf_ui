@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -28,7 +29,7 @@ export default function ImpactView() {
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
   const [impactReports, setImpacReports] = useState<ImpactReport[] | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export default function ImpactView() {
               };
 
               return [data];
-            }
+            },
           );
 
           setImpactAssets([...datas]);
@@ -101,7 +102,7 @@ export default function ImpactView() {
               };
 
               return [data];
-            }
+            },
           );
 
           setImpacReports([...datas]);
@@ -112,24 +113,28 @@ export default function ImpactView() {
     }
   }, [impact]);
 
-  const downloadReport = (reportId: string, filename:string, assetType: string = "") => {
+  const downloadReport = (
+    reportId: string,
+    filename: string,
+    assetType: string = "",
+  ) => {
     console.log(assetType);
 
     axios
-      .get(`${api}/impacts/reports/${reportId}`, {
+      .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
         headers: {
           // Accept: "application/json",
           // Authorization: `Bearer ${authed?.token}`,
           "Content-Disposition": "attachment;",
           "Content-Type": "application/octet-stream",
         },
-        responseType: "document",
+        responseType: "blob",
       })
       .then((res: AxiosResponse) => {
         if (res) {
           console.log(res?.data);
 
-          fileDownload(res?.data,filename, "");
+          fileDownload(res?.data, filename, res.headers["content-type"]);
         }
       })
       .catch((err: AxiosError) => {
@@ -201,7 +206,7 @@ export default function ImpactView() {
 
           {/* Impact Report */}
           <div
-            className={`w-full ${impactAssets === null  ? "flex flex-col gap-5 p-3 scrollbar-hide" : "hidden"}  `}
+            className={`w-full ${impactAssets === null ? "flex flex-col gap-5 p-3 scrollbar-hide" : "hidden"}  `}
           >
             <h1 className="text-xl md:text-3xl">{impact?.title} Reports</h1>
 
@@ -227,10 +232,7 @@ export default function ImpactView() {
                         size={20}
                         className=" text-primary-500"
                         onClick={() => {
-                          downloadReport(
-                            `${d?.impactReportId}`,
-                            `${d?.title}`,
-                          );
+                          downloadReport(`${d?.impactReportId}`, `${d?.title}`);
                         }}
                       />
                     </Button>
@@ -253,9 +255,7 @@ export default function ImpactView() {
                 <p className=" text-center ">No Asset(s) for impact</p>
               </>
             ) : (
-              <div
-                className={`w-full flex flex-col md:flex-row gap-5`}
-              >
+              <div className={`w-full flex flex-col md:flex-row gap-5`}>
                 {impactAssets?.flatMap((d: ImpactAsset) => (
                   <div
                     key={d?.impactAssetId}

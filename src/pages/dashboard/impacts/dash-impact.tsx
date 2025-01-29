@@ -13,8 +13,8 @@ import {
   GoPencil,
   GoTrash,
 } from "react-icons/go";
-import axios, { AxiosResponse, AxiosError } from "axios";
 import fileDownload from "js-file-download";
+import axios, { AxiosResponse, AxiosError } from "axios";
 
 export default function DashImpactView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -319,20 +319,20 @@ export default function DashImpactView() {
       alert("Enable Edit mode to download Asset(S)");
     } else {
       axios
-        .get(`${api}/impacts/reports/${reportId}`, {
+        .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
           headers: {
             // Accept: "application/json",
             Authorization: `Bearer ${authed?.token}`,
             "Content-Disposition": "attachment;",
             "Content-Type": "application/octet-stream",
           },
-          responseType: "document",
+          responseType: "blob",
         })
         .then((res: AxiosResponse) => {
           if (res) {
             console.log(res?.data);
 
-            fileDownload(res?.data, "");
+            fileDownload(res?.data, "", res.headers["content-type"]);
           }
         })
         .catch((err: AxiosError) => {

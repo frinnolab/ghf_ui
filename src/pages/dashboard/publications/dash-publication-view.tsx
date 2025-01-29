@@ -259,20 +259,20 @@ export default function DashPublicationsView() {
       alert("Enable Edit mode to download Asset(S)");
     } else {
       axios
-        .get(`${api}/publications/assets/${assetId}`, {
+        .get(`${api}/publications/assets/${pubId}/${assetId}`, {
           headers: {
             // Accept: "application/json",
             Authorization: `Bearer ${authed?.token}`,
             "Content-Disposition": "attachment;",
             "Content-Type": "application/octet-stream"
           },
-          responseType:"document"
+          responseType:"blob"
         })
         .then((res: AxiosResponse) => {
           if (res) {
             console.log(res?.data);
 
-            fileDownload(res?.data, '');
+            fileDownload(res?.data, '', res.headers["content-type"]);
           }
         })
         .catch((err: AxiosError) => {

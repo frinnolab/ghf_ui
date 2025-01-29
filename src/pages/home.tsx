@@ -1,4 +1,4 @@
-import DefaultLayout from "@/layouts/default";
+/* eslint-disable import/order */
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import {
@@ -14,7 +14,6 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
 import { GoArrowUpRight } from "react-icons/go";
-import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
 import CountUp from "react-countup";
@@ -27,7 +26,9 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Blog } from "./dashboard/blog/dash-blogs";
 import { useNavigate } from "react-router-dom";
+import { SummaryInfo } from "./dashboard/summary/dash-summary";
 import { CompanyInfo } from "./dashboard/settings/dash-settings";
+import DefaultLayout from "@/layouts/default";
 export type Partner = {
   label?: string;
   logo?: string;
@@ -56,7 +57,7 @@ export default function HomePage() {
   const [blogs, setBlogs] = useState<Blog[] | null>(null);
 
   const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
-    null
+    null,
   );
 
   const [selectedDonorType, setSelectedselectedDonorType] =
@@ -82,7 +83,7 @@ export default function HomePage() {
 
   const changeDonorType = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = donationTypes?.find(
-      (p) => p?.type === Number(e.target.value)
+      (p) => p?.type === Number(e.target.value),
     );
 
     setSelectedselectedDonorType(statusVal);
@@ -90,13 +91,12 @@ export default function HomePage() {
 
   const changeDonorCurrType = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = currencyTypes?.find(
-      (p) => p?.type === Number(e.target.value)
+      (p) => p?.type === Number(e.target.value),
     );
 
     setSelectedselectedDonorCurrType(statusVal);
   };
-  
-  
+
   const fetchCompanyinfo = () => {
     if (companyInfo === null) {
       setIsloading(true);
@@ -263,14 +263,11 @@ export default function HomePage() {
       });
   };
 
-
-
   useEffect(() => {
     //setIsInfoloading(true);
     fetchCompanyinfo();
     fetchSummaryinfo();
     //setIsInfoloading(false);
-
   }, [summaryInfo, companyInfo]);
 
   useEffect(() => {
@@ -326,7 +323,8 @@ export default function HomePage() {
 
           setCollabs(() => {
             return dataP?.filter(
-              (p) => p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016
+              (p) =>
+                p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016,
             );
           });
         })
@@ -347,7 +345,6 @@ export default function HomePage() {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
       introVideoRef?.current?.play();
-
     } else {
       introVideoRef?.current?.pause();
       setIsPaused(true);
@@ -523,7 +520,9 @@ export default function HomePage() {
             </div> */}
           </div>
 
-          <div className="w-full flex flex-col justify-center items-center space-y-5">
+          <div
+            className={`w-full flex flex-col justify-center items-center space-y-5`}
+          >
             <h1 className="md:text-3xl text-2xl py-3">Introduction</h1>
 
             <div className="flex flex-col gap-5 md:drop-shadow-2xl">
@@ -533,7 +532,7 @@ export default function HomePage() {
                   borderRadius: "20px",
                 }}
                 className=" md:w-[1000px]"
-                src={companyInfo?.introVideoUrl ??  siteConfig.staticAssets.staticIntroVideo}
+                src={companyInfo?.introVideoUrl}
                 onClick={playInftro}
                 muted
                 controls
@@ -588,7 +587,10 @@ export default function HomePage() {
 
           <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center gap-3 md:gap-5 p-5">
             {collabs?.map((p: Partner, i) => (
-              <div key={i} className="w-[20%] p-5 md:p-10 rounded-2xl text-center ">
+              <div
+                key={i}
+                className="w-[20%] p-5 md:p-10 rounded-2xl text-center "
+              >
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
