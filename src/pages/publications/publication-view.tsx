@@ -83,7 +83,7 @@ export default function PublicationsView() {
     }
   }, [publication]);
 
-  function downloadPubAsset2(assetId: string, filename: string = "", type: "") {
+  function downloadPubAsset2(assetId: string, filename: string = "") {
     axios({
       headers: {
         "Content-Type": "application/octet-stream",
@@ -158,7 +158,7 @@ export default function PublicationsView() {
                       size={20}
                       className=" text-primary-500"
                       onClick={() => {
-                        downloadPubAsset2(`${d?.assetId}`, `${d?.title}`, "");
+                        downloadPubAsset2(`${d?.assetId}`, `${d?.title}`);
                       }}
                     />
                   </Button>

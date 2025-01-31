@@ -1,4 +1,7 @@
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable prettier/prettier */
 /* eslint-disable import/order */
+import * as motion from "motion/react-client";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import {
@@ -53,11 +56,12 @@ export default function HomePage() {
   const [partners, setPartners] = useState<Partner[] | null>(null);
   const [donation] = useState<Donation | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isIntroVideo, setIsIntrovideo] = useState<boolean>(false);
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState<Blog[] | null>(null);
 
   const [donationTypes, setDonationTypes] = useState<DonationType[] | null>(
-    null,
+    null
   );
 
   const [selectedDonorType, setSelectedselectedDonorType] =
@@ -83,7 +87,7 @@ export default function HomePage() {
 
   const changeDonorType = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = donationTypes?.find(
-      (p) => p?.type === Number(e.target.value),
+      (p) => p?.type === Number(e.target.value)
     );
 
     setSelectedselectedDonorType(statusVal);
@@ -91,7 +95,7 @@ export default function HomePage() {
 
   const changeDonorCurrType = (e: ChangeEvent<HTMLSelectElement>) => {
     const statusVal = currencyTypes?.find(
-      (p) => p?.type === Number(e.target.value),
+      (p) => p?.type === Number(e.target.value)
     );
 
     setSelectedselectedDonorCurrType(statusVal);
@@ -104,7 +108,11 @@ export default function HomePage() {
       axios
         .get(`${api}/settings/companyinfo`)
         .then((res: AxiosResponse) => {
-          console.log(res.data);
+          console.log(res?.data);
+
+          if (res?.data["introVideoUrl"]) {
+            setIsIntrovideo(true);
+          }
 
           setCompanyInfo(res?.data);
 
@@ -122,6 +130,7 @@ export default function HomePage() {
         });
     }
   };
+
   const fetchSummaryinfo = () => {
     if (summaryInfo === null) {
       axios
@@ -176,12 +185,14 @@ export default function HomePage() {
               description: b?.description ?? "",
               thumbnailUrl: b?.thumbnailUrl ?? "",
             };
+
             return [data];
           });
 
           setBlogs(datas);
         })
         .catch((err: AxiosError) => {
+          // eslint-disable-next-line no-console
           console.log(err.response);
         });
     }
@@ -222,6 +233,7 @@ export default function HomePage() {
 
   const fetchDonationTypes = () => {
     let data: DonationType[] = [];
+
     axios
       .get(`${api}/donations/types`)
       .then((res: AxiosResponse) => {
@@ -230,6 +242,7 @@ export default function HomePage() {
             title: d?.title,
             type: Number(d?.type),
           };
+
           return [dType];
         });
 
@@ -237,12 +250,14 @@ export default function HomePage() {
       })
       .catch((err: AxiosError) => {
         console.log(err.response);
+
         return null;
       });
   };
 
   const fetchCurrencyTypes = () => {
     let data: DonationCurrencyType[] = [];
+
     axios
       .get(`${api}/donations/currencies`)
       .then((res: AxiosResponse) => {
@@ -252,6 +267,7 @@ export default function HomePage() {
             type: Number(d?.type),
             shortName: d?.shortname,
           };
+
           return [dType];
         });
 
@@ -259,6 +275,7 @@ export default function HomePage() {
       })
       .catch((err: AxiosError) => {
         console.log(err.response);
+
         return null;
       });
   };
@@ -268,7 +285,7 @@ export default function HomePage() {
     fetchCompanyinfo();
     fetchSummaryinfo();
     //setIsInfoloading(false);
-  }, [summaryInfo, companyInfo]);
+  }, []);
 
   useEffect(() => {
     if (impacts === null) {
@@ -284,6 +301,7 @@ export default function HomePage() {
               schoolRegion: d?.schoolRegion,
               studentsTotal: Number(d?.studentsTotal),
             };
+
             return [resData];
           });
 
@@ -314,6 +332,7 @@ export default function HomePage() {
               type: p?.type,
               startYear: Number(p?.startYear),
             };
+
             return [pData];
           });
 
@@ -323,8 +342,7 @@ export default function HomePage() {
 
           setCollabs(() => {
             return dataP?.filter(
-              (p) =>
-                p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016,
+              (p) => p?.type === PartnerType.COLLABORATOR && p.startYear <= 2016
             );
           });
         })
@@ -353,9 +371,14 @@ export default function HomePage() {
 
   return (
     <DefaultLayout>
-      <div
+      <motion.div
         ref={mainSectionRef}
         className="w-full flex flex-col items-center justify-center bg-default-50"
+        transition={{
+          duration: 0.8,
+          delay: 0.5,
+          ease: [0, 0.71, 0.2, 1.01],
+        }}
       >
         {/* Hero Section */}
         <div className="h-[40dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
@@ -364,19 +387,31 @@ export default function HomePage() {
             ref={headerTextsRef}
             className=" flex flex-col items-center gap-5 md:top-[65%] top-[15%] z-30 absolute p-10"
           >
-            <div className="w-full flex flex-col  md:flex-row items-center gap-1 text-center md:text-5xl text-white  font-semibold p-5  rounded-xl">
-              <h1>
+            <motion.div className="w-full flex flex-col  md:flex-row items-center gap-1 text-center md:text-5xl text-white  font-semibold p-5  rounded-xl">
+              <motion.h1
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0.5,
+                    duration: 0.8,
+                    ease: "linear",
+                  },
+                }}
+              >
                 WE LIVE TO EMPOWER, DEVELOP AND INSPIRE YOUNG GENERATION TO
                 ACQUIRE ENTREPRENEURSHIP AND 21ST CENTURY SKILLS
-              </h1>
-            </div>
+              </motion.h1>
+            </motion.div>
           </div>
           {/* Header Text End*/}
 
           <div className="w-full absolute top-16 md:top-[-1%] xl:top-[3%] ">
             <Image
-              radius="none"
               alt="Header img"
+              radius="none"
               src="/assets/images/static/MAIN_PAGE.jpg"
             />
           </div>
@@ -384,10 +419,52 @@ export default function HomePage() {
 
         {/* Who We're */}
         <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-20 font-semibold cursor-default panel panel-intro md:relative md:pt-[5%] z-30">
-          <div className=" bg-primary rounded-2xl p-10 text-default-50 ">
-            <h1 className="md:text-3xl text-2xl py-3">Who we are</h1>
+          <motion.div
+            // animate={{ opacity: 1, scale: 1 }}
+            className=" bg-primary rounded-2xl p-10 text-default-50 "
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{
+              opacity: 1,
+              scale: 1,
+              transition: {
+                duration: 0.5,
+                delay: 0.3,
+                ease: "linear",
+                // ease: [0, 0.71, 0.2, 1.01],
+              },
+            }}
+          >
+            <motion.h1
+              className="md:text-3xl text-2xl py-3"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+                transition: {
+                  delay: 0.5,
+                  duration: 0.8,
+                  ease: "linear",
+                },
+              }}
+            >
+              Who we are
+            </motion.h1>
 
-            <p className="md:text-xl text-justify">
+            <motion.p
+              className="md:text-xl text-justify"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+                transition: {
+                  delay: 0.7,
+                  duration: 0.9,
+                  ease: "linear",
+                },
+              }}
+            >
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -397,13 +474,13 @@ export default function HomePage() {
               and the community around them. We aim at being an organization
               that enlightens young people potential, giving them hope and
               courage to bring the very best out of themselves.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           <div className={`w-full flex items-center justify-center`}>
             <Link
-              href={`whatwedo`}
               className="flex text-center rounded p-3 border border-transparent bg-primary text-default-100"
+              href={`whatwedo`}
             >
               What we do <GoArrowUpRight />{" "}
             </Link>
@@ -413,8 +490,8 @@ export default function HomePage() {
 
         {/* Data Summary Section */}
         <div
-          id="infoStats"
           className="w-full xl:h-[60%] md:h-screen flex flex-col gap-5 md:gap-0 justify-center items-center p-5 cursor-default panel panel-sum"
+          id="infoStats"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
@@ -428,8 +505,8 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                separator=" "
                 end={Number(summaryInfo?.regions?.value ?? 0)}
+                separator=" "
               />
               <h1 className=" text-2xl ">Regions Reached</h1>
             </div>
@@ -443,8 +520,8 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                separator=","
                 end={Number(summaryInfo?.districts?.value ?? 0)}
+                separator=","
               />
               <h1 className=" text-2xl ">Districts Reached</h1>
             </div>
@@ -458,8 +535,8 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                separator=","
                 end={Number(summaryInfo?.schools?.value ?? 0)}
+                separator=","
               />
               <h1 className=" text-2xl ">Schools Reached</h1>
             </div>
@@ -473,8 +550,8 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                separator=","
                 end={Number(summaryInfo?.students?.value ?? 0)}
+                separator=","
               />
               <h1 className=" text-2xl ">Students Impacted</h1>
             </div>
@@ -484,8 +561,8 @@ export default function HomePage() {
 
         {/* Vision Section */}
         <div
+          className={`w-full ${!isIntroVideo ? "hidden" : "flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 md:h-screen panel"} `}
           id="aboutInfo"
-          className="w-full flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 md:h-screen panel"
         >
           <div className="w-full hidden  md:space-y-5">
             {/* Our vision */}
@@ -528,20 +605,20 @@ export default function HomePage() {
             <div className="flex flex-col gap-5 md:drop-shadow-2xl">
               <video
                 ref={introVideoRef}
+                controls
+                muted
+                className=" md:w-[1000px]"
+                src={companyInfo?.introVideoUrl}
                 style={{
                   borderRadius: "20px",
                 }}
-                className=" md:w-[1000px]"
-                src={companyInfo?.introVideoUrl}
                 onClick={playInftro}
-                muted
-                controls
               />
               <div className=" w-full flex justify-end items-center gap-3 ">
                 <p className=" italic text-small ">A word from our founder</p>
                 <Button
-                  variant="flat"
                   className=" px-10 py-5 "
+                  variant="flat"
                   onClick={playInftro}
                 >
                   {isPaused ? "Play" : "Pause"}
@@ -553,30 +630,59 @@ export default function HomePage() {
         {/* Vision Section End*/}
 
         {/* Donors Section */}
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          transition={{
+            duration: 1,
+            delay: 0.8,
+            ease: [0, 0.71, 0.2, 1.01],
+          }}
+          whileInView={{ opacity: 1 }}
+          // eslint-disable-next-line react/jsx-sort-props
           className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
         >
           <h1 className=" text-3xl md:text-5xl ">Our Partners & Donors</h1>
 
           <div className="w-full flex flex-col md:flex-row justify-between items-center gap-5 p-5">
             {partners?.map((p: Partner, i) => (
-              <div key={i} className=" p-5 md:p-10 rounded-2xl text-center ">
+              <motion.div
+                key={i}
+                animate={{ opacity: 1, scale: 1 }}
+                className=" p-5 md:p-10 rounded-2xl text-center "
+                initial={{ opacity: 0, scale: 0 }}
+                transition={{
+                  duration: 0.4,
+                  scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                }}
+                whileHover={{
+                  opacity: 1,
+                  scale: 1.1,
+                  transition: { duration: 0.5 },
+                }}
+              >
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
                   className={`h-[100px] w-[100px] md:h-[150px] md:w-[auto]`}
                   src={`${p?.logo}`}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
-          <div></div>
-        </div>
+          {/* <div></div> */}
+        </motion.div>
         {/* Donors Section End*/}
 
         {/* Collaborators */}
-        <div
+        <motion.div
           className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
+          initial={{ opacity: 0 }}
+          transition={{
+            duration: 1,
+            delay: 0.8,
+            ease: [0, 0.71, 0.2, 1.01],
+          }}
+          whileInView={{ opacity: 1 }}
         >
           <div className={`w-full space-y-3 text-center`}>
             <h1 className="text-3xl md:text-5xl ">Collaborators Since 2016</h1>
@@ -587,9 +693,21 @@ export default function HomePage() {
 
           <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center gap-3 md:gap-5 p-5">
             {collabs?.map((p: Partner, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="w-[20%] p-5 md:p-10 rounded-2xl text-center "
+                animate={{
+                  x: 0,
+                  opacity: 1,
+                  transition: {
+                    default: { type: "spring" },
+                    opacity: { ease: "linear" },
+                  },
+                }}
+                className="w-[15%] h-[15%] p-5 md:p-10 rounded-2xl text-center "
+                whileHover={{
+                  scale: 1.1,
+                  transition: { duration: 0.5 },
+                }}
               >
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
@@ -597,10 +715,10 @@ export default function HomePage() {
                   className={`h-[100px] w-[100px] md:h-[150px] md:w-[150px]`}
                   src={`${p?.logo}`}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
         {/* Collaborators End */}
 
         {/* Donations */}
@@ -622,8 +740,8 @@ export default function HomePage() {
               />
             ) : (
               <form
-                onSubmit={handleSubmit(onDonationSubmit)}
                 className=" flex flex-col gap-3 p-5 space-y-2"
+                onSubmit={handleSubmit(onDonationSubmit)}
               >
                 {/* Fullnames */}
                 <div className="w-full gap-5 flex justify-between items-center">
@@ -631,8 +749,8 @@ export default function HomePage() {
                   <div className="w-full space-y-2">
                     <label htmlFor="Firstname">Firstname</label>
                     <Input
-                      type="text"
                       defaultValue={`${donation?.firstname ?? ""}`}
+                      type="text"
                       {...register("firstname", { required: true })}
                       placeholder={`${donation?.firstname ?? "Enter Firstname"}`}
                     />
@@ -648,8 +766,8 @@ export default function HomePage() {
                   <div className="w-full space-y-2">
                     <label htmlFor="Lastname">Lastname</label>
                     <Input
-                      type="text"
                       defaultValue={`${donation?.lastname ?? ""}`}
+                      type="text"
                       {...register("lastname")}
                       placeholder={`${donation?.lastname ?? "Enter Lastname"}`}
                     />
@@ -664,8 +782,8 @@ export default function HomePage() {
                   <div className="w-full space-y-2">
                     <label htmlFor="email">Email</label>
                     <Input
-                      type="text"
                       defaultValue={`${donation?.email ?? ""}`}
+                      type="text"
                       {...register("email", { required: true })}
                       placeholder={`${donation?.email ?? "Enter email"}`}
                     />
@@ -682,8 +800,8 @@ export default function HomePage() {
                     <label htmlFor="mobile">Mobile</label>
                     <Input
                       isRequired
-                      type="text"
                       defaultValue={`${donation?.mobile ?? ""}`}
+                      type="text"
                       {...register("mobile")}
                       placeholder={`${donation?.mobile ?? "Enter mobile"}`}
                     />
@@ -702,8 +820,8 @@ export default function HomePage() {
                       <label htmlFor="donorType">Donor</label>
                       <Select
                         isRequired
-                        label="Select Donor Type"
                         className="max-w-xs"
+                        label="Select Donor Type"
                         onChange={(e) => {
                           changeDonorType(e);
                         }}
@@ -721,8 +839,8 @@ export default function HomePage() {
                   <div className="w-full space-y-2">
                     <label htmlFor="company">Company</label>
                     <Input
-                      type="text"
                       defaultValue={`${donation?.company ?? ""}`}
+                      type="text"
                       {...register("company")}
                       placeholder={`${donation?.company ?? "Enter company"}`}
                     />
@@ -742,8 +860,8 @@ export default function HomePage() {
                       <label htmlFor="currency">Currency</label>
                       <Select
                         isRequired
-                        label="Select Currency Type"
                         className="max-w-xs"
+                        label="Select Currency Type"
                         onChange={(e) => {
                           changeDonorCurrType(e);
                         }}
@@ -761,9 +879,9 @@ export default function HomePage() {
                   <div className="w-full space-y-2">
                     <label htmlFor="amount">Amount</label>
                     <Input
-                      type="number"
-                      min={0}
                       defaultValue={`${donation?.amountPledged ?? ""}`}
+                      min={0}
+                      type="number"
                       {...register("amountPledged")}
                       placeholder={`${donation?.amountPledged ?? "Enter Amount Pledge"}`}
                     />
@@ -774,8 +892,8 @@ export default function HomePage() {
                 <div className="w-full space-y-2">
                   <label htmlFor="description">Description</label>
                   <Textarea
-                    type="text"
                     defaultValue={`${donation?.description ?? ""}`}
+                    type="text"
                     {...register("description")}
                     placeholder={`${donation?.description ?? "Enter Description"}`}
                   />
@@ -812,16 +930,30 @@ export default function HomePage() {
               />
             ) : (
               <div className={`w-full flex flex-col gap-3`}>
-                <div
+                <motion.div
                   className={`w-full ${blogs?.length === 0 ? "hidden" : "flex justify-end items-center gap-5"}`}
                 >
                   {blogs?.map((p) => (
-                    <div
-                      className={`shadow w-[30%] rounded-xl bg-default-50`}
+                    <motion.div
                       key={p?.blogId}
+                      className={`shadow w-[30%] rounded-xl bg-default-50`}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeOut",
+                      }}
+                      whileHover={{
+                        scale: [null, 1, 1.15],
+                        zIndex: 100,
+                        transition: {
+                          duration: 0.5,
+                          delay: 0.2,
+                          times: [0, 0.2, 0.5],
+                          ease: ["easeInOut", "easeOut"],
+                        },
+                      }}
                     >
                       <Image
-                        className="w-screen h-[30vh] object-cover"
+                        className={`w-screen h-[30vh] object-cover`}
                         src={
                           p?.thumbnailUrl !== "" || null
                             ? p?.thumbnailUrl
@@ -834,9 +966,9 @@ export default function HomePage() {
 
                         <div className="w-full p-1 flex justify-end">
                           <Button
-                            variant="light"
-                            color="primary"
                             className="flex items-center border border-primary-400 hover:border-transparent"
+                            color="primary"
+                            variant="light"
                             onClick={() => {
                               navigate(`blog/${p?.blogId}`, {
                                 state: `${p?.blogId}`,
@@ -847,9 +979,9 @@ export default function HomePage() {
                           </Button>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
 
                 <div className="flex justify-end p-5">
                   <a className=" text-primary " href="/blog">
@@ -861,7 +993,7 @@ export default function HomePage() {
           </div>
         </div>
         {/* Recent Projects End */}
-      </div>
+      </motion.div>
     </DefaultLayout>
   );
 }

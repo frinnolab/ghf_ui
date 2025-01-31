@@ -118,7 +118,6 @@ export default function ImpactView() {
     filename: string,
     assetType: string = "",
   ) => {
-    console.log(assetType);
 
     axios
       .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
