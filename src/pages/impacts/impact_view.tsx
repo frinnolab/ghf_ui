@@ -116,7 +116,6 @@ export default function ImpactView() {
   const downloadReport = (
     reportId: string,
     filename: string,
-    assetType: string = "",
   ) => {
 
     axios

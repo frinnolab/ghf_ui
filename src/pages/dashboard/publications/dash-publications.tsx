@@ -51,7 +51,7 @@ export default function DashPublications() {
     axios
       .delete(`${api}/publications/${i?.publishId}`, {
         headers:{
-          "Authorization": `Bearer ${authed?.token}`,
+          Authorization: `Bearer ${authed?.token}`,
         },
         method: "DELETE",
       })
@@ -61,7 +61,7 @@ export default function DashPublications() {
         }
       })
       .catch((err: AxiosError) => {
-        console.log(err);
+        console.warn(err?.response);
       });
   };
 
