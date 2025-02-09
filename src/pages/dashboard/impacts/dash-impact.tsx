@@ -153,9 +153,11 @@ export default function DashImpactView() {
           method: "put",
         })
         .then((res: AxiosResponse) => {
-          setIsloading(false);
-          setIsEdit(false);
-          nav(`/dashboard/impacts`);
+          if (res?.data) {
+            setIsloading(false);
+            setIsEdit(false);
+            nav(`/dashboard/impacts`);
+          }
 
           //window.location.reload();
         })
@@ -411,6 +413,9 @@ export default function DashImpactView() {
         .catch((err: AxiosError) => {
           console.error(err);
         });
+    } else {
+      //Create
+      setIsloading(true);
     }
   }, [impactId]);
 
@@ -437,6 +442,9 @@ export default function DashImpactView() {
         .catch((err: AxiosError) => {
           console.log(err);
         });
+    }else {
+      //Create
+      setIsloading(false);
     }
   }, [impact]);
 
@@ -464,6 +472,10 @@ export default function DashImpactView() {
         .catch((err: AxiosError) => {
           console.log(err);
         });
+    }
+    else {
+      //Create
+      setIsloading(false);
     }
   }, [impact]);
 
@@ -716,9 +728,7 @@ export default function DashImpactView() {
                                       size={20}
                                       className=" text-primary-500"
                                       onClick={() => {
-                                        downloadReport(
-                                          `${d?.impactReportId}`
-                                        );
+                                        downloadReport(`${d?.impactReportId}`);
                                       }}
                                     />
                                   </span>

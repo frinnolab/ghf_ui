@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable prettier/prettier */
 import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import { Alumni } from "../dashboard/alumnis/dash-alumni-list";
@@ -60,6 +62,7 @@ export default function AlumniList() {
     data.append("firstname", `${p?.alumniProfile?.firstname ?? ""}`);
     data.append("lastname", `${p?.alumniProfile?.lastname ?? ""}`);
     data.append("mobile", `${p?.alumniProfile?.mobile ?? ""}`);
+    data.append("isPublished", `0`);
 
     if (selectedImage) {
       data.append("avatar", selectedImage);
@@ -82,7 +85,7 @@ export default function AlumniList() {
         }
       })
       .catch((err: AxiosError) => {
-        console.log(err?.response);
+        console.error(err?.response);
       });
   };
 
@@ -167,13 +170,13 @@ export default function AlumniList() {
                   >
                     <div>
                       <Avatar
+                        defaultValue={`${(<GoPersonFill />)}`}
                         size="lg"
                         src={
                           d?.alumniProfile?.avatarUrl !== "" || null
                             ? d?.alumniProfile?.avatarUrl
                             : ""
                         }
-                        defaultValue={`${(<GoPersonFill />)}`}
                       />
                     </div>
 
@@ -196,7 +199,7 @@ export default function AlumniList() {
                         <label
                           className="text-small text-slate-500"
                           htmlFor="pAlumni"
-                        ></label>
+                         />
                         <h1>GHF {setRoleName(Number(d?.alumniProfile?.role))}</h1>
                       </div>
                       

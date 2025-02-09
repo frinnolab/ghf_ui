@@ -1,10 +1,11 @@
 import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import { Avatar, Divider } from "@nextui-org/react";
+import { Avatar, Divider, Image } from "@nextui-org/react";
 import { TeamMember } from "./dashboard/teams/dash-teams";
 import { GoPersonFill } from "react-icons/go";
 import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
+import * as motion from "motion/react-client";
 
 export default function DocsPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -43,12 +44,50 @@ export default function DocsPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
-        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[85dvh]">
-          <div className="inline-block max-w-lg text-center justify-center p-3">
-            <h1 className={title()}>About Us</h1>
+        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
+          <motion.div className={`w-full absolute top-[-15%]`}>
+            <Image
+              alt="About Bg"
+              radius="none"
+              width={5000}
+              src="assets/images/static/ABOUT_US2.jpg"
+            />
+          </motion.div>
+
+          <div className="inline-block max-w-lg text-center justify-center p-3 z-10 ">
+            <motion.h1
+              className={title()}
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+                transition: {
+                  ease: "linear",
+                  delay: 0.8,
+                  duration: 1,
+                },
+              }}
+            >
+              About Us
+            </motion.h1>
           </div>
+
           {/* Bio */}
-          <div className="rounded-2xl">
+          <motion.div
+            className="rounded-2xl z-10"
+            initial={{
+              opacity: 0,
+            }}
+            whileInView={{
+              opacity: 1,
+              transition: {
+                ease: "linear",
+                delay: 0.8,
+                duration: 1.5,
+              },
+            }}
+          >
             <p className=" text-2xl md:text-3xl text-pretty md:text-justify p-5 md:py-10">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
@@ -60,15 +99,15 @@ export default function DocsPage() {
               that enlightens young people potential, giving them hope and
               courage to bring the very best out of themselves.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         <Divider />
 
         {/* Vision Section */}
         <div
+          className="w-full md:min-h-[85dvh] flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 panel z-10"
           id="aboutInfo"
-          className="w-full md:min-h-[85dvh] flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 panel"
         >
           <div className="w-full flex flex-col justify-center items-center  md:space-y-5">
             {/* Our vision */}
@@ -142,9 +181,9 @@ function TeamCard({ member }: { member: TeamMember }) {
     >
       <div>
         <Avatar
+          defaultValue={`${(<GoPersonFill />)}`}
           size="lg"
           src={member?.memberAvatarUrl !== "" ? member?.memberAvatarUrl : ""}
-          defaultValue={`${(<GoPersonFill />)}`}
         />
       </div>
       {/* <Image src={`${member?.member?.avatarUrl ?? <GoPersonFill />}`} /> */}

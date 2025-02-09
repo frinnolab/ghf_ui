@@ -170,7 +170,7 @@ export const siteConfig = {
       postoffice: "P.O.BOX 2466 DSM",
     },
     contact:{
-      email: "greathopefoundation@gmail.com",
+      email: "info@ghftz.org",
       contacts:["+255 764 977 365,","+255 783 672 512"]
     }
   }

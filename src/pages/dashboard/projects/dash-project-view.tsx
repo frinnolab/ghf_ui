@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 import useAuthedProfile from "@/hooks/use-auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import {

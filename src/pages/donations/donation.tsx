@@ -16,6 +16,7 @@ import {
   Textarea,
   Image,
 } from "@nextui-org/react";
+import { title } from "@/components/primitives";
 
 export default function DonationPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -81,6 +82,7 @@ export default function DonationPage() {
 
   const fetchDonationTypes = () => {
     let data: DonationType[] = [];
+
     axios
       .get(`${api}/donations/types`)
       .then((res: AxiosResponse) => {
@@ -89,6 +91,7 @@ export default function DonationPage() {
             title: d?.title,
             type: Number(d?.type),
           };
+
           return [dType];
         });
 
@@ -96,12 +99,14 @@ export default function DonationPage() {
       })
       .catch((err: AxiosError) => {
         console.log(err.response);
+
         return null;
       });
   };
 
   const fetchCurrencyTypes = () => {
     let data: DonationCurrencyType[] = [];
+
     axios
       .get(`${api}/donations/currencies`)
       .then((res: AxiosResponse) => {
@@ -111,6 +116,7 @@ export default function DonationPage() {
             type: Number(d?.type),
             shortName: d?.shortname,
           };
+
           return [dType];
         });
 
@@ -118,6 +124,7 @@ export default function DonationPage() {
       })
       .catch((err: AxiosError) => {
         console.log(err.response);
+
         return null;
       });
   };
@@ -145,7 +152,7 @@ export default function DonationPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4">
-        <div className="h-screen w-full flex flex-col justify-center">
+        <div className="h-screen w-full justify-center hidden">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-10">
             <div className="w-full flex justify-between">
@@ -171,12 +178,13 @@ export default function DonationPage() {
         </div>
         {/* <h1 className={title()}>Donation</h1> */}
 
+        <div>
+          <h1 className={title()}>Donations</h1>
+        </div>
+
         <div className="w-full px-10 flex flex-col gap-5">
           <div className="w-full flex flex-col px-20 gap-5 ">
-            <h1 className=" text-2xl  font-semibold ">
-              {" "}
-              Become a Donor
-            </h1>
+            <h1 className=" text-2xl  font-semibold "> Become a Donor</h1>
           </div>
 
           <div
@@ -196,8 +204,8 @@ export default function DonationPage() {
                 />
               ) : (
                 <form
-                  onSubmit={handleSubmit(onDonationSubmit)}
                   className=" flex flex-col gap-3 p-5 space-y-2"
+                  onSubmit={handleSubmit(onDonationSubmit)}
                 >
                   {/* Fullnames */}
                   <div className="w-full gap-5 flex justify-between items-center">
@@ -205,8 +213,8 @@ export default function DonationPage() {
                     <div className="w-full space-y-2">
                       <label htmlFor="Firstname">Firstname</label>
                       <Input
-                        type="text"
                         defaultValue={`${donation?.firstname ?? ""}`}
+                        type="text"
                         {...register("firstname", { required: true })}
                         placeholder={`${donation?.firstname ?? "Enter Firstname"}`}
                       />
@@ -222,8 +230,8 @@ export default function DonationPage() {
                     <div className="w-full space-y-2">
                       <label htmlFor="Lastname">Lastname</label>
                       <Input
-                        type="text"
                         defaultValue={`${donation?.lastname ?? ""}`}
+                        type="text"
                         {...register("lastname")}
                         placeholder={`${donation?.lastname ?? "Enter Lastname"}`}
                       />
@@ -238,8 +246,8 @@ export default function DonationPage() {
                     <div className="w-full space-y-2">
                       <label htmlFor="email">Email</label>
                       <Input
-                        type="text"
                         defaultValue={`${donation?.email ?? ""}`}
+                        type="text"
                         {...register("email", { required: true })}
                         placeholder={`${donation?.email ?? "Enter email"}`}
                       />
@@ -256,8 +264,8 @@ export default function DonationPage() {
                       <label htmlFor="mobile">Mobile</label>
                       <Input
                         isRequired
-                        type="text"
                         defaultValue={`${donation?.mobile ?? ""}`}
+                        type="text"
                         {...register("mobile")}
                         placeholder={`${donation?.mobile ?? "Enter mobile"}`}
                       />

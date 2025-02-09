@@ -1,9 +1,12 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable prettier/prettier */
 import DefaultLayout from "@/layouts/default";
 import { Button, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Career, CareerType } from "../dashboard/careers/dash-careers";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { title } from "@/components/primitives";
 
 export default function CareersPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -41,6 +44,7 @@ export default function CareersPage() {
               careerValidity: Number(career.careerValidity),
             })
           );
+
           setCareers(careerData);
 
           setIsloading(false);
@@ -60,31 +64,46 @@ export default function CareersPage() {
     <DefaultLayout>
       <section className="w-full flex flex-col p-10 gap-3 cursor-default">
         {/* Main Actions */}
-        <div className="w-full flex flex-col">
-          <h1 className="text-2xl">Careers</h1>
-          <p>Join our ever growing community</p>
+        <div className="w-full flex flex-col gap-5">
+          <h1 className={title()} >Careers</h1>
+          <p className={` text-balance`}>
+            Great Hope Foundation, yearly works with a pool of volunteers
+            countrywide in implementing UWEZO PROGRAM, and some few succeed in
+            joining Great Hope Foundation team as employees. Volunteers that are
+            picked are normally form four/form six and University students.
+            Write to us, with the intention of becoming a volunteer
+          </p>
         </div>
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading..."
+              size="lg"
             />
           </>
         ) : (
           <div>
             {careers?.length === 0 ? (
-              <></>
+              <>
+              <div className="w-full flex justify-center">
+                <p>No Careers open at the momment</p>
+              </div>
+              </>
             ) : (
               <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {careers?.map((ca) => (
-                  <div className="w-full p-5 border rounded-lg space-y-3 hover:border-transparent" onClick={()=>{
-                    nav(`/careers/${ca?.careerId}`,{
-                        state:`${ca?.careerId}`
-                    })
-                  }}>
+                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                  <div
+                    key={`${ca?.careerId}`}
+                    className="w-full p-5 border rounded-lg space-y-3 hover:border-transparent"
+                    onClick={() => {
+                      nav(`/careers/${ca?.careerId}`, {
+                        state: `${ca?.careerId}`,
+                      });
+                    }}
+                  >
                     <div className="w-full space-y-2">
                       <h2 className="text-xl font-semibold">{ca?.position}</h2>
                       <p className="text-sm text-gray-500">
@@ -99,11 +118,9 @@ export default function CareersPage() {
                         color="primary"
                         variant="solid"
                         onClick={() => {
-                            nav(`/careers/${ca?.careerId}`,
-                                {
-                                    state:`${ca?.careerId}`
-                                }
-                            );
+                          nav(`/careers/${ca?.careerId}`, {
+                            state: `${ca?.careerId}`,
+                          });
                         }}
                       >
                         Apply Now

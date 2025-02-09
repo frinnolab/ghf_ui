@@ -23,12 +23,19 @@ export type CompanyInfo = {
   logoUrl?: string;
 };
 
+export type StatsInfo = {
+  statId?: string | null;
+  regionsReached?: number;
+  districtsReached?: number;
+  studentsImpacted?: number;
+  schoolsReached?: number;
+};
+
 export default function DashSettingsPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);  
   const [isLoading, setIsloading] = useState<boolean>(false);
-
   const { register, handleSubmit } = useForm<CompanyInfo>();
 
   const onSubmit: SubmitHandler<CompanyInfo> = (data: CompanyInfo) => {
@@ -242,7 +249,7 @@ export default function DashSettingsPage() {
             </form>
 
             <div className="w-full flex flex-col p-5">
-              <CompanyAssetsUi company={companyInfo} />
+              <CompanyAssetsUi company={companyInfo} isLoading = {isLoading} />
             </div>
           </div>
         )}
@@ -251,7 +258,13 @@ export default function DashSettingsPage() {
   );
 }
 
-function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
+function CompanyAssetsUi({
+  company,
+  isLoading,
+}: {
+  company: CompanyInfo | null;
+  isLoading: boolean;
+}) {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
@@ -296,7 +309,7 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
       }
 
       axios
-        .post(`${api}/settings/companyassets/${company?.id}`, data, {
+        .post(`${api}/settings/companyassets`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
             "Content-Type": "multipart/form-data",
@@ -319,7 +332,7 @@ function CompanyAssetsUi({ company }: { company: CompanyInfo | null }) {
     }
   };
   return (
-    <div className="flex flex-col items-center rounded-xl  h-[40dvh] gap-5">
+    <div className={`w-full ${isLoading ? 'disabled' : 'flex flex-col items-center'}  rounded-xl  h-[40dvh] gap-5`}>
       <div className={`w-full flex items-center justify-between`}>
         <h1>Manage Assets</h1>
 

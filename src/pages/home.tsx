@@ -29,8 +29,8 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Blog } from "./dashboard/blog/dash-blogs";
 import { useNavigate } from "react-router-dom";
-import { SummaryInfo } from "./dashboard/summary/dash-summary";
-import { CompanyInfo } from "./dashboard/settings/dash-settings";
+// import { SummaryInfo } from "./dashboard/summary/dash-summary";
+import { CompanyInfo, StatsInfo } from "./dashboard/settings/dash-settings";
 import DefaultLayout from "@/layouts/default";
 export type Partner = {
   label?: string;
@@ -46,9 +46,10 @@ export default function HomePage() {
   const [isPaused, setIsPaused] = useState<boolean>(true);
   // const [isInfoloading, setIsInfoloading] = useState<boolean>(true);
   const api = `${import.meta.env.VITE_API_URL}`;
-  const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
+  //const [summaryInfo, setSummarInfo] = useState<SummaryInfo | null>(null);
   const [impacts, setImpacts] = useState<Impact[] | null>(null);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
+  const [statsInfo, setStatsInfo] = useState<StatsInfo | null>(null);
 
   const [isPartners, setIsPartners] = useState<boolean>(false);
   const [collabs, setCollabs] = useState<Partner[] | null>(null);
@@ -101,6 +102,49 @@ export default function HomePage() {
     setSelectedselectedDonorCurrType(statusVal);
   };
 
+  const fetchStatInfo = () => {
+    if (statsInfo === null) {
+      setIsloading(true);
+
+      axios
+        .get(`${api}/settings/statsinfo`)
+        .then((res: AxiosResponse) => {
+          // if (res?.data["introVideoUrl"]) {
+          //   setIsIntrovideo(true);
+          // }
+
+          // setCompanyInfo(res?.data);
+
+          const data:StatsInfo = {
+            studentsImpacted: Number(res?.data['studentsImpacted'] ?? 0),
+            regionsReached: Number(res?.data['regionsReached'] ?? 0),
+            schoolsReached:Number(res?.data['schoolsReached'] ?? 0),
+            districtsReached:Number(res?.data['districtsReached'] ?? 0)
+          }
+
+          setStatsInfo(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response);
+          setStatsInfo(()=>{
+            return {
+              studentsImpacted: 0,
+              regionsReached: 0,
+              schoolsReached:0,
+              districtsReached:0
+            }
+          });
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
+        });
+    }
+  };
   const fetchCompanyinfo = () => {
     if (companyInfo === null) {
       setIsloading(true);
@@ -131,41 +175,41 @@ export default function HomePage() {
     }
   };
 
-  const fetchSummaryinfo = () => {
-    if (summaryInfo === null) {
-      axios
-        .get(`${api}/settings/summaryinfo`)
-        .then((res: AxiosResponse) => {
-          setSummarInfo(() => {
-            return {
-              regions: {
-                label: "Total Regions",
-                value: `${res?.data["totalRegions"] ?? 0}`,
-              },
-              districts: {
-                label: "Total Districts",
-                value: `${res?.data["totalDistricts"] ?? 0}`,
-              },
-              schools: {
-                label: "Total Schools",
-                value: `${res?.data["totalSchools"]}`,
-              },
-              students: {
-                label: "Total Students",
-                value: `${res?.data["totalStudents"]}`,
-              },
-              projects: {
-                label: "Total Projects",
-                value: `${res?.data["totalProjects"]}`,
-              },
-            };
-          });
-        })
-        .catch((err: AxiosError) => {
-          console.log(err.response);
-        });
-    }
-  };
+  // const fetchSummaryinfo = () => {
+  //   if (summaryInfo === null) {
+  //     axios
+  //       .get(`${api}/settings/summaryinfo`)
+  //       .then((res: AxiosResponse) => {
+  //         setSummarInfo(() => {
+  //           return {
+  //             regions: {
+  //               label: "Total Regions",
+  //               value: `${res?.data["totalRegions"] ?? 0}`,
+  //             },
+  //             districts: {
+  //               label: "Total Districts",
+  //               value: `${res?.data["totalDistricts"] ?? 0}`,
+  //             },
+  //             schools: {
+  //               label: "Total Schools",
+  //               value: `${res?.data["totalSchools"]}`,
+  //             },
+  //             students: {
+  //               label: "Total Students",
+  //               value: `${res?.data["totalStudents"]}`,
+  //             },
+  //             projects: {
+  //               label: "Total Projects",
+  //               value: `${res?.data["totalProjects"]}`,
+  //             },
+  //           };
+  //         });
+  //       })
+  //       .catch((err: AxiosError) => {
+  //         console.log(err.response);
+  //       });
+  //   }
+  // };
 
   const fetchBlogs = () => {
     if (blogs === null) {
@@ -281,9 +325,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+
+    fetchStatInfo();
     //setIsInfoloading(true);
     fetchCompanyinfo();
-    fetchSummaryinfo();
+    //fetchSummaryinfo();
     //setIsInfoloading(false);
   }, []);
 
@@ -505,7 +551,7 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                end={Number(summaryInfo?.regions?.value ?? 0)}
+                end={Number(statsInfo?.regionsReached ?? 0)}
                 separator=" "
               />
               <h1 className=" text-2xl ">Regions Reached</h1>
@@ -520,7 +566,7 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                end={Number(summaryInfo?.districts?.value ?? 0)}
+                end={Number(statsInfo?.districtsReached ?? 0)}
                 separator=","
               />
               <h1 className=" text-2xl ">Districts Reached</h1>
@@ -535,7 +581,7 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                end={Number(summaryInfo?.schools?.value ?? 0)}
+                end={Number(statsInfo?.schoolsReached ?? 0)}
                 separator=","
               />
               <h1 className=" text-2xl ">Schools Reached</h1>
@@ -550,7 +596,7 @@ export default function HomePage() {
               <CountUp
                 className="text-6xl"
                 duration={10}
-                end={Number(summaryInfo?.students?.value ?? 0)}
+                end={Number(statsInfo?.studentsImpacted ?? 0)}
                 separator=","
               />
               <h1 className=" text-2xl ">Students Impacted</h1>

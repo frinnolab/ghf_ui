@@ -1,16 +1,22 @@
+/* eslint-disable react/jsx-no-target-blank */
 import { Link } from "@nextui-org/link";
-
-import { Navbar } from "@/components/navbar";
-
-import { siteConfig as config } from "@/config/site";
 import {
   FaMailBulk,
   FaMapMarkedAlt,
   FaMapPin,
   FaPhoneAlt,
 } from "react-icons/fa";
-import { FaFacebook, FaInstagram, FaLinkedinIn, FaSignsPost, FaTwitter } from "react-icons/fa6";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedinIn,
+  FaSignsPost,
+  FaTwitter,
+} from "react-icons/fa6";
 import { Image } from "@nextui-org/react";
+
+import { siteConfig as config } from "@/config/site";
+import { Navbar } from "@/components/navbar";
 export default function DefaultLayout({
   children,
 }: {
@@ -49,22 +55,38 @@ export default function DefaultLayout({
 
             <ul className="space-y-3 text-lg">
               <li className="flex items-center gap-5">
-                <a href={`${config?.socialLinks?.twitterX?.link}`} target="_blank" className="flex items-center gap-5">
+                <a
+                  className="flex items-center gap-5"
+                  href={`${config?.socialLinks?.twitterX?.link}`}
+                  target="_blank"
+                >
                   <FaTwitter /> {config?.socialLinks?.twitterX?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.facebook?.link}`} target="_blank" className="flex items-center gap-5">
+                <a
+                  className="flex items-center gap-5"
+                  href={`${config?.socialLinks?.facebook?.link}`}
+                  target="_blank"
+                >
                   <FaFacebook /> {config?.socialLinks?.facebook?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.instagram?.link}`} target="_blank" className="flex items-center gap-5">
+                <a
+                  className="flex items-center gap-5"
+                  href={`${config?.socialLinks?.instagram?.link}`}
+                  target="_blank"
+                >
                   <FaInstagram /> {config?.socialLinks?.instagram?.name}
                 </a>
               </li>
               <li className="flex items-center gap-5">
-              <a href={`${config?.socialLinks?.linkedin?.link}`} target="_blank" className="flex items-center gap-5">
+                <a
+                  className="flex items-center gap-5"
+                  href={`${config?.socialLinks?.linkedin?.link}`}
+                  target="_blank"
+                >
                   <FaLinkedinIn /> {config?.socialLinks?.linkedin?.name}
                 </a>
               </li>
