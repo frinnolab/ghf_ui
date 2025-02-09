@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
 import { AuthRole } from "@/types";
 import axios, { AxiosResponse } from "axios";
+import { motion } from "motion/react";
 
 // import { Logo } from "@/components/icons";
 
@@ -86,12 +87,26 @@ export const Navbar = () => {
           >
             {/* <Logo /> */}
 
-            <Image
-              isZoomed
-              alt="logo of ghf"
-              src={`${siteConfig?.staticAssets?.staticLogoLine}`}
-              width={150}
-            />
+            <motion.div
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
+              whileHover={{
+                scale: 1.2,
+                transition: {
+                  ease: "easeInOut",
+                },
+              }}
+            >
+              <Image
+                alt="logo of ghf"
+                src={`${siteConfig?.staticAssets?.staticLogoLine}`}
+                width={150}
+              />
+            </motion.div>
 
             {/* <Image width = 50 height = 50 src/> */}
 
