@@ -45,7 +45,7 @@ export default function DocsPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
         <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-15%]`}>
+          <motion.div className={`w-full absolute top-[-15%] saturate-[50%]`}>
             <Image
               alt="About Bg"
               radius="none"
@@ -75,7 +75,7 @@ export default function DocsPage() {
 
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10"
+            className="rounded-2xl z-10 bg-default-50/70"
             initial={{
               opacity: 0,
             }}
@@ -88,7 +88,7 @@ export default function DocsPage() {
               },
             }}
           >
-            <p className=" text-2xl md:text-3xl text-pretty md:text-justify p-5 md:py-10">
+            <p className=" text-3xl md:text-4xl text-pretty md:text-justify p-5 md:py-10">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import DashboardLayout from "@/layouts/dash-layout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ import {
 } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { GoEye, GoTrash } from "react-icons/go";
+
 import { AuthRole } from "@/types";
 import useAuthedProfile from "@/hooks/use-auth";
 
@@ -76,6 +78,9 @@ export default function DashAlumniList() {
       axios
         .get(`${api}/alumnis`)
         .then((res: AxiosResponse) => {
+
+          console.log(res?.data);
+
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
 
@@ -100,6 +105,7 @@ export default function DashAlumniList() {
               age: d?.age,
               story: d?.story,
             };
+
             return [resData];
           });
 
