@@ -15,13 +15,13 @@ export default function AlumniView() {
   const navigate = useNavigate();
   const [alumniId] = useState<string | null>(() => {
     if (route?.state) {
-      return `${route?.state['alumniId']}`;
+      return `${route?.state["alumniId"]}`;
     }
     return null;
   });
   const [alumniPId] = useState<string | null>(() => {
     if (route?.state) {
-      return `${route?.state['alumniProfileId']}`;
+      return `${route?.state["alumniProfileId"]}`;
     }
     return null;
   });
@@ -34,8 +34,6 @@ export default function AlumniView() {
       axios
         .get(`${api}/alumnis/${alumniId}/${alumniPId}`)
         .then((res: AxiosResponse) => {
-
-
           const profData: Profile = {
             profileId: res.data?.alumniProfile?.profileId,
             firstname: res.data?.alumniProfile?.firstname,
@@ -50,9 +48,9 @@ export default function AlumniView() {
             age: Number(res?.data?.age),
             alumniId: `${res?.data?.alumniId}`,
             profileId: `${res?.data?.profileId}`,
-            participationSchool: `${res?.data?.participationSchool ?? ''}`,
-            participationYear: `${res?.data?.participationYear ?? ''}`,
-            story: `${res?.data?.story ?? ''}`,
+            participationSchool: `${res?.data?.participationSchool ?? ""}`,
+            participationYear: `${res?.data?.participationYear ?? ""}`,
+            story: `${res?.data?.story ?? ""}`,
             alumniProfile: profData,
           };
 
@@ -91,19 +89,23 @@ export default function AlumniView() {
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1 className="text-lg">Fullname</h1>
                 <h1 className="text-2xl">
-                  {alumni?.alumniProfile?.firstname ?? ''}{" "}
-                  {alumni?.alumniProfile?.lastname ?? ''}
+                  {alumni?.alumniProfile?.firstname ?? ""}{" "}
+                  {alumni?.alumniProfile?.lastname ?? ""}
                 </h1>
               </div>
 
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1 className="text-lg">Email</h1>
-                <h1 className="text-2xl">{alumni?.alumniProfile?.email ?? ''}</h1>
+                <h1 className="text-2xl">
+                  {alumni?.alumniProfile?.email ?? ""}
+                </h1>
               </div>
 
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
                 <h1 className="text-lg">Participation School</h1>
-                <h1 className="text-2xl">{alumni?.participationSchool ?? ''}</h1>
+                <h1 className="text-2xl">
+                  {alumni?.participationSchool ?? ""}
+                </h1>
               </div>
 
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
@@ -137,11 +139,15 @@ export default function AlumniView() {
         {/* Contents */}
         <div className="w-full flex flex-col gap-5 p-10">
           {/* Description */}
-            <h1 className=" text-2xl ">Impact Story</h1>
-            <Divider />
-            <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
-              { alumni?.story === '' || null ? 'No story at the moment!.' : alumni?.story}
-            </p>
+          <h1 className=" text-2xl ">Impact Story</h1>
+          <Divider />
+          {/* <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
+            {alumni?.story === "" || null
+              ? "No story at the moment!."
+              : alumni?.story}
+            </p> */}
+
+          <div dangerouslySetInnerHTML={{ __html: `${alumni?.story ?? ""}` }} />
         </div>
         {/* Contents End */}
       </div>

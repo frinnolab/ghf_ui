@@ -1,16 +1,53 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable prettier/prettier */
-import { title } from "@/components/primitives";
-import DefaultLayout from "@/layouts/default";
-import { Alumni } from "../dashboard/alumnis/dash-alumni-list";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
-import { Avatar, Button, Divider, Input, Textarea } from "@nextui-org/react";
+import { Avatar, Button, Divider, Input, Spinner } from "@nextui-org/react";
 import { GoArrowUpRight, GoPersonFill, GoTrash } from "react-icons/go";
-import { AuthRole } from "@/types";
-import { Profile } from "../dashboard/profiles/dash-profiles-list";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ReactQuill from "react-quill";
+
+import { Alumni } from "../dashboard/alumnis/dash-alumni-list";
+import { Profile } from "../dashboard/profiles/dash-profiles-list";
+
+import DefaultLayout from "@/layouts/default";
+import { title } from "@/components/primitives";
+import { AuthRole } from "@/types";
+import "react-quill/dist/quill.snow.css";
+// import { Qformats, Qmodules } from "../dashboard/blog/dash-blog-create";
+
+export const Alumniformats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  // "link",
+  // "image",
+  // "video",
+];
+
+export const Alumnimodules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    // ["image"],
+    // ["video"],
+    // ["link"],
+    ["clean"],
+  ],
+};
 
 export default function AlumniList() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -18,7 +55,10 @@ export default function AlumniList() {
   const navigate = useNavigate();
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [alumni] = useState<Alumni>();
+  const [quillValue, setQuillValue] = useState<string>("");
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
@@ -28,8 +68,8 @@ export default function AlumniList() {
   const toDetail = (b: Alumni) => {
     navigate(`/alumni/${b?.alumniId}`, {
       state: {
-        "alumniId":`${b?.alumniId}`,
-        "alumniProfileId":`${b?.alumniProfile?.profileId}`
+        alumniId: `${b?.alumniId}`,
+        alumniProfileId: `${b?.alumniProfile?.profileId}`,
       },
     });
   };
@@ -44,19 +84,20 @@ export default function AlumniList() {
   };
 
   const onAlumniSubmit: SubmitHandler<Alumni> = (d) => {
+    setIsloading(true);
     onSaveAlumni(d);
-
-    //alert(quillValue);
   };
 
   const onSaveAlumni = (p: Alumni) => {
+
+
     const data = new FormData();
 
     data.append("age", `${p?.age}`);
     data.append("participationSchool", `${p?.participationSchool ?? ""}`);
     data.append("participationYear", `${p?.participationYear ?? ""}`);
     data.append("currenctOccupation", `${p?.currenctOccupation ?? ""}`);
-    data.append("story", `${p?.story ?? ""}`);
+    data.append("story", `${quillValue ?? ""}`);
     data.append("roleType", `${AuthRole.Alumni}`);
     data.append("email", `${p?.alumniProfile?.email ?? ""}`);
     data.append("firstname", `${p?.alumniProfile?.firstname ?? ""}`);
@@ -69,7 +110,6 @@ export default function AlumniList() {
     }
 
     //console.log(JSON.stringify(data.forEach((d=>console.log(d)))));
-    
 
     axios
       .post(`${api}/alumnis`, data, {
@@ -102,18 +142,17 @@ export default function AlumniList() {
 
   useEffect(() => {
     if (!isAlumni) {
+      setIsloading(true);
       axios
-        .get(`${api}/alumnis`)
+        .get(`${api}/alumnis?isPublished=1`)
         .then((res: AxiosResponse) => {
-          
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
-
             const data: Profile = {
               profileId: d?.alumniProfile?.profileId,
               firstname: d?.alumniProfile?.firstname ?? "",
               lastname: d?.alumniProfile?.lastname ?? "",
-              email:`${d?.alumniProfile?.email ?? ""}` ,
+              email: `${d?.alumniProfile?.email ?? ""}`,
               role: Number(d?.alumniProfile.roleType) ?? AuthRole.Alumni,
               avatarUrl: d?.alumniProfile?.avatarUrl ?? "",
               position: d?.alumniProfile?.position ?? "",
@@ -128,17 +167,21 @@ export default function AlumniList() {
               profileId: d?.profileId,
               age: d?.age,
               story: d?.story,
+              isPublished:Boolean(Number(res?.data['isPublished']))
             };
+
             return [resData];
           });
 
           setAlumnis(() => {
             return [...data];
           });
+          setIsAlumni(true);
+          setIsloading(false);
         })
         .catch((err: AxiosError) => {
           setIsAlumni(true);
-          console.log(err);
+          console.error(err);
         });
     }
   }, [alumnis, isAlumni]);
@@ -154,80 +197,97 @@ export default function AlumniList() {
             UWEZO Program Alumni stories
           </h1>
 
-          <div className="w-full flex flex-wrap text-center gap-5">
-            {alumnis === null || alumnis?.length === 0 ? (
-              <div className={`w-full text-center`}>
-                <h1 className=" text-xl text-center hidden">
-                  No Alumnae stories at the momment!. Please check back soon
-                </h1>
-              </div>
+          <div className="w-full flex justify-center flex-wrap text-center gap-5">
+            {isLoading ? (
+              <>
+                <Spinner
+                  className=" flex justify-center "
+                  color="primary"
+                  label="Loading Alumnis..."
+                  size="lg"
+                />
+              </>
             ) : (
-              <div className="w-full flex flex-col md:flex-row flex-wrap gap-10">
-                {alumnis?.flatMap((d) => (
-                  <div
-                    key={d?.alumniId}
-                    className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[25%]`}
-                  >
-                    <div>
-                      <Avatar
-                        defaultValue={`${(<GoPersonFill />)}`}
-                        size="lg"
-                        src={
-                          d?.alumniProfile?.avatarUrl !== "" || null
-                            ? d?.alumniProfile?.avatarUrl
-                            : ""
-                        }
-                      />
-                    </div>
-
-                    {/* Content */}
-                    <div>
-                      <div className="">
-                        <label
-                          className="text-small text-slate-500"
-                          htmlFor="pname"
-                        >
-                          Fullname
-                        </label>
-                        <h1>
-                          {d?.alumniProfile?.firstname}{" "}
-                          {d?.alumniProfile?.lastname}
-                        </h1>
-                      </div>
-
-                      <div className="">
-                        <label
-                          className="text-small text-slate-500"
-                          htmlFor="pAlumni"
-                         />
-                        <h1>GHF {setRoleName(Number(d?.alumniProfile?.role))}</h1>
-                      </div>
-                      
-                      <div className="">
-                        <label
-                          className="text-small text-slate-500"
-                          htmlFor="pYear"
-                        >Year</label>
-                        <h1>{d?.participationYear}</h1>
-                      </div>
-
-                      <div className="p-1">
-                        <Button
-                          variant="light"
-                          color="primary"
-                          className="flex items-center border border-primary-400 hover:border-transparent"
-                          onClick={() => {
-                            toDetail(d);
-                          }}
-                        >
-                          View Alumni <GoArrowUpRight size={20} />
-                        </Button>
-                      </div>
-                    </div>
-                    {/* Content End */}
+              <>
+                {alumnis === null || alumnis?.length === 0 ? (
+                  <div className={`w-full text-center`}>
+                    <h1 className=" text-xl text-center hidden">
+                      No Alumnae stories at the momment!. Please check back soon
+                    </h1>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div className="w-full flex flex-col md:flex-row flex-wrap gap-10">
+                    {alumnis?.flatMap((d) => (
+                      <div
+                        key={d?.alumniId}
+                        className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[25%]`}
+                      >
+                        <div>
+                          <Avatar
+                            defaultValue={`${(<GoPersonFill />)}`}
+                            size="lg"
+                            src={
+                              d?.alumniProfile?.avatarUrl !== "" || null
+                                ? d?.alumniProfile?.avatarUrl
+                                : ""
+                            }
+                          />
+                        </div>
+
+                        {/* Content */}
+                        <div>
+                          <div className="">
+                            <label
+                              className="text-small text-slate-500"
+                              htmlFor="pname"
+                            >
+                              Fullname
+                            </label>
+                            <h1>
+                              {d?.alumniProfile?.firstname}{" "}
+                              {d?.alumniProfile?.lastname}
+                            </h1>
+                          </div>
+
+                          <div className="">
+                            <label
+                              className="text-small text-slate-500"
+                              htmlFor="pAlumni"
+                            />
+                            <h1>
+                              GHF {setRoleName(Number(d?.alumniProfile?.role))}
+                            </h1>
+                          </div>
+
+                          <div className="">
+                            <label
+                              className="text-small text-slate-500"
+                              htmlFor="pYear"
+                            >
+                              Year
+                            </label>
+                            <h1>{d?.participationYear}</h1>
+                          </div>
+
+                          <div className="p-1">
+                            <Button
+                              variant="light"
+                              color="primary"
+                              className="flex items-center border border-primary-400 hover:border-transparent"
+                              onClick={() => {
+                                toDetail(d);
+                              }}
+                            >
+                              View Alumni <GoArrowUpRight size={20} />
+                            </Button>
+                          </div>
+                        </div>
+                        {/* Content End */}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -235,15 +295,14 @@ export default function AlumniList() {
 
           {/* Registration */}
           <div
-            className={`${" md:rounded-2xl md:bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
+            className={`${isLoading ? "hidden" : "md:rounded-2xl md:bg-default-200 w-full flex flex-col gap-3 justify-center items-center p-4 panel"}`}
           >
             <h1 className=" text-2xl ">Register as Alumni here.</h1>
 
             <div className=" md:shadow md:rounded-2xl bg-default-50 p-3 ">
-              
               <form
+                className={` flex flex-col gap-1 p-4 space-y-1`}
                 onSubmit={handleSubmit(onAlumniSubmit)}
-                className=" flex flex-col gap-1 p-4 space-y-1"
               >
                 {/* Fullnames */}
                 <div className="w-full gap-5 flex justify-between items-center">
@@ -253,8 +312,8 @@ export default function AlumniList() {
                       Firstname
                     </label>
                     <Input
-                      type="text"
                       defaultValue={`${alumni?.alumniProfile?.firstname ?? ""}`}
+                      type="text"
                       {...register("alumniProfile.firstname")}
                       placeholder={`${alumni?.alumniProfile?.firstname ?? "Enter Firstname"}`}
                     />
@@ -266,8 +325,8 @@ export default function AlumniList() {
                       Lastname
                     </label>
                     <Input
-                      type="text"
                       defaultValue={`${alumni?.alumniProfile?.lastname ?? ""}`}
+                      type="text"
                       {...register("alumniProfile.lastname")}
                       placeholder={`${alumni?.alumniProfile?.lastname ?? "Enter Lastname"}`}
                     />
@@ -284,8 +343,8 @@ export default function AlumniList() {
                       Email
                     </label>
                     <Input
-                      type="email"
                       defaultValue={`${alumni?.alumniProfile?.email ?? ""}`}
+                      type="email"
                       {...register("alumniProfile.email")}
                       placeholder={`${alumni?.alumniProfile?.email ?? "Enter Email"}`}
                     />
@@ -297,9 +356,9 @@ export default function AlumniList() {
                       Mobile
                     </label>
                     <Input
-                      type="number"
-                      min={0}
                       defaultValue={`${alumni?.alumniProfile?.mobile ?? ""}`}
+                      min={0}
+                      type="number"
                       {...register("alumniProfile.mobile")}
                       placeholder={`${alumni?.alumniProfile?.mobile ?? "Enter Mobile"}`}
                     />
@@ -316,9 +375,9 @@ export default function AlumniList() {
                       Age
                     </label>
                     <Input
-                      type="number"
-                      min={0}
                       defaultValue={`${alumni?.age ?? ""}`}
+                      min={0}
+                      type="number"
                       {...register("age")}
                       placeholder={`${alumni?.age ?? "Enter your age"}`}
                     />
@@ -330,8 +389,8 @@ export default function AlumniList() {
                       Current Occupation
                     </label>
                     <Input
-                      type="text"
                       defaultValue={`${alumni?.currenctOccupation ?? ""}`}
+                      type="text"
                       {...register("currenctOccupation")}
                       placeholder={`${alumni?.currenctOccupation ?? "Enter Occupation"}`}
                     />
@@ -348,8 +407,8 @@ export default function AlumniList() {
                       Participation School
                     </label>
                     <Input
-                      type="text"
                       defaultValue={`${alumni?.participationSchool ?? ""}`}
+                      type="text"
                       {...register("participationSchool")}
                       placeholder={`${alumni?.participationSchool ?? "Enter School Name"}`}
                     />
@@ -361,9 +420,9 @@ export default function AlumniList() {
                       Participation Year
                     </label>
                     <Input
-                      type="number"
-                      min={2000}
                       defaultValue={`${alumni?.participationYear ?? ""}`}
+                      min={2000}
+                      type="number"
                       {...register("participationYear")}
                       placeholder={`${alumni?.participationYear ?? "Enter Year"}`}
                     />
@@ -377,15 +436,36 @@ export default function AlumniList() {
                   <label className="text-default-500" htmlFor="story">
                     In 100 words how did you benefit with the program
                   </label>
-                  <Textarea
-                    type="text"
+                  {/* <Textarea
                     defaultValue={`${alumni?.story ?? ""}`}
+                    type="text"
                     {...register("story")}
                     placeholder={`${alumni?.story ?? "Enter Brief story"}`}
+                  /> */}
+
+                  <ReactQuill
+                    formats={Alumniformats}
+                    modules={Alumnimodules}
+                    placeholder={`${"Enter story description"}`}
+                    style={{
+                      border: "none",
+                      height: "20dvh",
+                      width: "80dvh",
+                      overflow: "hidden",
+                      overflowX: "hidden",
+                    }}
+                    theme="snow"
+                    value={quillValue.substring(0, 110)}
+                    onChange={(e) => {
+                      if (e.length === 105) {
+                        alert(`Maximum character length reached.`);
+                      } else {
+                        setQuillValue(e);
+                      }
+                    }}
                   />
 
                   {/* <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/> */}
-                
                 </div>
 
                 <div className="w-full space-y-1">
@@ -402,10 +482,12 @@ export default function AlumniList() {
                       }}
                     />
 
-                    <span className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedImage ? "" : "hidden"}`}>
+                    <span
+                      className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedImage ? "" : "hidden"}`}
+                    >
                       <GoTrash
-                        size={20}
                         className=" text-danger-500"
+                        size={20}
                         onClick={removeSelectedImage}
                       />
                     </span>

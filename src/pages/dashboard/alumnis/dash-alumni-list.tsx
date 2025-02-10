@@ -24,11 +24,12 @@ export default function DashAlumniList() {
   const actionTypes = ["detail", "edit", "delete"];
   const authed = useAuthedProfile();
 
-  const columns = ["Firstname", "Lastname", "School", "Year", "Actions"];
+  const columns = ["Firstname", "School", "Year", "Actions"];
   const nav = useNavigate();
   const api = `${import.meta.env.VITE_API_URL}`;
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
+  const [isAlumniPublished, setIsAlumniPublished] = useState<boolean>(false);
   const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Alumni) => {
@@ -80,7 +81,7 @@ export default function DashAlumniList() {
         .then((res: AxiosResponse) => {
 
           console.log(res?.data);
-
+          
           setIsAlumni(true);
           const data: Alumni[] = Array.from(res?.data).flatMap((d: any) => {
 
@@ -104,7 +105,16 @@ export default function DashAlumniList() {
               profileId: d?.profileId,
               age: d?.age,
               story: d?.story,
+              isPublished: Boolean(Number(res?.data["isPublished"])),
             };
+
+            console.log(Number(res?.data["isPublished"]));
+            
+
+            const isAlumniPub =
+              Number(res?.data["isPublished"]) === 1 ? true : false;
+
+            setIsAlumniPublished(isAlumniPub);
 
             return [resData];
           });
@@ -140,10 +150,10 @@ export default function DashAlumniList() {
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading Alumnis..."
+              size="lg"
             />
           </>
         ) : (
@@ -162,16 +172,16 @@ export default function DashAlumniList() {
                   </TableCell>
 
                   <TableCell onClick={() => handleSelectedRow(alumni)}>
-                    {alumni?.alumniProfile?.lastname}
-                  </TableCell>
-
-                  <TableCell onClick={() => handleSelectedRow(alumni)}>
                     {alumni?.participationSchool}
                   </TableCell>
 
                   <TableCell onClick={() => handleSelectedRow(alumni)}>
                     {alumni?.participationYear}
                   </TableCell>
+{/* 
+                  <TableCell onClick={() => handleSelectedRow(alumni)}>
+                    {isAlumniPublished ? "Published" : " Not Published "}
+                  </TableCell> */}
 
                   <TableCell>
                     <div className="relative flex items-center gap-2">
@@ -211,4 +221,5 @@ export type Alumni = {
   participationYear?: string;
   currenctOccupation?: string;
   story?: string;
+  isPublished?: boolean;
 };

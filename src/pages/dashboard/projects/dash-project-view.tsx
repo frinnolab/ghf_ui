@@ -55,6 +55,7 @@ export default function DashProjectPage() {
   const [selectedThumbImage, setSelectedThumbImage] = useState<File | null>(
     null
   );
+  
   const [projectStatus] = useState<ProjectStatus[]>(() => {
     return [
       {
@@ -375,6 +376,11 @@ export default function DashProjectPage() {
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
           <Switch
+            defaultSelected={isEdit}
+            endContent={<GoEye />}
+            size="lg"
+            startContent={<GoPencil />}
+            title={`${isEdit ? "Edit mode" : "View mode"}`}
             onClick={() => {
               if (!isEdit) {
                 setIsEdit(true);
@@ -382,11 +388,6 @@ export default function DashProjectPage() {
                 setIsEdit(false);
               }
             }}
-            defaultSelected={isEdit}
-            size="lg"
-            startContent={<GoPencil />}
-            endContent={<GoEye />}
-            title={`${isEdit ? "Edit mode" : "View mode"}`}
           ></Switch>
         </div>
 
@@ -394,8 +395,8 @@ export default function DashProjectPage() {
         <div className="w-full rounded-2xl bg-default-200 shadow flex p-5 justify-between">
           {/* Form */}
           <form
-            onSubmit={handleSubmit(onProjectSubmit)}
             className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5"
+            onSubmit={handleSubmit(onProjectSubmit)}
           >
             <div className="w-full space-y-3">
               <label htmlFor="Thumbnail">Thumbnail Image</label>
@@ -460,9 +461,9 @@ export default function DashProjectPage() {
             <div className="w-full space-y-2">
               <label htmlFor="Title">Title</label>
               <Input
+                defaultValue={`${project?.title ?? ""}`}
                 disabled={!isEdit ? true : false}
                 type="text"
-                defaultValue={`${project?.title ?? ""}`}
                 {...register("title")}
                 placeholder={`${project?.title?.toUpperCase() ?? "Enter Title"}`}
               />
@@ -545,7 +546,6 @@ export default function DashProjectPage() {
 
             <div className="flex gap-5">
               <div className="w-full space-y-3">
-                <label htmlFor="#"></label>
               </div>
 
               <div className="w-full flex flex-col space-y-3">

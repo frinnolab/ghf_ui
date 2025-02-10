@@ -91,14 +91,14 @@ export const Navbar = () => {
               initial={{
                 opacity: 0,
               }}
-              whileInView={{
-                opacity: 1,
-              }}
               whileHover={{
                 scale: 1.2,
                 transition: {
                   ease: "easeInOut",
                 },
+              }}
+              whileInView={{
+                opacity: 1,
               }}
             >
               <Image

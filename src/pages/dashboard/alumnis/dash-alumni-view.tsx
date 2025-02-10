@@ -2,15 +2,26 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alumni } from "./dash-alumni-list";
 import { Button } from "@nextui-org/button";
-import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
-import { Avatar, Divider, Input, Textarea } from "@nextui-org/react";
+import {
+  GoArrowLeft,
+  GoEye,
+  GoLock,
+  GoPencil,
+  GoTrash,
+  GoUnlock,
+} from "react-icons/go";
+import { Avatar, Divider, Input } from "@nextui-org/react";
 import { Switch } from "@nextui-org/switch";
-import { AuthRole } from "@/types";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { Profile } from "../profiles/dash-profiles-list";
-import { siteConfig } from "@/config/site";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ReactQuill from "react-quill";
+import { Profile } from "../profiles/dash-profiles-list";
+import { AuthRole } from "@/types";
+
+import { siteConfig } from "@/config/site";
+
 import useAuthedProfile from "@/hooks/use-auth";
+import "react-quill/dist/quill.snow.css";
 
 export default function DashAlumniView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -19,7 +30,9 @@ export default function DashAlumniView() {
   const [alumni, setAlumni] = useState<Alumni | null>(null);
   const [alumniProfile, setAlumniProfile] = useState<Profile | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isPublished, setIsPublished] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [quillValue, setQuillValue] = useState<string>("");
 
   // Alumni Info Refs
   const ageRef = useRef<HTMLInputElement>(null);
@@ -132,13 +145,39 @@ export default function DashAlumniView() {
     }
   };
 
+  const handleAlumniPublish = (isAlumniPublished: boolean) => {
+    const data: Alumni = {
+      isPublished: isAlumniPublished,
+    };
+
+    alert(`Alumni ${isAlumniPublished ? "Published" : "UnPublished"}`);
+
+    setIsPublished(isAlumniPublished);
+
+    //Update publish status
+    axios
+      .put(`${api}/alumnis/${alumniId}/publish`, data, {
+        headers: {
+          Authorization: `Bearer ${authed?.token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          window.location.reload();
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.error(err?.response);
+      });
+  };
+
   useEffect(() => {
     if (alumniId && alumniProfileId) {
       axios
         .get(`${api}/alumnis/${alumniId}/${alumniProfileId}`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
-
           const profData: Profile = {
             profileId: res.data?.alumniProfile?.profileId,
             firstname: res.data?.alumniProfile?.firstname,
@@ -154,14 +193,20 @@ export default function DashAlumniView() {
             alumniId: `${res?.data?.alumniId}`,
             profileId: `${res?.data?.profileId}`,
             participationSchool: `${res?.data?.participationSchool}`,
-            participationYear: `${res?.data?.participationYear}` ,
-            currenctOccupation : res?.data?.currentOccupation,
+            participationYear: `${res?.data?.participationYear}`,
+            currenctOccupation: res?.data?.currenctOccupation,
             story: res?.data?.story,
             alumniProfile: profData,
+            isPublished: Boolean(Number(res?.data["isPublished"])),
           };
+
+          const isAlumniPublished =
+            Number(res?.data["isPublished"]) === 1 ? true : false;
 
           setAlumni(data);
           setAlumniProfile(profData);
+          setIsPublished(isAlumniPublished);
+          setQuillValue(res?.data["story"]);
         })
         .catch((err: AxiosError) => {
           console.log(err);
@@ -182,7 +227,7 @@ export default function DashAlumniView() {
 
       <div className="w-full flex flex-col p-5 gap-5">
         <div className={`w-full flex justify-between items-center gap-5 `}>
-          <div></div>
+          <div />
           <div className={` self-end flex justify-between items-center gap-5`}>
             <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
@@ -199,15 +244,37 @@ export default function DashAlumniView() {
               startContent={<GoPencil />}
               endContent={<GoEye />}
               title={`${isEdit ? "Edit mode" : "View mode"}`}
-            ></Switch>
+            />
           </div>
         </div>
 
         {/* Content */}
-        <div className="w-full rounded-2xl flex p-5 justify-between gap-5 bg-slate-200">
+        <div className="w-full rounded-2xl flex flex-col p-5 justify-between gap-3 bg-slate-200 min-h-[50dvh]">
+          <div className={` self-end flex justify-between items-center gap-5`}>
+            <p>{`${isPublished ? "Published" : "Not Published"}`}</p>
+
+            <Switch
+              defaultSelected={isPublished}
+              endContent={<GoUnlock />}
+              size="lg"
+              startContent={<GoLock />}
+              title={`${isPublished ? "Published" : "Not Published"}`}
+              onClick={() => {
+                if (isPublished) {
+                  handleAlumniPublish(false);
+                  // setIsPublished(false);
+                  //UnPublish
+                } else {
+                  handleAlumniPublish(true);
+                  // setIsPublished(true);
+                  //Publish
+                }
+              }}
+            />
+          </div>
           {/* Form */}
-          <div className="w-full flex flex-col gap-5 overflow-y-scroll h-[70vh] p-5 ">
-            <div className=" flex justify-between  gap-5 p-4 space-y-1">
+          <div className="w-full flex flex-col gap-3 h-[65dvh] p-5 ">
+            <div className="w-full flex justify-between  gap-10 space-y-1">
               {/* Profile Info */}
 
               <form
@@ -332,7 +399,7 @@ export default function DashAlumniView() {
               {/* Profile Info End */}
               {/* Alumni Info */}
 
-              <form className="w-full flex flex-col gap-3">
+              <form className="w-full flex flex-col justify-between gap-3">
                 {/* Ages */}
                 <div className="w-full gap-5 flex justify-between items-center">
                   {/* Age */}
@@ -342,12 +409,12 @@ export default function DashAlumniView() {
                     </label>
                     <Input
                       disabled={!isEdit ? true : false}
-                      type="number"
                       min={0}
+                      placeholder={`${alumni?.age ?? "Enter your age"}`}
                       ref={ageRef}
                       // defaultValue={`${alumni?.age ?? ""}`}
                       // {...register("age")}
-                      placeholder={`${alumni?.age ?? "Enter your age"}`}
+                      type="number"
                     />
                   </div>
 
@@ -358,11 +425,11 @@ export default function DashAlumniView() {
                     </label>
                     <Input
                       disabled={!isEdit ? true : false}
-                      type="text"
+                      placeholder={`${alumni?.currenctOccupation ?? "Enter Occupation"}`}
                       ref={occupationRef}
                       // defaultValue={`${alumni?.currenctOccupation ?? ""}`}
                       // {...register("currenctOccupation")}
-                      placeholder={`${alumni?.currenctOccupation ?? "Enter Occupation"}`}
+                      type="text"
                     />
                   </div>
                 </div>
@@ -376,11 +443,11 @@ export default function DashAlumniView() {
                     </label>
                     <Input
                       disabled={!isEdit ? true : false}
-                      type="text"
+                      placeholder={`${alumni?.participationSchool ?? "Enter School Name"}`}
                       ref={pSchoolRef}
                       // defaultValue={`${alumni?.participationSchool ?? ""}`}
                       // {...register("participationSchool")}
-                      placeholder={`${alumni?.participationSchool ?? "Enter School Name"}`}
+                      type="text"
                     />
                   </div>
 
@@ -391,12 +458,12 @@ export default function DashAlumniView() {
                     </label>
                     <Input
                       disabled={!isEdit ? true : false}
-                      type="number"
                       min={2000}
+                      placeholder={`${alumni?.participationYear ?? "Enter Year"}`}
                       ref={pYearRef}
                       // defaultValue={`${alumni?.participationYear ?? ""}`}
                       // {...register("participationYear")}
-                      placeholder={`${alumni?.participationYear ?? "Enter Year"}`}
+                      type="number"
                     />
                   </div>
                 </div>
@@ -406,19 +473,32 @@ export default function DashAlumniView() {
                   <label className="text-default-500" htmlFor="story">
                     In 100 words how did you benefit with the program
                   </label>
-                  <Textarea
-                    disabled={!isEdit ? true : false}
-                    type="text"
-                    maxLength={100}
-                    ref={pStoryRef}
-                    // defaultValue={`${alumni?.story ?? ""}`}
-                    // {...register("story")}
-                    placeholder={`${alumni?.story ?? "Enter Brief story"}`}
+
+                  <ReactQuill
+                    formats={Alumniformats}
+                    modules={Alumnimodules}
+                    placeholder={`${"Enter story description"}`}
+                    style={{
+                      border: "none",
+                      height: "15dvh",
+                      width: "100dvh",
+                      overflow: "hidden",
+                      overflowX: "hidden",
+                    }}
+                    theme="snow"
+                    value={quillValue.substring(0, 110)}
+                    onChange={(e) => {
+                      if (e.length === 105) {
+                        alert(`Maximum character length reached.`);
+                      } else {
+                        setQuillValue(e);
+                      }
+                    }}
                   />
                 </div>
 
                 {/* Alumni Actions */}
-                <div className="w-full space-y-1 items-center justify-end">
+                <div className="w-full flex space-y-1 items-center justify-end">
                   <Button
                     className={`${alumni === null ? " bg-default " : "bg-primary"}`}
                     disabled={!isEdit ? true : false}
@@ -439,3 +519,35 @@ export default function DashAlumniView() {
     </div>
   );
 }
+
+export const Alumniformats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  // "link",
+  // "image",
+  // "video",
+];
+
+export const Alumnimodules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    // ["image"],
+    // ["video"],
+    // ["link"],
+    ["clean"],
+  ],
+};
