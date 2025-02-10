@@ -77,13 +77,13 @@ export default function DashBlogsListPage() {
   }, [blogs]);
 
   const handleSelectedRow = (p: Blog) => {
-    console.log(p);
     nav(`/dashboard/blogs/${p.blogId}`, {
       state: p.blogId,
     });
   };
 
   const handleAction = (p: Blog, action: string) => {
+    setIsloading(true);
     switch (action) {
       case actionTypes[0]:
         //Detail

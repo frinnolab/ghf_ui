@@ -1,5 +1,5 @@
 import { Button } from "@nextui-org/button";
-import { Divider, Image, Input, Switch } from "@nextui-org/react";
+import { Divider, Image, Input, Spinner, Switch } from "@nextui-org/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -53,6 +53,7 @@ export default function DashBlogCreate() {
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [quillValue, setQuillValue] = useState<string>("");
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   //From Inputs End
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -80,6 +81,7 @@ export default function DashBlogCreate() {
 
   useEffect(() => {
     if (blogId) {
+      setIsloading(true);
       axios
         .get(`${api}/blogs/${blogId}`, {
           headers: {
@@ -98,6 +100,8 @@ export default function DashBlogCreate() {
 
           setBlog(data);
           setQuillValue(res?.data["description"]);
+
+          setIsloading(false);
         });
     }
   }, [blogId]);
@@ -114,6 +118,7 @@ export default function DashBlogCreate() {
   };
 
   const handleSave = (d: Blog) => {
+    setIsloading(true);
     const data = new FormData();
 
     if (blog === null) {
@@ -144,6 +149,7 @@ export default function DashBlogCreate() {
   };
 
   const handleUpdate = (d: Blog) => {
+    setIsloading(true);
     const data = new FormData();
 
     if (blog) {
@@ -212,105 +218,117 @@ export default function DashBlogCreate() {
         </div>
 
         {/* Content */}
-        <div className="w-full min-h-[70dvh] rounded-2xl bg-default-200 shadow gap-5 flex p-5 justify-between">
-          {/* Form */}
-          <form
-            className="w-full flex flex-col gap-5"
-            onSubmit={handleSubmit(onSubmitBlog)}
-          >
-            <div className="w-full space-y-3">
-              <label htmlFor="Title">Title</label>
-              <Input
-                disabled={!isEdit ? true : false}
-                type="text"
-                {...register("title")}
-                placeholder={`${blog?.title ?? "Enter Title"}`}
+        <div className="w-full min-h-[70dvh] rounded-2xl bg-default-200 shadow gap-5 flex p-5 justify-between ">
+          {isLoading ? (
+            <div className="w-full flex justify-center">
+              <Spinner
+                size="lg"
+                className=" flex justify-center "
+                label="Loading..."
+                color="primary"
               />
             </div>
-
-            {/* Editor */}
-            <div className="w-full space-y-3 overflow-hidden scrollbar-hide">
-              <label htmlFor="description">Description</label>
-              {/* <Textarea
-                disabled={!isEdit ? true : false}
-                type="text"
-                {...register("description")}
-                placeholder={`${blog?.description ?? "Enter Description"}`}
-              /> */}
-
-              <div className={`w-full h-[30dvh]`}>
-                <ReactQuill
-                  placeholder={`${blogId ? blog?.description : "Enter description"}`}
-                  theme="snow"
-                  style={{
-                    height: "30dvh",
-                    overflow: "scroll",
-                    overflowX: "hidden",
-                  }}
-                  value={quillValue}
-                  onChange={setQuillValue}
-                  formats={Qformats}
-                  modules={Qmodules}
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="w-full space-y-3">
-              <Button
-                color="primary"
-                disabled={!isEdit ? true : false}
-                type="submit"
+          ) : (
+            <>
+              {/* Form */}
+              <form
+                className="w-full flex flex-col gap-5"
+                onSubmit={handleSubmit(onSubmitBlog)}
               >
-                {blogId === null ? "Save" : "Update"}
-              </Button>
-            </div>
-          </form>
-          {/* Form End */}
-          {/* Thumbnail */}
+                <div className="w-full space-y-3">
+                  <label htmlFor="Title">Title</label>
+                  <Input
+                    disabled={!isEdit ? true : false}
+                    type="text"
+                    {...register("title")}
+                    placeholder={`${blog?.title ?? "Enter Title"}`}
+                  />
+                </div>
 
-          <div className="w-full min-h-[30dvh] relative rounded-2xl p-5 flex flex-col items-center gap-3 ">
-            <h1>Thumbnail Image</h1>
-            {selectedImage ? (
-              <div className="w-full flex items-center p-5 justify-center">
-                <Image src={URL.createObjectURL(selectedImage)} />
-              </div>
-            ) : (
-              <div>
-                {blog?.thumbnailUrl ? (
-                  <div className="w-full flex items-center justify-center">
+                {/* Editor */}
+                <div className="w-full space-y-3 overflow-hidden scrollbar-hide">
+                  <label htmlFor="description">Description</label>
+
+                  <div className={`w-full h-[30dvh]`}>
+                    <ReactQuill
+                      placeholder={`${blogId ? blog?.description : "Enter description"}`}
+                      theme="snow"
+                      style={{
+                        height: "30dvh",
+                        overflow: "scroll",
+                        overflowX: "hidden",
+                      }}
+                      value={quillValue}
+                      onChange={setQuillValue}
+                      formats={Qformats}
+                      modules={Qmodules}
+                    />
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="w-full space-y-3">
+                  <Button
+                    color="primary"
+                    disabled={!isEdit ? true : false}
+                    type="submit"
+                  >
+                    {blogId === null ? "Save" : "Update"}
+                  </Button>
+                </div>
+              </form>
+              {/* Form End */}
+              {/* Thumbnail */}
+
+              <div className="w-full  relative rounded-2xl p-5 flex flex-col items-center gap-3 ">
+                <h1>Thumbnail Image</h1>
+                {selectedImage ? (
+                  <div className="w-full h-[50dvh] flex items-center p-5 justify-center">
                     <Image
-                      src={
-                        blog?.thumbnailUrl ?? siteConfig.staticAssets.staticLogo
-                      }
+                      width={300}
+                      src={URL.createObjectURL(selectedImage)}
                     />
                   </div>
                 ) : (
-                  <Image src={siteConfig.staticAssets.staticLogo} />
+                  <div>
+                    {blog?.thumbnailUrl ? (
+                      <div className="w-full flex items-center justify-center">
+                        <Image
+                          width={300}
+                          src={
+                            blog?.thumbnailUrl ??
+                            siteConfig.staticAssets.staticLogo
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <Image src={siteConfig.staticAssets.staticLogo} />
+                    )}
+                  </div>
                 )}
+
+                <div className="p-3 flex items-center">
+                  <input
+                    disabled={isEdit ? false : true}
+                    accept="image/*"
+                    ref={thumbRef}
+                    type="file"
+                    onChange={(e) => {
+                      onChangePic(e);
+                    }}
+                  />
+
+                  <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                    <GoTrash
+                      size={20}
+                      className=" text-danger-500"
+                      onClick={removeSelectedImage}
+                    />
+                  </span>
+                </div>
               </div>
-            )}
-
-            <div className="p-3 flex items-center">
-              <input
-                disabled={isEdit ? false : true}
-                accept="image/*"
-                ref={thumbRef}
-                type="file"
-                onChange={(e) => {
-                  onChangePic(e);
-                }}
-              />
-
-              <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-                <GoTrash
-                  size={20}
-                  className=" text-danger-500"
-                  onClick={removeSelectedImage}
-                />
-              </span>
-            </div>
-          </div>
+            </>
+          )}
         </div>
         {/* Content End */}
       </div>

@@ -181,13 +181,6 @@ export default function DashboardProfilePage() {
     }
 
 
-    console.log(`${profileId ? "Update" : "Save"}`);
-
-    console.log(d);
-    
-    
-    
-
     if (profileId === null) {
       //Create new profile
       axios

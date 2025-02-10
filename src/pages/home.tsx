@@ -977,7 +977,7 @@ export default function HomePage() {
             ) : (
               <div className={`w-full flex flex-col gap-3`}>
                 <motion.div
-                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex justify-end items-center gap-5"}`}
+                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex flex-row-reverse justify-end items-center gap-5"}`}
                 >
                   {blogs?.map((p) => (
                     <motion.div
