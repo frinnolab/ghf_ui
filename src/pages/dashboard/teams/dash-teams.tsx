@@ -24,6 +24,7 @@ import axios, { AxiosResponse, AxiosError, HttpStatusCode } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+
 import { Profile } from "../profiles/dash-profiles-list";
 
 export type Team = {
@@ -34,11 +35,13 @@ export type Team = {
 };
 
 export type TeamMember = {
+  teamMemberId?: string;
   teamId?: string;
   memberAvatarUrl?: string;
   member?: Profile;
   memberId?: string;
   teamPosition?: string;
+  isTeamMember?: boolean;
 };
 
 export default function DashboardTeamsPage() {
@@ -189,10 +192,10 @@ export default function DashboardTeamsPage() {
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading..."
+              size="lg"
             />
           </>
         ) : (
@@ -244,8 +247,8 @@ export default function DashboardTeamsPage() {
       <>
         <Modal
           isOpen={isOpen}
-          onOpenChange={onOpenChange}
           placement="top-center"
+          onOpenChange={onOpenChange}
         >
           <ModalContent>
             {(onClose) => (
@@ -256,7 +259,6 @@ export default function DashboardTeamsPage() {
                 <ModalBody>
                   <Input
                     ref={teamNameRef}
-                    autoFocus
                     label="Team name"
                     placeholder="Enter Team name"
                     variant="bordered"

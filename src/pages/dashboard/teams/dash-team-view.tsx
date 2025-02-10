@@ -12,6 +12,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   Switch,
   Table,
   TableBody,
@@ -22,12 +23,22 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoPencil, GoTrash, GoX } from "react-icons/go";
+import {
+  GoArrowLeft,
+  GoEye,
+  GoLock,
+  GoPencil,
+  GoTrash,
+  GoUnlock,
+  GoX,
+} from "react-icons/go";
 import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
-import { Profile } from "../profiles/dash-profiles-list";
 import { Input } from "@nextui-org/input";
-import { AuthRole } from "@/types";
 import { SubmitHandler, useForm } from "react-hook-form";
+
+import { Profile } from "../profiles/dash-profiles-list";
+
+import { AuthRole } from "@/types";
 
 export type profileSelect = {
   key: string;
@@ -41,13 +52,18 @@ export default function DashboardTeamPage() {
   const nav = useNavigate();
   const route = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isAvailable, setIsAvailable] = useState<boolean>(false);
+  const [isTeamMember, setIsTeamMember] = useState<boolean>(false);
   const [isMainBoard, setIsMainBoard] = useState<boolean>(false);
   //const [isMainBoard, setIsMainBoard] = useState<boolean>(false);
   const [, setValue] = useState<string>("");
+  //const [, setValue] = useState<string>("");
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
   const [members, setMembers] = useState<profileSelect[]>([]);
   const [tmembers, setTMembers] = useState<TeamMember[]>([]);
   const [hasMembers, setHasMembers] = useState<boolean>(false);
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const actionTypes = ["detail", "edit", "delete"];
 
   const { register, handleSubmit } = useForm<Team>();
@@ -69,6 +85,14 @@ export default function DashboardTeamPage() {
 
   const onMemberChange = (member: profileSelect) => {
     setSelectedMember(member?.value);
+
+    const availableMember =
+      tmembers.find((p) => p?.member?.profileId === member?.value?.profileId) ??
+      null;
+
+    if (availableMember) {
+      setIsAvailable(true);
+    }
   };
 
   const onInputChange = (value: string) => {
@@ -107,43 +131,87 @@ export default function DashboardTeamPage() {
   };
 
   const addToTeam = () => {
+    setIsloading(true);
     if (selectedMember) {
       const data: TeamMember = {
         teamId: team?.teamId,
         teamPosition: `${teamPos?.current?.value.toUpperCase() ?? ""}`,
         member: selectedMember,
         memberId: `${selectedMember?.profileId}`,
+        isTeamMember: isTeamMember,
       };
 
-      console.log(data);
+      //Update Team Member
+      if (isAvailable) {
+        const availableMember =
+          tmembers.find((p) => p?.member?.profileId === data?.memberId) ?? null;
 
-      axios
-        .post(`${api}/teams/members`, data, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authed?.token}`,
-          },
-        })
-        .then((res: AxiosResponse) => {
-          console.log(res?.data);
-          window.location.reload();
-        })
-        .catch((err: AxiosError) => {
-          console.log(err.response);
+        if (availableMember) {
+          const data2: TeamMember = {
+            teamId: team?.teamId,
+            teamMemberId: availableMember?.teamMemberId,
+            teamPosition: `${teamPos?.current?.value.toUpperCase() ?? ""}`,
+            member: selectedMember,
+            memberId: `${selectedMember?.profileId}`,
+            isTeamMember: isTeamMember,
+          };
 
-          if (HttpStatusCode.Found) {
-            alert("Member already exists in team!.");
-          }
-        });
+          axios
+            .put(`${api}/teams/members`, data2, {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authed?.token}`,
+              },
+            })
+            .then(() => {
+              window.location.reload();
+            })
+            .catch((err: AxiosError) => {
+              console.error(err.response);
+
+              // if (HttpStatusCode.Found) {
+              //   alert("Member already exists in team!.");
+              // }
+            });
+        }
+      } else {
+        //Add new Member to Team
+        axios
+          .post(`${api}/teams/members`, data, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authed?.token}`,
+            },
+          })
+          .then(() => {
+            window.location.reload();
+          })
+          .catch((err: AxiosError) => {
+            console.error(err.response);
+
+            if (HttpStatusCode.Found) {
+              alert("Member already exists in team!.");
+            }
+          });
+      }
     }
   };
 
   const handleSelectedRow = (p: TeamMember) => {
     if (p?.member) {
       setSelectedMember(p?.member);
+      setIsTeamMember(p?.isTeamMember ?? false);
+    }
 
-      //setTeamTeamPos(`${p?.teamPosition}`);
+    const availableMember =
+      tmembers.find((p) => p?.member?.profileId === p?.memberId) ?? null;
+
+    if (availableMember) {
+      setIsAvailable(true);
+    } else {
+      setIsAvailable(false);
     }
   };
 
@@ -165,26 +233,31 @@ export default function DashboardTeamPage() {
 
   const handleDelete = (b: TeamMember) => {
     alert(`Deleting ${b?.memberId}`);
-    if (authed?.role === AuthRole.User) {
-      alert(HttpStatusCode.Unauthorized);
+
+    setIsloading(true);
+    if (authed?.role !== AuthRole.SuperAdmin) {
+      alert(`You're not authorised:${HttpStatusCode.Unauthorized}`);
+      setIsloading(false);
+    }else{
+      axios
+        .delete(`${api}/teams/members/${b?.teamId}/${b?.memberId}`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${authed?.token}`,
+          },
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err: AxiosError) => {
+          console.log(err.response?.data ?? err.response?.statusText);
+        });
     }
 
-    axios
-      .delete(`${api}/teams/members/${b?.teamId}/${b?.memberId}`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${authed?.token}`,
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response?.data ?? err.response?.statusText);
-      });
   };
 
   const onUpdateTeam: SubmitHandler<Team> = (d: Team) => {
+    setIsloading(true);
     const data = {
       name: d?.name ?? team?.name,
       teamId: team?.teamId,
@@ -200,13 +273,11 @@ export default function DashboardTeamPage() {
           Authorization: `Bearer ${authed?.token}`,
         },
       })
-      .then((res: AxiosResponse) => {
-        console.log(res?.data);
-
+      .then(() => {
         window.location.reload();
       })
       .catch((err: AxiosError) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -215,17 +286,14 @@ export default function DashboardTeamPage() {
       .get(`${api}/teams/main`)
       .then((res: AxiosResponse) => {
         if (HttpStatusCode.Ok) {
-
           if (res?.data["teamId"] === team?.teamId) {
             alert("Team already Main Board.");
             setIsMainBoard(true);
-          } 
+          }
         }
-        
+
         if (HttpStatusCode.NoContent) {
-          alert(
-            "Main Board Set. Update to Save changes."
-          );
+          alert("Main Board Set. Update to Save changes.");
           //Update Team name. Set isMainBoard to false.
           setIsMainBoard(true);
           // const data = {
@@ -283,6 +351,7 @@ export default function DashboardTeamPage() {
   };
 
   useEffect(() => {
+    setIsloading(true);
     if (teamId) {
       axios
         .get(`${api}/teams/${teamId}`, {
@@ -292,7 +361,7 @@ export default function DashboardTeamPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
+          // console.log(res?.data);
           const data: Team = {
             teamId: `${res.data["teamId"]}`,
             name: `${res.data["name"]}`,
@@ -302,24 +371,29 @@ export default function DashboardTeamPage() {
 
           setTeam(data);
           setIsMainBoard(res?.data["isMainBoard"]);
+          setIsloading(false);
         });
     }
   }, [teamId]);
 
   useEffect(() => {
     if (!hasMembers) {
+      setIsloading(true);
+
       axios
         .get(`${api}/teams/members/${teamId}`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
+          // console.log(res?.data);
 
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: TeamMember = {
+                teamMemberId: d?.teamMemberId,
                 memberId: d?.memberId,
                 member: d?.member,
                 teamId: d?.teamId,
                 teamPosition: d?.teamPosition,
+                isTeamMember: Number(d?.isTeamMember) === 1 ? true : false,
               };
 
               return [data];
@@ -328,6 +402,8 @@ export default function DashboardTeamPage() {
 
           setTMembers([...datas]);
           setHasMembers(true);
+
+          setIsloading(false);
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
@@ -355,8 +431,8 @@ export default function DashboardTeamPage() {
 
             <Tooltip
               content="Edit Team name"
-              placement="bottom"
               hidden={!isEdit}
+              placement="bottom"
             >
               <Button
                 disableRipple
@@ -375,6 +451,11 @@ export default function DashboardTeamPage() {
             <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
             <Switch
+              defaultSelected={isEdit}
+              endContent={<GoEye />}
+              size="lg"
+              startContent={<GoPencil />}
+              title={`${isEdit ? "Edit mode" : "View mode"}`}
               onClick={() => {
                 if (!isEdit) {
                   setIsEdit(true);
@@ -382,180 +463,222 @@ export default function DashboardTeamPage() {
                   setIsEdit(false);
                 }
               }}
-              defaultSelected={isEdit}
-              size="lg"
-              startContent={<GoPencil />}
-              endContent={<GoEye />}
-              title={`${isEdit ? "Edit mode" : "View mode"}`}
-            ></Switch>
+            />
           </div>
         </div>
 
         {/* Content */}
         <div className="w-full rounded-2xl bg-slate-200 shadow flex justify-between p-5 h-[75dvh]">
-          <div className={`w-full border flex flex-col gap-3 p-3`}>
-            <h1 className={`text-xl`}>Manage Team Member</h1>
-            {/* <h1>Search/Add member</h1> */}
-            <div className="w-full flex  flex-col gap-2">
-              <Autocomplete
-                label="Search a profile"
-                variant="flat"
-                disabled={isEdit ? true : false}
-                defaultItems={members}
-                endContent={
-                  <GoX
-                    className=" cursor-pointer hover:bg-default-400 text-danger-400 p-1 rounded-full text-2xl"
-                    onClick={() => {
-                      setSelectedMember(null);
-                      setMembers([]);
-                      setValue("");
-                      close();
-                    }}
-                  />
-                }
-                className="w-full"
-                allowsCustomValue={true}
-                placeholder={`${selectedMember ? selectedMember?.email : "Enter profile email"}`}
-                onSelectionChange={(e) => {
-                  const member = members.filter((m) => m?.key === e)[0];
-
-                  if (member) {
-                    onMemberChange(member);
-                    setValue(`${member?.value?.email}`);
-                  }
-                }}
-                onInputChange={onInputChange}
-                allowsEmptyCollection={false}
-              >
-                {(item) => (
-                  <AutocompleteItem key={item.key}>
-                    {/* {item?.value?.email} */}
-                    <div className={`flex flex-col gap-1`}>
-                      <label className=" text-xs" htmlFor="email">
-                        {item?.value?.email}
-                      </label>
-
-                      <h1 className={` text-sm `}>{item?.value?.firstname}</h1>
-                    </div>
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
-              <p className="mt-1 text-small text-default-500">
-                Current selected member: {selectedMember?.email}
-              </p>
-              {/* <p className="text-small text-default-500">
-                Current input text: {value}
-              </p> */}
-
-              {/* Form */}
-              <div className={`w-full flex flex-col gap-2`}>
-                <div className={`flex flex-col gap-1`}>
-                  <label htmlFor="fName">Firstname</label>
-                  <Input
-                    disabled
-                    placeholder={
-                      selectedMember
-                        ? selectedMember?.firstname
-                        : "Member firstname"
+          {isLoading ? (
+            <div className="w-full flex justify-center">
+              <Spinner
+                className=" flex justify-center "
+                color="primary"
+                label="Loading..."
+                size="lg"
+              />
+            </div>
+          ) : (
+            <>
+              {/* Team Input */}
+              <div className={`w-full border flex flex-col gap-3 p-3`}>
+                <h1 className={`text-xl`}>Manage Team Member</h1>
+                {/* <h1>Search/Add member</h1> */}
+                <div className="w-full flex  flex-col gap-2">
+                  <Autocomplete
+                    allowsCustomValue={true}
+                    allowsEmptyCollection={false}
+                    className="w-full"
+                    defaultItems={members}
+                    disabled={isEdit ? true : false}
+                    endContent={
+                      <GoX
+                        className=" cursor-pointer hover:bg-default-400 text-danger-400 p-1 rounded-full text-2xl"
+                        onClick={() => {
+                          setSelectedMember(null);
+                          setMembers([]);
+                          setValue("");
+                          setIsTeamMember(false);
+                          setIsAvailable(false);
+                          close();
+                        }}
+                      />
                     }
-                  />
-                </div>
+                    label="Search a profile"
+                    placeholder={`${selectedMember ? selectedMember?.email : "Enter profile email"}`}
+                    variant="flat"
+                    onInputChange={onInputChange}
+                    onSelectionChange={(e) => {
+                      const member = members.filter((m) => m?.key === e)[0];
 
-                <div className={`flex flex-col gap-1`}>
-                  <label htmlFor="lName">Lastname</label>
-                  <Input
-                    disabled
-                    placeholder={
-                      selectedMember
-                        ? selectedMember?.lastname
-                        : "Member lastname"
-                    }
-                  />
-                </div>
-
-                <div className={`flex flex-col gap-1`}>
-                  <label htmlFor="pName">Position</label>
-                  <Input
-                    disabled
-                    placeholder={
-                      selectedMember
-                        ? selectedMember?.position
-                        : "Member position"
-                    }
-                  />
-                </div>
-
-                <div className={`flex flex-col gap-1`}>
-                  <label htmlFor="pName">Team member position</label>
-                  <Input
-                    disabled={!isEdit}
-                    ref={teamPos}
-                    placeholder={`${"Enter team position"}`}
-                  />
-                </div>
-
-                {/* Actions */}
-                <div className="space-y-5">
-                  <label htmlFor=""></label>
-                  <Button
-                    color={isEdit ? "primary" : "default"}
-                    disabled={!isEdit ? true : false}
-                    onClick={() => {
-                      if (selectedMember) {
-                        addToTeam();
-                      } else {
-                        alert("No profile to add to Team.");
+                      if (member) {
+                        onMemberChange(member);
+                        setValue(`${member?.value?.email}`);
                       }
                     }}
                   >
-                    {"Add member"}
-                  </Button>
+                    {(item) => (
+                      <AutocompleteItem key={item.key}>
+                        {/* {item?.value?.email} */}
+                        <div className={`flex flex-col gap-1`}>
+                          <label className=" text-xs" htmlFor="email">
+                            {item?.value?.email}
+                          </label>
+
+                          <h1 className={` text-sm `}>
+                            {item?.value?.firstname}
+                          </h1>
+                        </div>
+                      </AutocompleteItem>
+                    )}
+                  </Autocomplete>
+                  <p className="mt-1 text-small text-default-500">
+                    Current selected member: {selectedMember?.email}
+                  </p>
+                  {/* <p className="text-small text-default-500">
+                Current input text: {value}
+              </p> */}
+
+                  {/* Form */}
+                  <div className={`w-full flex flex-col gap-2`}>
+                    <div className={`flex flex-col gap-1`}>
+                      <label htmlFor="fName">Firstname</label>
+                      <Input
+                        disabled
+                        placeholder={
+                          selectedMember
+                            ? selectedMember?.firstname
+                            : "Member firstname"
+                        }
+                      />
+                    </div>
+
+                    <div className={`flex flex-col gap-1`}>
+                      <label htmlFor="lName">Lastname</label>
+                      <Input
+                        disabled
+                        placeholder={
+                          selectedMember
+                            ? selectedMember?.lastname
+                            : "Member lastname"
+                        }
+                      />
+                    </div>
+
+                    <div className={`flex flex-col gap-1`}>
+                      <label htmlFor="pName">Position</label>
+                      <Input
+                        disabled
+                        placeholder={
+                          selectedMember
+                            ? selectedMember?.position
+                            : "Member position"
+                        }
+                      />
+                    </div>
+
+                    <div className={`flex flex-col gap-1`}>
+                      <label htmlFor="pName">Team member position</label>
+                      <Input
+                        disabled={!isEdit}
+                        ref={teamPos}
+                        placeholder={`${"Enter team position"}`}
+                      />
+                    </div>
+
+                    <div
+                      className={`w-full flex justify-end items-center gap-3`}
+                    >
+                      <p>{`Is Team Member: ${isTeamMember ? "Member" : "Not member"}`}</p>
+
+                      <Switch
+                        isDisabled={!isEdit ? true : false}
+                        defaultSelected={isTeamMember}
+                        isSelected={isTeamMember}
+                        endContent={<GoLock />}
+                        size="lg"
+                        startContent={<GoUnlock />}
+                        title={`${isTeamMember ? "Team member" : "Not Team member"}`}
+                        onClick={() => {
+                          if (!isTeamMember) {
+                            setIsTeamMember(true);
+                          } else {
+                            setIsTeamMember(false);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {/* Actions */}
+                    <div className="space-y-5">
+                      {/* <label htmlFor=""></label> */}
+                      <Button
+                        color={isEdit ? "primary" : "default"}
+                        disabled={!isEdit ? true : false}
+                        onClick={() => {
+                          if (selectedMember) {
+                            addToTeam();
+                          } else {
+                            alert("No profile to add to Team.");
+                          }
+                        }}
+                      >
+                        {`${isAvailable ? "Update Member" : "Add member"}`}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className={`w-full border flex flex-col p-5 gap-3`}>
-            <h1 className={`text-xl`}>Team members</h1>
+              {/* Team Input End*/}
 
-            <Table fullWidth isStriped removeWrapper>
-              <TableHeader>
-                {columns.map((column) => (
-                  <TableColumn key={column}>{column}</TableColumn>
-                ))}
-              </TableHeader>
+              {/* Team Members */}
+              <div className={`w-full border flex flex-col p-5 gap-3`}>
+                <h1 className={`text-xl`}>Team members</h1>
 
-              <TableBody
-                emptyContent="No members at the moment"
-                items={tmembers}
-              >
-                {tmembers.map((team) => (
-                  <TableRow className="w-full" key={team?.teamId}>
-                    <TableCell onClick={() => handleSelectedRow(team)}>
-                      <p>{team?.member?.firstname}</p>
-                    </TableCell>
-                    <TableCell onClick={() => handleSelectedRow(team)}>
-                      <p>{team?.member?.position}</p>
-                    </TableCell>
-                    <TableCell onClick={() => handleSelectedRow(team)}>
-                      <p>{team?.teamPosition}</p>
-                    </TableCell>
-                    <TableCell>
-                      <div className="relative flex items-center gap-2">
-                        <Tooltip color="danger" content="Delete">
-                          <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
-                            <GoTrash
-                              onClick={() => handleAction(team, actionTypes[2])}
-                            />
-                          </span>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                <Table fullWidth isStriped removeWrapper>
+                  <TableHeader>
+                    {columns.map((column) => (
+                      <TableColumn key={column}>{column}</TableColumn>
+                    ))}
+                  </TableHeader>
+
+                  <TableBody
+                    emptyContent="No members at the moment"
+                    items={tmembers}
+                  >
+                    {tmembers.map((team) => (
+                      <TableRow className="w-full" key={team?.teamId}>
+                        <TableCell onClick={() => handleSelectedRow(team)}>
+                          <p>{team?.member?.firstname}</p>
+                        </TableCell>
+                        <TableCell onClick={() => handleSelectedRow(team)}>
+                          <p>{team?.member?.position}</p>
+                        </TableCell>
+                        <TableCell onClick={() => handleSelectedRow(team)}>
+                          <p>{team?.teamPosition}</p>
+                        </TableCell>
+                        <TableCell>
+                          <div className="relative flex items-center gap-2">
+                            <Tooltip color="danger" content="Delete">
+                              <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                                <GoTrash
+                                  onClick={() =>
+                                    handleAction(team, actionTypes[2])
+                                  }
+                                />
+                              </span>
+                            </Tooltip>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {/* Team Members End*/}
+            </>
+          )}
         </div>
 
         {/* Team Edit Dialog */}
@@ -593,6 +716,7 @@ export default function DashboardTeamPage() {
                             }
                           }}
                           defaultSelected={team?.isMainBoard}
+                          isSelected={team?.isMainBoard}
                           size="lg"
                         ></Switch>
                       </div>

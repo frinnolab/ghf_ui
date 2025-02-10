@@ -1,11 +1,13 @@
-import { title } from "@/components/primitives";
-import DefaultLayout from "@/layouts/default";
 import { Avatar, Divider, Image } from "@nextui-org/react";
-import { TeamMember } from "./dashboard/teams/dash-teams";
 import { GoPersonFill } from "react-icons/go";
 import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import * as motion from "motion/react-client";
+
+import { TeamMember } from "./dashboard/teams/dash-teams";
+
+import { title } from "@/components/primitives";
+import DefaultLayout from "@/layouts/default";
 
 export default function DocsPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -15,8 +17,9 @@ export default function DocsPage() {
   useEffect(() => {
     if (!hasMembers) {
       axios
-        .get(`${api}/teams/members/main`)
+        .get(`${api}/teams/members/team`)
         .then((res: AxiosResponse) => {
+
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: TeamMember = {
