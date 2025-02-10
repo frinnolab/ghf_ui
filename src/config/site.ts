@@ -170,7 +170,7 @@ export const siteConfig = {
       postoffice: "P.O.BOX 2466 DSM",
     },
     contact:{
-      email: "info@ghftz.org",
+      email: "info@ghftz.or.tz",
       contacts:["+255 764 977 365,","+255 783 672 512"]
     }
   }

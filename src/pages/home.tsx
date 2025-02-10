@@ -694,7 +694,7 @@ export default function HomePage() {
               <motion.div
                 key={i}
                 animate={{ opacity: 1, scale: 1 }}
-                className=" p-5 md:p-10 rounded-2xl text-center "
+                className="w-full p-5 md:p-10 rounded-2xl text-center "
                 initial={{ opacity: 0, scale: 0 }}
                 transition={{
                   duration: 0.4,
@@ -709,7 +709,7 @@ export default function HomePage() {
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
                 <Image
-                  className={`h-[100px] w-[100px] md:h-[150px] md:w-[auto]`}
+                width={350}
                   src={`${p?.logo}`}
                 />
               </motion.div>
@@ -737,7 +737,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center gap-3 md:gap-5 p-5">
+          <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center ">
             {collabs?.map((p: Partner, i) => (
               <motion.div
                 key={i}
@@ -749,7 +749,7 @@ export default function HomePage() {
                     opacity: { ease: "linear" },
                   },
                 }}
-                className="w-[15%] h-[15%] p-5 md:p-10 rounded-2xl text-center "
+                className="p-5 rounded-2xl text-center "
                 whileHover={{
                   scale: 1.1,
                   transition: { duration: 0.5 },
