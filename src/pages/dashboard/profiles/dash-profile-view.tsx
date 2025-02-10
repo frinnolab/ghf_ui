@@ -94,8 +94,7 @@ export default function DashboardProfilePage() {
               "Content-Type": "application/json",
             },
           })
-          .then((res: AxiosResponse) => {     
-            
+          .then((res: AxiosResponse) => {
             const data: Profile = {
               profileId: res.data?.profileId,
               firstname: res.data?.firstname ?? "",
@@ -106,6 +105,7 @@ export default function DashboardProfilePage() {
               mobile: res.data?.mobile ?? "",
               position: res.data?.position ?? "",
             };
+
             setProfile(data);
 
             const statusVal = roleTypeOptions.find(
@@ -146,6 +146,7 @@ export default function DashboardProfilePage() {
   };
 
   const handleProfileUpdate = (d: Profile) => {
+    setIsloading(true);
     const data = new FormData();
 
     if (profileId === null) {
@@ -156,11 +157,12 @@ export default function DashboardProfilePage() {
     }
 
     data.append("email", `${d?.email ?? profile?.email}`);
+    data.append("creatorProfileId", `${authed?.profileId}`);
     data.append("firstname", `${d?.firstname ?? profile?.firstname}`);
     data.append("lastname", `${d?.lastname ?? profile?.lastname}`);
     data.append("mobile", `${d?.mobile ?? profile?.mobile}`);
     data.append("position", `${d?.position ?? profile?.position}`);
-    data.append("role", `${selectedRoleType?.key}`);
+    data.append("roleType", `${selectedRoleType?.key}`);
 
     if (selectedImage) {
       data.append("avatar", selectedImage);
@@ -174,9 +176,16 @@ export default function DashboardProfilePage() {
       }
     } else {
       if (profileId === null) {
-        data.append("password", `${d?.email ?? profile?.email}`);
+        data.append("password", `${d?.email}`);
       }
     }
+
+
+    console.log(`${profileId ? "Update" : "Save"}`);
+
+    console.log(d);
+    
+    
     
 
     if (profileId === null) {
@@ -189,6 +198,7 @@ export default function DashboardProfilePage() {
           },
         })
         .then(() => {
+
           setProfile(null);
           setSelectedImage(null);
           nav(`/dashboard/profiles`);
@@ -312,7 +322,7 @@ export default function DashboardProfilePage() {
                   type="text"
                   isDisabled={!isEdit}
                   defaultValue={`${profile?.position ?? ""}`}
-                  {...register("position")}
+                  {...register("position",)}
                   placeholder={`${profile?.position ?? "Enter Position"}`}
                 />
               </div>
@@ -327,6 +337,7 @@ export default function DashboardProfilePage() {
                   ref={passRef}
                   placeholder="********"
                   isDisabled={!isEdit}
+                  // required
                 />
               </div>
 
@@ -337,6 +348,7 @@ export default function DashboardProfilePage() {
                   ref={coPassRef}
                   placeholder="********"
                   isDisabled={!isEdit}
+                  // required
                 />
               </div>
             </div>
