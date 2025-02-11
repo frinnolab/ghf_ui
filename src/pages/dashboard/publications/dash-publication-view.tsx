@@ -40,7 +40,7 @@ export default function DashPublicationsView() {
   const nav = useNavigate();
   const route = useLocation();
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isLoading, setIsloading] = useState<boolean>(true);
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   const [pubId] = useState<string | null>(() => {
     if (route?.state !== null) {
@@ -80,6 +80,7 @@ export default function DashPublicationsView() {
   const handleBack = () => nav("/dashboard/publications");
 
   const handleSave = (p: Publication) => {
+    setIsloading(true);
     if (publication === null) {
       //Save
       const data = {
@@ -98,20 +99,21 @@ export default function DashPublicationsView() {
             "Content-Type": "application/json",
           },
         })
-        .then((res: AxiosResponse) => {
-          //setSelectedImage(null);
-          console.log(res);
+        .then(() => {
+          setIsloading(false);
 
           setIsEdit(false);
           nav(`/dashboard/publications`);
         })
         .catch((err: AxiosError) => {
-          console.log(err.response);
+          console.error(err.response);
         });
     }
   };
 
   const handleUpdate = (p: Publication) => {
+    setIsloading(true);
+
     if (publication) {
       const data = {
         title: `${p?.title ?? publication?.title}`,
@@ -120,8 +122,6 @@ export default function DashPublicationsView() {
         publishType: `${selectedStatus?.key === undefined ? pubStatus[0].key : selectedStatus?.key}`,
         authorId: `${authed?.profileId ?? publication?.authorId}`,
       };
-
-      console.log(data);
 
       axios
         .put(`${api}/publications/${publication?.publishId}`, data, {
@@ -132,8 +132,7 @@ export default function DashPublicationsView() {
           },
           method: "put",
         })
-        .then((res: AxiosResponse) => {
-          console.log(res.data);
+        .then(() => {
 
           setIsEdit(false);
           //nav(`/dashboard/publications`);
@@ -288,8 +287,8 @@ export default function DashPublicationsView() {
   };
 
   useEffect(() => {
-    // setIsloading(true);
-    if (!publication) {
+    setIsloading(true);
+    if (pubId) {
       axios
         .get(`${api}/publications/${pubId}`, {
           headers: {
@@ -322,6 +321,8 @@ export default function DashPublicationsView() {
 
           setIsloading(false);
         });
+    } else {
+      setIsloading(false);
     }
   }, [publication]);
 

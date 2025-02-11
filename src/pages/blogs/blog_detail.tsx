@@ -64,14 +64,6 @@ export default function BlogDetailPage() {
       </div>
       <Divider />
       <div className="w-full flex flex-col">
-        <div className={`p-5`}>
-          <Image
-            radius="none"
-            className={`w-screen h-screen object-cover`}
-            src={`${blog?.thumbnailUrl != "" || null ? blog?.thumbnailUrl : siteConfig?.staticAssets?.staticLogo}`}
-          />
-        </div>
-
         {/* Contents */}
         <Divider />
         <div className="w-full flex flex-col gap-5 p-10">

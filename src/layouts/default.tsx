@@ -31,10 +31,10 @@ export default function DefaultLayout({
       </main>
       {/* FOOTER */}
 
-      <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20">
-        <div className="w-full flex flex-col-reverse md:flex-row gap-5 items-center justify-between">
+      <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20 border-t-2">
+        <div className="w-full flex flex-col-reverse md:flex-row gap-5 justify-between items-center ">
           <Link
-            className="flex justify-start items-center gap-1"
+            className="w-full flex justify-start items-center gap-1"
             color="foreground"
             href="/"
           >
@@ -44,13 +44,13 @@ export default function DefaultLayout({
               isZoomed
               alt="logo of ghf"
               src={config?.staticAssets?.staticLogoLine}
-              width={300}
+              width={500}
             />
           </Link>
 
           {/* Socials */}
 
-          <div className="flex flex-col space-y-10">
+          <div className="w-full flex flex-col space-y-10">
             <h1 className=" text-2xl ">Connect with us</h1>
 
             <ul className="space-y-3 text-lg">
@@ -95,7 +95,7 @@ export default function DefaultLayout({
 
           {/* Contact */}
 
-          <div className="flex flex-col space-y-10">
+          <div className="w-full flex flex-col space-y-10">
             <h1 className=" text-2xl ">Get Intouch with us</h1>
 
             <ul className="space-y-3 text-lg">

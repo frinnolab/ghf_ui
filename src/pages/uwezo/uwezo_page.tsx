@@ -6,6 +6,7 @@ import { Button, Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { GoArrowUpRight } from "react-icons/go";
 import { siteConfig } from "@/config/site";
+// import * as motion from "motion/react-client";
 
 export default function UwezoPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -43,15 +44,13 @@ export default function UwezoPage() {
               publisherId: `${p?.publisherId ?? ""}`,
             };
 
-            console.log(data);
-
             return [data];
           });
 
           setProjects(dataList);
         })
         .catch((err: AxiosError) => {
-          console.log(err.response);
+          console.error(err.response);
         });
     }
   }, [projects]);
@@ -61,10 +60,8 @@ export default function UwezoPage() {
       <section className="w-full flex flex-col items-center justify-center py-2 md:py-3">
         <div className="sm:h-screen w-full flex flex-col justify-center">
           {/* Header Text */}
-          <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-10">
-            <div className="w-full flex justify-between">
-              <div></div>
-
+          <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
+            <div className="w-full flex justify-end">
               <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">
                   UWEZO PROJECTS
@@ -83,7 +80,7 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col px-20  gap-5 relative md:pt-[0%]">
+        <div className="w-full flex flex-col p-5 md:px-20  gap-5 relative">
           <h1 className="text-2xl md:text-3xl  font-semibold">OUR PROJECTS</h1>
 
           <div className="w-full flex flex-col justify-center gap-5">
@@ -99,7 +96,7 @@ export default function UwezoPage() {
                     className="md:w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
                   >
                     <Image
-                      className={` md:w-screen md:h-[60dvh] object-cover`}
+                      className={`w-[500px] md:w-screen md:h-[60dvh] object-cover`}
                       src={
                         p?.thumbnailUrl !== "" || null
                           ? p?.thumbnailUrl

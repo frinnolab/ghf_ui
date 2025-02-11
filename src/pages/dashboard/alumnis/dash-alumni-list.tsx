@@ -29,7 +29,7 @@ export default function DashAlumniList() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
-  const [isAlumniPublished, setIsAlumniPublished] = useState<boolean>(false);
+  const [, setIsAlumniPublished] = useState<boolean>(false);
   const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleSelectedRow = (p: Alumni) => {

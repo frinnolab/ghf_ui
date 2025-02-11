@@ -38,7 +38,7 @@ export default function DocsPage() {
           setHasMembers(true);
         })
         .catch((err: AxiosError) => {
-          console.log(err.response);
+          console.error(err.response);
           setHasMembers(false);
         });
     }
@@ -48,7 +48,7 @@ export default function DocsPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
         <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-15%] saturate-[50%]`}>
+          <motion.div className={`w-full absolute top-[-10%] saturate-[50%]`}>
             <Image
               alt="About Bg"
               radius="none"
@@ -57,9 +57,9 @@ export default function DocsPage() {
             />
           </motion.div>
 
-          <div className="inline-block max-w-lg text-center justify-center p-3 z-10 ">
+          <div className="inline-block max-w-lg text-center justify-center p-3 z-10">
             <motion.h1
-              className={title()}
+              className={`text-3xl md:text-4xl font-semibold`}
               initial={{
                 opacity: 0,
               }}
@@ -78,7 +78,7 @@ export default function DocsPage() {
 
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/70"
+            className="rounded-2xl z-10 bg-default-50/65"
             initial={{
               opacity: 0,
             }}
@@ -91,7 +91,7 @@ export default function DocsPage() {
               },
             }}
           >
-            <p className=" text-3xl md:text-4xl text-pretty md:text-justify p-5 md:py-10">
+            <motion.p className=" text-2xl md:text-4xl text-pretty md:text-justify p-5 md:py-10">
               Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
@@ -101,7 +101,7 @@ export default function DocsPage() {
               and the community around them. We aim at being an organization
               that enlightens young people potential, giving them hope and
               courage to bring the very best out of themselves.
-            </p>
+            </motion.p>
           </motion.div>
         </div>
 

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import useAuthedProfile from "@/hooks/use-auth";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -98,6 +99,7 @@ export default function LoginPage() {
         alert(`${e.response?.data}`);
       });
   };
+
   return (
     <div className="w-full flex flex-col md:gap-10 items-center bg-slate-0 h-screen p-5">
       <div className="w-full">
@@ -131,16 +133,16 @@ export default function LoginPage() {
           ) : (
             <>
               <form
-                onSubmit={handleSubmit(handleLogin)}
                 className="w-full flex flex-col gap-3 p-5 space-y-2"
+                onSubmit={handleSubmit(handleLogin)}
               >
                 {/* Email */}
 
                 <div className="w-full space-y-3">
                   <label htmlFor="email">Email</label>
                   <Input
-                    type="email"
                     placeholder="Enter your email"
+                    type="email"
                     {...register("email", { required: true })}
                   />
 
@@ -155,13 +157,12 @@ export default function LoginPage() {
                   <label htmlFor="password">Password</label>
                   <Input
                     {...register("password", { required: true })}
-                    placeholder="Enter your password"
                     endContent={
                       <button
+                        aria-label="toggle password visibility"
                         className="focus:outline-none"
                         type="button"
                         onClick={toggleVisibility}
-                        aria-label="toggle password visibility"
                       >
                         {isVisible ? (
                           <GoEye className="text-2xl text-default-400 pointer-events-none" />
@@ -170,6 +171,7 @@ export default function LoginPage() {
                         )}
                       </button>
                     }
+                    placeholder="Enter your password"
                     type={isVisible ? "text" : "password"}
                   />
 
@@ -183,18 +185,21 @@ export default function LoginPage() {
                 {/* CTO */}
 
                 <div className="w-full space-y-3">
-                  <label htmlFor=""></label>
+                  <label htmlFor="loginBtn" />
                   <Button
                     className="w-full bg-orange-400"
-                    variant="flat"
                     type="submit"
+                    variant="flat"
                   >
                     Login
                   </Button>
                 </div>
 
-                <div className="w-full flex justify-end gap-3 text-center">
-                  <p>Forgot password?</p> <a href="#" className="text-primary">Click here</a>
+                <div className="w-full hidden gap-3 text-center">
+                  <p>Forgot password?</p>{" "}
+                  <a href="forgot" className="text-primary">
+                    Click here
+                  </a>
                 </div>
               </form>
             </>
@@ -202,7 +207,7 @@ export default function LoginPage() {
 
           <div className="w-full flex gap-3 justify-center items-center">
             <hr className="text-2xl w-full" />
-            <label htmlFor="">Or</label>
+            <label htmlFor="Or">Or</label>
             <hr className="text-2xl w-full" />
           </div>
 

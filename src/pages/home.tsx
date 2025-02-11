@@ -721,7 +721,7 @@ export default function HomePage() {
 
         {/* Collaborators */}
         <motion.div
-          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center md:p-10 panel"}`}
           initial={{ opacity: 0 }}
           transition={{
             duration: 1,
@@ -738,9 +738,9 @@ export default function HomePage() {
           </div>
 
           <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center ">
-            {collabs?.map((p: Partner, i) => (
+            {collabs?.map((p: Partner) => (
               <motion.div
-                key={i}
+                key={p?.logo}
                 animate={{
                   x: 0,
                   opacity: 1,
@@ -749,7 +749,7 @@ export default function HomePage() {
                     opacity: { ease: "linear" },
                   },
                 }}
-                className="p-5 rounded-2xl text-center "
+                className="p-5 rounded-lg text-center "
                 whileHover={{
                   scale: 1.1,
                   transition: { duration: 0.5 },
@@ -959,7 +959,7 @@ export default function HomePage() {
 
         {/* Recent Projects */}
         <div
-          className={`w-full ${blogs?.length === 0 || null ? "hidden" : "h-screen md:h-[auto] bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+          className={`w-full ${blogs?.length === 0 || null ? "hidden" : "md:h-screen bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
             <h1 className="text-3xl  md:text-5xl ">Recent Blogs</h1>
@@ -977,12 +977,12 @@ export default function HomePage() {
             ) : (
               <div className={`w-full flex flex-col gap-3`}>
                 <motion.div
-                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex flex-row-reverse justify-end items-center gap-5"}`}
+                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex flex-col md:flex-row-reverse md:justify-end items-center gap-5"}`}
                 >
                   {blogs?.map((p) => (
                     <motion.div
                       key={p?.blogId}
-                      className={`shadow w-[30%] rounded-xl bg-default-50`}
+                      className={`shadow md:w-[32%] rounded-xl bg-default-50`}
                       transition={{
                         duration: 0.3,
                         ease: "easeOut",

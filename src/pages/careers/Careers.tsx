@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable prettier/prettier */
-import DefaultLayout from "@/layouts/default";
 import { Button, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { Career, CareerType } from "../dashboard/careers/dash-careers";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+import { Career, CareerType } from "../dashboard/careers/dash-careers";
+
+import DefaultLayout from "@/layouts/default";
 import { title } from "@/components/primitives";
 
 export default function CareersPage() {
@@ -26,7 +28,7 @@ export default function CareersPage() {
 
   const fetchCareers = () => {
     axios
-      .get(`${api}/careers`, {
+      .get(`${api}/careers?validity=1`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -62,16 +64,16 @@ export default function CareersPage() {
 
   return (
     <DefaultLayout>
-      <section className="w-full flex flex-col p-10 gap-3 cursor-default">
+      <section className="w-full flex flex-col p-10 gap-5 cursor-default">
         {/* Main Actions */}
-        <div className="w-full flex flex-col gap-5">
+        <div className="w-full flex flex-col gap-5 space-y-5">
           <h1 className={title()} >Careers</h1>
-          <p className={` text-balance`}>
+          <p className={` text-2xl text-balance`}>
             Great Hope Foundation, yearly works with a pool of volunteers
             countrywide in implementing UWEZO PROGRAM, and some few succeed in
             joining Great Hope Foundation team as employees. Volunteers that are
             picked are normally form four/form six and University students.
-            Write to us, with the intention of becoming a volunteer
+            Write to us, with the intention of becoming a volunteer.
           </p>
         </div>
         {isLoading ? (

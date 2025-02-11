@@ -1,15 +1,17 @@
-import DefaultLayout from "@/layouts/default";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { Button } from "@nextui-org/button";
+import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+
 import {
   Publication,
   PublishTypeEnum,
 } from "../dashboard/publications/dash-publications";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios, { AxiosResponse, AxiosError } from "axios";
+
+import DefaultLayout from "@/layouts/default";
 import { title } from "@/components/primitives";
-import { Button } from "@nextui-org/button";
-import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
 export default function Publications() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -94,9 +96,17 @@ export default function Publications() {
               </>
             ) : (
               <div className="flex w-full flex-col">
-                <Tabs aria-label="Options" fullWidth size="lg" radius="sm" color="primary">
+                <Tabs
+                  fullWidth
+                  aria-label="Options"
+                  color="primary"
+                  radius="sm"
+                  size="lg"
+                >
                   <Tab key="newsletters" title="Newsletters">
-                    <Card className={`w-full border-transparent shadow-none`}>
+                    <Card
+                      className={`w-full border-transparent shadow-none bg-transparent`}
+                    >
                       {pubs?.filter(
                         (p) => p?.publishType === PublishTypeEnum.Newsletter
                       ).length === 0 ? (
@@ -104,7 +114,7 @@ export default function Publications() {
                           <h1>No Newsletters at the momment.</h1>
                         </>
                       ) : (
-                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
+                        <CardBody className="w-full flex flex-col md:flex-row md:flex-wrap  items-center gap-5 p-5 bg-transparent">
                           {pubs
                             ?.filter(
                               (p) =>
@@ -113,7 +123,7 @@ export default function Publications() {
                             .flatMap((mp) => (
                               <div
                                 key={mp?.publishId}
-                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                                className={`p-3 md:w-[32%] w-full flex flex-col gap-3 border rounded-xl bg-default-50`}
                               >
                                 <h1 className={`text-2xl`}>{mp?.title}</h1>
 
@@ -153,7 +163,9 @@ export default function Publications() {
                   </Tab>
 
                   <Tab key="reports" title="Reports">
-                    <Card className={`w-full border-transparent shadow-none`}>
+                    <Card
+                      className={`w-full border-transparent shadow-none bg-transparent`}
+                    >
                       {pubs?.filter(
                         (p) => p?.publishType === PublishTypeEnum.Report
                       ).length === 0 ? (
@@ -161,16 +173,15 @@ export default function Publications() {
                           <h1>No Reports at the momment.</h1>
                         </>
                       ) : (
-                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
+                        <CardBody className="w-full flex md:flex-row md:flex-wrap gap-5 p-5 bg-transparent">
                           {pubs
                             ?.filter(
-                              (p) =>
-                                p?.publishType === PublishTypeEnum.Report
+                              (p) => p?.publishType === PublishTypeEnum.Report,
                             )
                             .flatMap((mp) => (
                               <div
                                 key={mp?.publishId}
-                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                                className={`p-3 md:w-[32%] w-full flex flex-col gap-3 border rounded-xl bg-default-50`}
                               >
                                 <h1 className={`text-2xl`}>{mp?.title}</h1>
 
@@ -210,7 +221,9 @@ export default function Publications() {
                   </Tab>
 
                   <Tab key="manual" title="Student manuals">
-                    <Card className={`w-full border-transparent shadow-none`}>
+                    <Card
+                      className={`w-full border-transparent shadow-none bg-transparent`}
+                    >
                       {pubs?.filter(
                         (p) =>
                           p?.publishType === PublishTypeEnum["Student Manual"]
@@ -219,16 +232,17 @@ export default function Publications() {
                           <h1>No Manuals at the momment.</h1>
                         </>
                       ) : (
-                        <CardBody className="w-full flex flex-row flex-wrap gap-5 p-5">
+                        <CardBody className="w-full flex flex-col md:flex-row md:flex-wrap gap-5 p-5 bg-transparent">
                           {pubs
                             ?.filter(
                               (p) =>
-                                p?.publishType === PublishTypeEnum["Student Manual"]
+                                p?.publishType ===
+                                PublishTypeEnum["Student Manual"],
                             )
                             .flatMap((mp) => (
                               <div
                                 key={mp?.publishId}
-                                className={`p-3 w-[30%] flex flex-col gap-3 border rounded-xl`}
+                                className={`p-3 md:w-[32%] w-full flex flex-col gap-3 border rounded-xl bg-default-50`}
                               >
                                 <h1 className={`text-2xl`}>{mp?.title}</h1>
 
@@ -262,7 +276,8 @@ export default function Publications() {
                                 </div>
                               </div>
                             ))}
-                        </CardBody>                      )}
+                        </CardBody>
+                      )}
                     </Card>
                   </Tab>
                 </Tabs>
