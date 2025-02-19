@@ -29,7 +29,7 @@ export default function ImpactView() {
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
   const [impactReports, setImpacReports] = useState<ImpactReport[] | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function ImpactView() {
               };
 
               return [data];
-            },
+            }
           );
 
           setImpactAssets([...datas]);
@@ -92,17 +92,19 @@ export default function ImpactView() {
       axios
         .get(`${api}/impacts/reports/${impactId}`)
         .then((res: AxiosResponse) => {
+          //console.log(res?.data);
+
           const datas: ImpactReport[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: ImpactReport = {
                 reportUrl: d?.reportUrl,
-                impactReportId: d?.impactReportId,
+                impactReportId: d?.assetId,
                 impactId: d?.impactId,
-                title: d?.title,
+                title: d?.title ?? null,
               };
 
               return [data];
-            },
+            }
           );
 
           setImpacReports([...datas]);
@@ -115,9 +117,8 @@ export default function ImpactView() {
 
   const downloadReport = (
     reportId: string,
-    filename: string,
+    filename: string = "Impact Report",
   ) => {
-
     axios
       .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
         headers: {
@@ -130,7 +131,7 @@ export default function ImpactView() {
       })
       .then((res: AxiosResponse) => {
         if (res) {
-          console.log(res?.data);
+          //console.log(res?.data);
 
           fileDownload(res?.data, filename, res.headers["content-type"]);
         }
@@ -204,7 +205,7 @@ export default function ImpactView() {
 
           {/* Impact Report */}
           <div
-            className={`w-full ${impactAssets === null ? "flex flex-col gap-5 p-3 scrollbar-hide" : "hidden"}  `}
+            className={`w-full ${impactAssets === null ? "hidden" : "flex flex-col gap-5 p-3 scrollbar-hide"}  `}
           >
             <h1 className="text-xl md:text-3xl">{impact?.title} Reports</h1>
 
@@ -213,12 +214,10 @@ export default function ImpactView() {
                 <p className=" text-center "></p>
               </>
             ) : (
-              <div
-                className={`w-full flex flex-col md:flex-row justify-center gap-5`}
-              >
-                {impactReports?.flatMap((d: ImpactReport) => (
+              <div className={`w-full flex flex-col md:flex-row gap-5`}>
+                {impactReports?.flatMap((d: ImpactReport, i) => (
                   <div
-                    key={d?.impactReportId}
+                    key={i}
                     className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
                   >
                     <GoFile size={20} />
@@ -230,7 +229,10 @@ export default function ImpactView() {
                         size={20}
                         className=" text-primary-500"
                         onClick={() => {
-                          downloadReport(`${d?.impactReportId}`, `${d?.title}`);
+                          downloadReport(
+                            `${d?.impactReportId}`,
+                            `${d?.title ?? "Impact Report"}`,
+                          );
                         }}
                       />
                     </Button>

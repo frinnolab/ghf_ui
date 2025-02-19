@@ -58,29 +58,30 @@ export default function UwezoPage() {
   return (
     <DefaultLayout>
       <section className="w-full flex flex-col items-center justify-center py-2 md:py-3">
-        <div className="sm:h-screen w-full flex flex-col justify-center">
+
+        <div className="sm:h-[50dvh] w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
               <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">
-                  UWEZO PROJECTS
+                  UWEZO PROGRAM
                 </h1>
               </div>
             </div>
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[8.5%] filter saturate-[50%]">
+          <div className="w-full absolute top-[-3%] filter saturate-[80%]">
             <Image
-              radius="none"
               alt="Header img"
+              radius="none"
               src="/assets/images/static/6J9A9337_2.JPG"
             />
           </div>
         </div>
 
-        <div className="w-full flex flex-col p-5 md:px-20  gap-5 relative">
+        <div className="w-full flex flex-col p-5 md:px-20  gap-5 relative bg-default-50">
           <h1 className="text-2xl md:text-3xl  font-semibold">OUR PROJECTS</h1>
 
           <div className="w-full flex flex-col justify-center gap-5">

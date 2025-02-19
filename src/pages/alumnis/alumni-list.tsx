@@ -3,18 +3,27 @@
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
-import { Avatar, Button, Divider, Input, Spinner } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  // Divider,
+  Input,
+  Spinner,
+  Image,
+} from "@nextui-org/react";
 import { GoArrowUpRight, GoPersonFill, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 
+import * as motion from "motion/react-client";
 import { Alumni } from "../dashboard/alumnis/dash-alumni-list";
 import { Profile } from "../dashboard/profiles/dash-profiles-list";
 
 import DefaultLayout from "@/layouts/default";
-import { title } from "@/components/primitives";
+// import { title } from "@/components/primitives";
 import { AuthRole } from "@/types";
 import "react-quill/dist/quill.snow.css";
+
 // import { Qformats, Qmodules } from "../dashboard/blog/dash-blog-create";
 
 export const Alumniformats = [
@@ -89,8 +98,6 @@ export default function AlumniList() {
   };
 
   const onSaveAlumni = (p: Alumni) => {
-
-
     const data = new FormData();
 
     data.append("age", `${p?.age}`);
@@ -167,7 +174,7 @@ export default function AlumniList() {
               profileId: d?.profileId,
               age: d?.age,
               story: d?.story,
-              isPublished:Boolean(Number(res?.data['isPublished']))
+              isPublished: Boolean(Number(res?.data["isPublished"])),
             };
 
             return [resData];
@@ -177,7 +184,10 @@ export default function AlumniList() {
             return [...data];
           });
           setIsAlumni(true);
-          setIsloading(false);
+
+          setTimeout(()=>{
+            setIsloading(false);
+          },1500)
         })
         .catch((err: AxiosError) => {
           setIsAlumni(true);
@@ -189,15 +199,79 @@ export default function AlumniList() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
-        <h1 className={title()}>Alumni</h1>
+        
+        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
+          <motion.div className={`w-full absolute top-[-65%] saturate-[100%]`}>
+            <Image
+              alt="About Bg"
+              radius="none"
+              src="assets/images/static/Alumni_BG.JPG"
+              width={5000}
+            />
+          </motion.div>
 
-        <div className="w-full flex flex-col px-20 gap-5 ">
-          <h1 className=" text-2xl  font-semibold ">
-            {" "}
-            UWEZO Program Alumni stories
-          </h1>
+          {/* <div className="inline-block max-w-lg text-center justify-center p-3 z-10"> */}
+          <div className="w-full flex z-10">
+            <motion.h1
+              className={`text-3xl md:text-5xl text-black font-semibold`}
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+                transition: {
+                  ease: "easeIn",
+                  delay: 0.8,
+                  duration: 1,
+                },
+              }}
+            >
+              Alumni Stories
+            </motion.h1>
 
-          <div className="w-full flex justify-center flex-wrap text-center gap-5">
+            <div/>
+          </div>
+
+          {/* Bio */}
+          <motion.div
+            className="rounded-2xl z-10 bg-default-50/65"
+            initial={{
+              opacity: 0,
+            }}
+            whileInView={{
+              opacity: 1,
+              transition: {
+                ease: "linear",
+                delay: 0.8,
+                duration: 1.5,
+              },
+            }}
+          >
+            <motion.p className=" text-2xl md:text-4xl text-balance md:text-justify p-5 md:py-10">
+              Great Hope Foundation asked a few Alumni of UWEZO PROGRAM who are
+              now in the labor market to share any Impact they can trace and the
+              contribution of UWEZO PROGRAM to what they have been able to
+              achieved do so far. Since its initiation in 2016, Great Hope
+              Foundation has worked with over 5,000 Secondary School students in
+              over 1,200 Secondary Schools. Here are a few stories that we
+              captured.
+            </motion.p>
+          </motion.div>
+        </div>
+
+        {/* <Divider /> */}
+
+        <div className="w-full flex flex-col px-20 gap-5 z-10">
+          <div className="w-full flex pb-5">
+            <h1 hidden className=" text-2xl font-semibold bg-default-50/50 p-5 rounded-md">
+              {" "}
+              UWEZO Program Alumni stories
+            </h1>
+
+            <div />
+          </div>
+
+          <div className="w-full flex justify-center flex-wrap text-center gap-5 space-y-5">
             {isLoading ? (
               <>
                 <Spinner
@@ -291,7 +365,7 @@ export default function AlumniList() {
             )}
           </div>
 
-          <Divider />
+          {/* <Divider /> */}
 
           {/* Registration */}
           <div

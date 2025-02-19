@@ -1,14 +1,8 @@
-import useAuthedProfile from "@/hooks/use-auth";
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-console */
 import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Career,
-  CareerApplication,
-  CareerStatus,
-  CareerType,
-  CareerValidity,
-} from "./dash-careers";
-import axios, { AxiosError, AxiosResponse, HttpStatusCode } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import {
   Button,
   Divider,
@@ -32,11 +26,60 @@ import {
   useDisclosure,
   Tooltip,
 } from "@nextui-org/react";
-import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
-import { AuthRole } from "@/types";
+import {
+  GoArrowLeft,
+  GoDownload,
+  GoEye,
+  GoPencil,
+  GoTrash,
+} from "react-icons/go";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ReactQuill from "react-quill";
-import { Qformats, Qmodules } from "../blog/dash-blog-create";
+import fileDownload from "js-file-download";
+
+import {
+  Career,
+  CareerApplication,
+  CareerStatus,
+  CareerType,
+  CareerValidity,
+} from "./dash-careers";
+
+import useAuthedProfile from "@/hooks/use-auth";
+import { AuthRole } from "@/types";
+// import { Qformats, Qmodules } from "../blog/dash-blog-create";
+
+export const Cformats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  // "link",
+  // "image",
+  // "video",
+];
+
+export const Cmodules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    // ["image"],
+    // ["video"],
+    // ["link"],
+    ["clean"],
+  ],
+};
 
 function DashCareerView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -224,6 +267,8 @@ function DashCareerView() {
         },
       })
       .then((res: AxiosResponse) => {
+        console.log(res?.data);
+
         if (res?.data) {
           const data: CareerApplication = {
             careerAppId: res?.data["careerAppId"],
@@ -272,6 +317,9 @@ function DashCareerView() {
       careerRoleType: Number(cap.careerRoleType),
     };
 
+    //console.log(data);
+    
+
     axios
       .put(`${api}/careers/applications/${cap?.careerAppId}`, data, {
         headers: {
@@ -295,10 +343,10 @@ function DashCareerView() {
     switch (action) {
       case actionTypes[0]:
         //Detail
-        handleSelectedRow(p);
+        //handleSelectedRow(p);
         break;
       case actionTypes[1]:
-        handleSelectedRow(p);
+        //handleSelectedRow(p);
         //Detail
         break;
       case actionTypes[2]:
@@ -308,8 +356,8 @@ function DashCareerView() {
   };
 
   const handleDelete = (b: CareerApplication) => {
-    if (authed?.role !== AuthRole.SuperAdmin || AuthRole.Admin) {
-      alert(HttpStatusCode.Unauthorized);
+    if (Number(authed?.role) !== AuthRole.SuperAdmin) {
+      alert(`You do not have permission to perform this action.`);
     } else {
       axios
         .delete(`${api}/careers/applications/${b?.careerAppId}`, {
@@ -335,7 +383,7 @@ function DashCareerView() {
     setSelectedValidity(statusVal);
   };
 
-  const columns = ["Name", "Email", "Role", "Status", "Actions"];
+  const columns = ["Name", "Email", "Role", "CV", "Status", "Actions"];
 
   const handleBack = () => nav("/dashboard/careers");
 
@@ -359,6 +407,9 @@ function DashCareerView() {
             careerType: Number(res.data?.careerType),
             careerValidity: Number(res.data?.careerValidity),
           };
+
+          setQuillValue(res?.data["requirements"]);
+
           setCareer(data);
 
           const careerTypeVal = careerTypes.find(
@@ -393,6 +444,8 @@ function DashCareerView() {
       })
       .then((appRes: AxiosResponse) => {
         if (appRes?.data) {
+          console.log(appRes?.data);
+
           const appData: CareerApplication[] = Array.from(appRes.data).map(
             (app: any) => ({
               careerAppId: app.careerAppId,
@@ -437,6 +490,31 @@ function DashCareerView() {
     }
   };
 
+  const handleDownloadCV = (ca: CareerApplication) => {
+    console.log(ca);
+    axios
+    .get(`${api}/careers/applications/${ca?.careerAppId}/download`, {
+      headers: {
+        // Accept: "application/json",
+        Authorization: `Bearer ${authed?.token}`,
+        "Content-Disposition": "attachment;",
+        "Content-Type": "application/octet-stream",
+      },
+      responseType: "blob",
+    })
+    .then((res: AxiosResponse) => {
+      if (res) {
+        fileDownload(res?.data, "", res.headers["content-type"]);
+      }
+    })
+    .catch((err: AxiosError) => {
+      console.warn(err.response);
+
+      window.location.reload();
+    });
+
+  };
+
   useEffect(() => {
     if (career === null && careerId) {
       setIsloading(true);
@@ -461,6 +539,11 @@ function DashCareerView() {
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
           <Switch
+            defaultSelected={isEdit}
+            endContent={<GoEye />}
+            size="lg"
+            startContent={<GoPencil />}
+            title={`${isEdit ? "Edit mode" : "View mode"}`}
             onClick={() => {
               if (!isEdit) {
                 setIsEdit(true);
@@ -468,12 +551,7 @@ function DashCareerView() {
                 setIsEdit(false);
               }
             }}
-            defaultSelected={isEdit}
-            size="lg"
-            startContent={<GoPencil />}
-            endContent={<GoEye />}
-            title={`${isEdit ? "Edit mode" : "View mode"}`}
-          ></Switch>
+          />
         </div>
       </div>
       <Divider />
@@ -500,9 +578,9 @@ function DashCareerView() {
                   <div className="w-full space-y-3">
                     <label htmlFor="position">Position</label>
                     <Input
+                      defaultValue={`${career?.position ?? ""}`}
                       disabled={!isEdit}
                       type="text"
-                      defaultValue={`${career?.position ?? ""}`}
                       {...register("position")}
                       placeholder={career?.position ?? "Enter Position"}
                     />
@@ -511,8 +589,8 @@ function DashCareerView() {
                   <div className="w-full space-y-3">
                     <label htmlFor="description">Description</label>
                     <Textarea
-                      disabled={!isEdit}
                       defaultValue={`${career?.description ?? ""}`}
+                      disabled={!isEdit}
                       {...register("description")}
                       placeholder={career?.description ?? "Enter Description"}
                     />
@@ -521,12 +599,12 @@ function DashCareerView() {
                   <div className="w-full space-y-3">
                     <label htmlFor="requirements">Requirements</label>
                     <ReactQuill
-                      placeholder={`${career?.requirements ?? "Enter Requirements"}`}
+                      formats={Cformats.filter((p) => p )}
+                      modules={Cmodules}
+                      placeholder={`${quillValue ?? "Enter Requirements"}`}
                       theme="snow"
                       value={quillValue}
                       onChange={setQuillValue}
-                      formats={Qformats.filter((p) => p)}
-                      modules={Qmodules}
                     />
                   </div>
 
@@ -537,11 +615,11 @@ function DashCareerView() {
                       <label htmlFor="cType">Type</label>
 
                       <Select
+                        className="max-w-xs"
+                        defaultSelectedKeys={`${career?.careerType ?? careerTypes[1].key}`}
                         isDisabled={!isEdit ? true : false}
                         label="Select Type"
                         selectedKeys={`${selectedCareerType?.key ?? careerTypes[1].key}`}
-                        className="max-w-xs"
-                        defaultSelectedKeys={`${career?.careerType ?? careerTypes[1].key}`}
                         onChange={(e) => {
                           changeCareerTypes(e);
                         }}
@@ -561,11 +639,11 @@ function DashCareerView() {
                       <label htmlFor="cValid">Validity</label>
 
                       <Select
+                        className="max-w-xs"
+                        defaultSelectedKeys={`${career?.careerValidity ?? careerValiditys[1].key}`}
                         isDisabled={!isEdit ? true : false}
                         label="Select Validity"
                         selectedKeys={`${selectedValidity?.key ?? careerValiditys[1].key}`}
-                        className="max-w-xs"
-                        defaultSelectedKeys={`${career?.careerValidity ?? careerValiditys[1].key}`}
                         onChange={(e) => {
                           changeCareerValidity(e);
                         }}
@@ -597,10 +675,10 @@ function DashCareerView() {
           {isAppsLoading ? (
             <>
               <Spinner
-                size="lg"
                 className=" flex justify-center "
-                label="Loading Career Applications!."
                 color="primary"
+                label="Loading Career Applications!."
+                size="lg"
               />
             </>
           ) : (
@@ -618,7 +696,7 @@ function DashCareerView() {
                     items={careerApps}
                   >
                     {careerApps?.map((ca) => (
-                      <TableRow className="w-full" key={ca?.careerAppId}>
+                      <TableRow key={ca?.careerAppId} className="w-full">
                         <TableCell
                           onClick={() => {
                             handleSelectedRow(ca);
@@ -634,25 +712,34 @@ function DashCareerView() {
                           {ca?.email}
                         </TableCell>
                         <TableCell
-                          onClick={() => {
-                            handleSelectedRow(ca);
-                          }}
+                        // onClick={() => {
+                        //   handleSelectedRow(ca);
+                        // }}
                         >
                           {careerRoleText(Number(ca?.careerRoleType))}
                         </TableCell>
                         <TableCell
                           onClick={() => {
-                            handleSelectedRow(ca);
+                            if(isEdit){
+                              handleDownloadCV(ca);
+                            }else{
+                              alert(`Enable edit mode to download CV`)
+                            }
                           }}
                         >
+                          <span className=" text-lg hover:text-primary-400">
+                            <GoDownload />
+                          </span>
+                        </TableCell>
+                        <TableCell>
                           {/* {careerStatusText(Number(ca?.careerStatus))} */}
                           <Select
                             aria-hidden={true}
-                            isDisabled={!isEdit ? true : false}
-                            label="Select Status"
-                            selectedKeys={`${selectedStatus?.key ?? careerStatuses[0].key}`}
                             className="max-w-xs"
                             defaultSelectedKeys={`${selectedApplication?.careerStatus ?? careerStatuses[0].key}`}
+                            isDisabled={isEdit ? false : true}
+                            label="Select Status"
+                            selectedKeys={`${selectedStatus?.key ?? careerStatuses[0].key}`}
                             onChange={(e) => {
                               changeCareerStatus(e, ca);
                             }}
@@ -676,8 +763,14 @@ function DashCareerView() {
                               </span>
                             </Tooltip>
 
-                            <Tooltip color="danger" content="Delete">
-                              <span className="text-lg text-danger-500 cursor-pointer active:opacity-50">
+                            <Tooltip
+                              color="danger"
+                              content="Delete"
+                              isDisabled={!isEdit}
+                            >
+                              <span
+                                className={` ${isEdit ? "text-lg text-danger-500 cursor-pointer active:opacity-50" : "hidden"} `}
+                              >
                                 <GoTrash
                                   onClick={() =>
                                     handleAction(ca, actionTypes[2])
@@ -730,15 +823,15 @@ function DashCareerView() {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="solid" color="danger" onClick={onClose}>
+            <Button color="danger" variant="solid" onClick={onClose}>
               Close
             </Button>
 
-            {isEdit && (
-              <Button onClick={() => {}} color="primary">
+            {/* {isEdit && (
+              <Button color="primary" onClick={() => {}}>
                 Save Changes
               </Button>
-            )}
+            )} */}
           </ModalFooter>
         </ModalContent>
       </Modal>

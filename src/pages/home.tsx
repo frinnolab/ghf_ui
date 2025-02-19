@@ -115,12 +115,12 @@ export default function HomePage() {
 
           // setCompanyInfo(res?.data);
 
-          const data:StatsInfo = {
-            studentsImpacted: Number(res?.data['studentsImpacted'] ?? 0),
-            regionsReached: Number(res?.data['regionsReached'] ?? 0),
-            schoolsReached:Number(res?.data['schoolsReached'] ?? 0),
-            districtsReached:Number(res?.data['districtsReached'] ?? 0)
-          }
+          const data: StatsInfo = {
+            studentsImpacted: Number(res?.data["studentsImpacted"] ?? 0),
+            regionsReached: Number(res?.data["regionsReached"] ?? 0),
+            schoolsReached: Number(res?.data["schoolsReached"] ?? 0),
+            districtsReached: Number(res?.data["districtsReached"] ?? 0),
+          };
 
           setStatsInfo(data);
 
@@ -130,13 +130,13 @@ export default function HomePage() {
         })
         .catch((err: AxiosError) => {
           console.log(err.response);
-          setStatsInfo(()=>{
+          setStatsInfo(() => {
             return {
               studentsImpacted: 0,
               regionsReached: 0,
-              schoolsReached:0,
-              districtsReached:0
-            }
+              schoolsReached: 0,
+              districtsReached: 0,
+            };
           });
 
           setTimeout(() => {
@@ -325,7 +325,6 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-
     fetchStatInfo();
     //setIsInfoloading(true);
     fetchCompanyinfo();
@@ -435,6 +434,7 @@ export default function HomePage() {
           >
             <motion.div className="w-full flex flex-col  md:flex-row items-center gap-1 text-center md:text-5xl text-white  font-semibold p-5  rounded-xl">
               <motion.h1
+              className={` uppercase text-balance `}
                 initial={{
                   opacity: 0,
                 }}
@@ -447,8 +447,9 @@ export default function HomePage() {
                   },
                 }}
               >
-                WE LIVE TO EMPOWER, DEVELOP AND INSPIRE YOUNG GENERATION TO
-                ACQUIRE ENTREPRENEURSHIP AND 21ST CENTURY SKILLS
+                We design innovative platforms and projects that equip young
+                people with entrepreneurial and 21st-century skills—preparing
+                them for a seamless transition into the marketplace.
               </motion.h1>
             </motion.div>
           </div>
@@ -511,7 +512,7 @@ export default function HomePage() {
                 },
               }}
             >
-              Great Hope Foundation (GHF) is a local Non - Governmental
+              {/* Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
               working to develop platforms that capacitate young people with
@@ -519,7 +520,17 @@ export default function HomePage() {
               bringing the best out of young people, in a way that benefits them
               and the community around them. We aim at being an organization
               that enlightens young people potential, giving them hope and
-              courage to bring the very best out of themselves.
+              courage to bring the very best out of themselves. */}
+              Great Hope Foundation has been empowering youth for over a decade,
+              equipping them with entrepreneurial and 21st-century skills to
+              thrive in the marketplace. Our flagship initiative, the UWEZO
+              PROGRAM, has empowered over 6,700 young people since 2016. As a
+              nonprofit, we believe in investing in young minds today to build a
+              thriving society tomorrow. Through education, mentorship, and
+              leadership programs, we’re shaping the next generation of leaders
+              who will drive change in their communities. Join us in creating a
+              brighter future—because when young minds are empowered, the
+              world transforms.
             </motion.p>
           </motion.div>
 
@@ -708,10 +719,7 @@ export default function HomePage() {
               >
                 <h1 className=" text-2xl hidden ">{p?.label}</h1>
 
-                <Image
-                width={350}
-                  src={`${p?.logo}`}
-                />
+                <Image width={350} src={`${p?.logo}`} />
               </motion.div>
             ))}
           </div>
@@ -959,7 +967,8 @@ export default function HomePage() {
 
         {/* Recent Projects */}
         <div
-          className={`w-full ${blogs?.length === 0 || null ? "hidden" : "md:h-screen bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+          className="hidden"
+          // className={`w-full ${blogs?.length === 0 || null ? "hidden" : "md:h-screen bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
             <h1 className="text-3xl  md:text-5xl ">Recent Blogs</h1>

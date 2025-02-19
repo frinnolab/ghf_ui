@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Blog } from "../dashboard/blog/dash-blogs";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
-import { Divider, Image } from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { siteConfig } from "@/config/site";
+
+import { Blog } from "../dashboard/blog/dash-blogs";
+// import { siteConfig } from "@/config/site";
 
 export default function BlogDetailPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -15,6 +16,7 @@ export default function BlogDetailPage() {
     if (route?.state) {
       return `${route?.state}`;
     }
+
     return null;
   });
   const [blog, setBlog] = useState<Blog | null>(null);

@@ -17,7 +17,7 @@ export const siteConfig = {
       href: "/whatwedo",
     },
     {
-      label: "Impacts",
+      label: "Impact",
       href: "/impacts",
     },
     {
@@ -79,7 +79,7 @@ export const siteConfig = {
       href: "/dashboard/partners",
     },
     {
-      label: "Impacts",
+      label: "Impact",
       href: "/dashboard/impacts",
     },
     {

@@ -19,6 +19,7 @@ export default function DocsPage() {
       axios
         .get(`${api}/teams/members/team`)
         .then((res: AxiosResponse) => {
+          console.log(res?.data);
 
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
@@ -48,18 +49,19 @@ export default function DocsPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
         <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-10%] saturate-[50%]`}>
+          <motion.div className={`w-full absolute top-[-20%] saturate-[100%]`}>
             <Image
+              className=" object-fill"
               alt="About Bg"
               radius="none"
               width={5000}
-              src="assets/images/static/ABOUT_US2.jpg"
+              src="assets/images/static/ABOUT_US_3.JPG"
             />
           </motion.div>
 
           <div className="inline-block max-w-lg text-center justify-center p-3 z-10">
             <motion.h1
-              className={`text-3xl md:text-4xl font-semibold`}
+              className={`text-3xl md:text-5xl font-semibold`}
               initial={{
                 opacity: 0,
               }}
@@ -78,7 +80,7 @@ export default function DocsPage() {
 
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/65"
+            className="rounded-2xl z-10 bg-default-50/50"
             initial={{
               opacity: 0,
             }}
@@ -186,7 +188,11 @@ function TeamCard({ member }: { member: TeamMember }) {
         <Avatar
           defaultValue={`${(<GoPersonFill />)}`}
           size="lg"
-          src={member?.memberAvatarUrl !== "" ? member?.memberAvatarUrl : ""}
+          src={
+            member?.memberAvatarUrl !== null
+              ? member?.memberAvatarUrl
+              : "assets/images/static/ghf_default.png"
+          }
         />
       </div>
       {/* <Image src={`${member?.member?.avatarUrl ?? <GoPersonFill />}`} /> */}

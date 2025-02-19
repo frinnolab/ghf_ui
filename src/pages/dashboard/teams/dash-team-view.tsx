@@ -232,7 +232,7 @@ export default function DashboardTeamPage() {
   };
 
   const handleDelete = (b: TeamMember) => {
-    alert(`Deleting ${b?.memberId}`);
+    alert(`Deleting ${b?.member?.email}`);
 
     setIsloading(true);
     if (authed?.role !== AuthRole.SuperAdmin) {
@@ -490,7 +490,7 @@ export default function DashboardTeamPage() {
                     allowsEmptyCollection={false}
                     className="w-full"
                     defaultItems={members}
-                    disabled={isEdit ? true : false}
+                    isDisabled={isEdit ? false : true}
                     endContent={
                       <GoX
                         className=" cursor-pointer hover:bg-default-400 text-danger-400 p-1 rounded-full text-2xl"

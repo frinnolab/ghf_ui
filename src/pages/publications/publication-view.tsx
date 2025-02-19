@@ -95,6 +95,7 @@ export default function PublicationsView() {
       console.log(res);
 
       const contentType = res.headers["content-type"];
+
       fileDownload(res?.data, filename, contentType);
     });
   }
@@ -127,9 +128,9 @@ export default function PublicationsView() {
         <div className=" space-y-5 ">
           <label htmlFor="description">Description</label>
           <div
-            className=" text-xl text-balance p-5 bg-default-200 rounded-2xl "
             dangerouslySetInnerHTML={{ __html: `${publication?.description}` }}
-          ></div>
+            className=" text-xl text-balance p-5 bg-default-200 rounded-2xl "
+          />
         </div>
 
         {/* Assets */}

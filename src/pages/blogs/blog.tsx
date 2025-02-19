@@ -58,11 +58,33 @@ export default function BlogPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-2 md:py-5">
+        <div className="sm:h-[50dvh] w-full flex flex-col justify-center">
+          {/* Header Text */}
+          <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
+            <div className="w-full flex justify-end">
+              <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+                <h1 className=" text-2xl md:text-4xl font-semibold">BLOG</h1>
+              </div>
+            </div>
+          </div>
+          {/* Header Text End*/}
+
+          <div className="w-full absolute top-[-20%] filter saturate-[90%]">
+            <Image
+              className=" object-fill "
+              alt="Blogs Bg"
+              radius="none"
+              width={3000}
+              src="assets/images/static/Blogs_BG.jpg"
+            />
+          </div>
+        </div>
+
         <div className="inline-block max-w-lg text-center justify-center">
           <h1 className={title()}>Blogs</h1>
         </div>
 
-        <div className="w-full flex flex-col p-20 gap-5 ">
+        <div className="w-full flex flex-col p-20 gap-5 z-10 bg-default-50 ">
           <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}

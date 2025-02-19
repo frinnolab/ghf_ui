@@ -5,9 +5,9 @@ import {
   CareerStatus,
   CareerType,
 } from "../dashboard/careers/dash-careers";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Divider, Input, Spinner, Textarea } from "@nextui-org/react";
-import { GoArrowLeft } from "react-icons/go";
+import { GoArrowLeft, GoTrash } from "react-icons/go";
 import { Button } from "@nextui-org/react";
 import axios, { AxiosError } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -18,13 +18,14 @@ const CareerView = () => {
   const api = `${import.meta.env.VITE_API_URL}`;
   const route = useLocation();
   const navigate = useNavigate();
-  //const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [quillValue] = useState<string>("");
+  const [selectedCV, setSelectedCV] = useState<File | null>(null);
+  // const [quillValue] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(false);
   const [careerId] = useState<string | null>(() => {
     if (route?.state) {
       return `${route?.state}`;
     }
+
     return null;
   });
   const [career, setCareer] = useState<Career | null>(null);
@@ -66,7 +67,7 @@ const CareerView = () => {
     ];
   });
 
-  const [, setSelectedRole] = useState<{
+  const [careerRoleType, setSelectedRole] = useState<{
     key: AuthRole;
     value: string;
   }>();
@@ -76,34 +77,37 @@ const CareerView = () => {
   const handleCreate: SubmitHandler<CareerApplication> = (
     data: CareerApplication
   ) => {
-    console.log(quillValue);
-
     setIsloading(true);
 
-    const newData: CareerApplication = {
-      careerId: `${careerId}`,
-      email: data?.email,
-      firstname: data?.firstname,
-      lastname: data?.lastname,
-      mobile: data?.mobile,
-      biography: data?.biography,
-      city: data?.city,
-      country: data?.country,
-      careerStatus: Number(selectedStatus?.key),
-      careerRoleType: Number(selectedStatus?.key),
-    };
+    const cData = new FormData();
+
+    cData.append("careerId", `${careerId}`);
+    cData.append("email", `${data?.email}`);
+    cData.append("firstname", `${data?.firstname}`);
+    cData.append("lastname", `${data?.lastname}`);
+    cData.append("mobile", `${data?.mobile}`);
+    cData.append("biography", ``);
+    cData.append("city", `${data?.city}`);
+    cData.append("country", `${data?.country}`);
+    cData.append("careerStatus", `${selectedStatus?.key}`);
+    cData.append("careerRoleType", `${careerRoleType?.key}`);
+
+    if (selectedCV) {
+      cData.append("cv", selectedCV);
+    }
 
     axios
-      .post(`${api}/careers/${careerId}/applications`, newData, {
+      .post(`${api}/careers/${careerId}/applications`, cData, {
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((res: AxiosResponse) => {
         if (res) {
-          console.log(res?.data);
+          //console.log(res?.data);
           setIsloading(false);
+          alert(`Application submitted succesfully!`);
           window.location.reload();
         }
       })
@@ -132,6 +136,7 @@ const CareerView = () => {
             careerType: Number(res.data.careerType),
             careerValidity: Number(res.data.careerValidity),
           };
+
           setCareer(careerData);
 
           switch (Number(res?.data?.careerType)) {
@@ -153,6 +158,17 @@ const CareerView = () => {
       });
   };
 
+  const removeSelectedCV = () => {
+    setSelectedCV(null);
+    window.location.reload();
+  };
+
+  const onChangeCV = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedCV(e.target.files[0]);
+    }
+  };
+
   const careerTypeText = (cType: CareerType) => {
     switch (cType) {
       case CareerType.Employment:
@@ -163,7 +179,7 @@ const CareerView = () => {
   };
 
   useEffect(() => {
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     if (career === null && careerId) {
       setIsloading(true);
       fetchCareer(careerId);
@@ -191,10 +207,10 @@ const CareerView = () => {
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading..."
+              size="lg"
             />
           </>
         ) : (
@@ -245,8 +261,8 @@ const CareerView = () => {
               <label htmlFor="email">Email</label>
               <Input
                 id="email"
-                type="email"
                 placeholder="Enter your email"
+                type="email"
                 {...register("email")}
                 required
               />
@@ -256,10 +272,10 @@ const CareerView = () => {
               <div className="w-full space-y-2">
                 <label htmlFor="firstName">First Name</label>
                 <Input
-                  id="firstName"
-                  type="text"
-                  placeholder="Enter your first name"
                   required
+                  id="firstName"
+                  placeholder="Enter your first name"
+                  type="text"
                   {...register("firstname")}
                 />
               </div>
@@ -268,8 +284,8 @@ const CareerView = () => {
                 <label htmlFor="lastName">Last Name</label>
                 <Input
                   id="lastName"
-                  type="text"
                   placeholder="Enter your last name"
+                  type="text"
                   {...register("lastname")}
                 />
               </div>
@@ -279,10 +295,10 @@ const CareerView = () => {
               <div className="w-full space-y-2">
                 <label htmlFor="city">City</label>
                 <Input
-                  id="firstNamcitye"
-                  type="text"
-                  placeholder="Enter your city"
                   required
+                  id="firstNamcitye"
+                  placeholder="Enter your city"
+                  type="text"
                   {...register("city")}
                 />
               </div>
@@ -290,38 +306,71 @@ const CareerView = () => {
               <div className="w-full space-y-2">
                 <label htmlFor="country">Country</label>
                 <Input
-                  id="country"
-                  type="text"
-                  placeholder="Enter your country"
                   required
+                  id="country"
+                  placeholder="Enter your country"
+                  type="text"
                   {...register("country")}
                 />
               </div>
             </div>
 
-            <div className="w-full space-y-2">
-              <label htmlFor="phone">Phone Number</label>
-              <Input
-                id="phone"
-                type="text"
-                placeholder="Enter your phone number"
-                {...register("mobile")}
-                required
-              />
+            {/* Phone & Role */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="w-full space-y-2">
+                <label htmlFor="phone">Phone Number</label>
+                <Input
+                  id="phone"
+                  type="text"
+                  placeholder="Enter your phone number"
+                  {...register("mobile")}
+                  required
+                />
+              </div>
+
+              <div className="w-full space-y-2">
+                <label htmlFor="role">Role</label>
+                <Input
+                  disabled
+                  type="text"
+                  placeholder={`${careerTypeText(Number(career?.careerType))}`}
+                  {...register("careerRoleType")}
+                  required
+                />
+              </div>
             </div>
 
-            <div className="w-full space-y-2">
-              <label htmlFor="role">Role</label>
-              <Input
-                disabled
-                type="text"
-                placeholder={`${careerTypeText(Number(career?.careerType))}`}
-                {...register("careerRoleType")}
-                required
-              />
-            </div>
+            {/* Phone & Role End */}
 
-            <div className="w-full space-y-2" hidden>
+            {/* CV Upload */}
+            <div className="w-full flex justify-between items-center gap-5">
+              <div className="w-full space-y-2">
+                <label htmlFor="resume">Resume/CV</label>
+                <Input
+                  accept=".pdf,.doc,.docx"
+                  id="resume"
+                  type="file"
+                  onChange={(e) => {
+                    onChangeCV(e);
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col p-5 items-end">
+                <span
+                  className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedCV ? "" : "hidden"}`}
+                >
+                  <GoTrash
+                    className=" text-danger-500"
+                    size={20}
+                    onClick={removeSelectedCV}
+                  />
+                </span>
+              </div>
+            </div>
+            {/* CV Upload End */}
+
+            <div hidden className="w-full space-y-2">
               <label htmlFor="careerStatus">Status</label>
               <Input
                 disabled
@@ -329,15 +378,6 @@ const CareerView = () => {
                 type="text"
                 {...register("careerStatus")}
                 required
-              />
-            </div>
-
-            <div className="w-full space-y-2" hidden>
-              <label htmlFor="resume">Resume/CV</label>
-              <Input
-                id="resume"
-                type="file"
-                accept=".pdf,.doc,.docx"
               />
             </div>
 
