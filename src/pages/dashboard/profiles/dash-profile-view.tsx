@@ -1,7 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Profile } from "./dash-profiles-list";
-import { AuthRole } from "@/types";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@nextui-org/button";
@@ -14,6 +12,10 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoTrash } from "react-icons/go";
+
+import { Profile } from "./dash-profiles-list";
+
+import { AuthRole } from "@/types";
 import { siteConfig } from "@/config/site";
 import useAuthedProfile from "@/hooks/use-auth";
 
@@ -65,8 +67,9 @@ export default function DashboardProfilePage() {
     ];
   });
 
-  const [selectedRoleType, setSelectedRoleType] = useState<RoleTypeOption>();
-
+  const [selectedRoleType, setSelectedRoleType] = useState<RoleTypeOption>(
+    roleTypeOptions[4]
+  );
 
   const nav = useNavigate();
 
@@ -83,7 +86,7 @@ export default function DashboardProfilePage() {
       setIsEdit(true);
 
       if (profileId === null) {
-        //Creaate new
+        //Create new
         setIsloading(false);
         setSelectedRoleType(roleTypeOptions[4]);
       } else {
@@ -108,15 +111,15 @@ export default function DashboardProfilePage() {
 
             setProfile(data);
 
+            console.log(res?.data);
+
             const statusVal = roleTypeOptions.find(
               (p) => p?.key === Number(res.data.roleType)
             );
 
-            setSelectedRoleType(statusVal);
+            console.log(statusVal);
 
-            if (data?.profileId === authed?.profileId) {
-              setIsEdit(true);
-            }
+            setSelectedRoleType(statusVal ?? roleTypeOptions[4]);
 
             setTimeout(() => {
               setIsloading(false);
@@ -180,8 +183,8 @@ export default function DashboardProfilePage() {
       }
     }
 
-
     if (profileId === null) {
+      alert(`Create a New profile`);
       //Create new profile
       axios
         .post(`${api}/profiles`, data, {
@@ -200,10 +203,13 @@ export default function DashboardProfilePage() {
         .catch((err: AxiosError) => {
           console.log(err.response);
         });
+
     } else {
       //Update Profile
+      alert(`Update profiled ${profile?.email}`);
+
       axios
-        .post(`${api}/profiles/${authed?.profileId}`, data, {
+        .post(`${api}/profiles/${profile?.profileId}`, data, {
           headers: {
             Authorization: `Bearer ${authed?.token}`,
             "Content-Type": "multipart/form-data",
@@ -225,7 +231,11 @@ export default function DashboardProfilePage() {
       (p) => p?.key === Number(e.target.value)
     );
 
-    setSelectedRoleType(statusVal);
+    // console.log(statusVal);
+    // console.log(selectedRoleType);
+
+    setSelectedRoleType(statusVal ?? selectedRoleType);
+    //console.log(selectedRoleType);
   };
 
   const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
@@ -255,10 +265,10 @@ export default function DashboardProfilePage() {
           className={`w-full flex flex-col gap-5 justify-center items-center text-center pt-[20%]`}
         >
           <Spinner
-            size="lg"
             className=" flex justify-center "
-            label="Loading..."
             color="primary"
+            label="Loading..."
+            size="lg"
           />
         </div>
       ) : (
@@ -315,7 +325,7 @@ export default function DashboardProfilePage() {
                   type="text"
                   isDisabled={!isEdit}
                   defaultValue={`${profile?.position ?? ""}`}
-                  {...register("position",)}
+                  {...register("position")}
                   placeholder={`${profile?.position ?? "Enter Position"}`}
                 />
               </div>
@@ -348,42 +358,43 @@ export default function DashboardProfilePage() {
 
             {/* Role & Mobile */}
             <div className="flex gap-10">
-              <div className="w-full space-y-3" >
+              <div className="w-full space-y-3">
+                <div className="w-full flex flex-col space-y-5">
+                  <label htmlFor="status">
+                    Role Select : {selectedRoleType?.value}{" "}
+                  </label>
 
-              <div className="w-full flex flex-col space-y-5">
-                <label htmlFor="status">Role Select</label>
-
-                <Select
-                  isDisabled={!isEdit ? true : false}
-                  label="Select Role Type"
-                  selectedKeys={`${selectedRoleType?.key ?? roleTypeOptions[1].key}`}
-                  className="max-w-xs"
-                  defaultSelectedKeys={`${selectedRoleType?.key ?? roleTypeOptions[4].key}`}
-                  onChange={(e) => {
-                    changeRoleType(e);
-                  }}
-                >
-                  {roleTypeOptions.map((status) => (
-                    <SelectItem key={`${status.key}`}>
-                      {status.value}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-
+                  <Select
+                    className="max-w-xs"
+                    defaultSelectedKeys={`${selectedRoleType?.key ?? roleTypeOptions[4].key}`}
+                    // isDisabled={!isEdit ? true : false}
+                    label="Select Role Type"
+                    selectedKeys={`${selectedRoleType?.key}`}
+                    // selectedKeys={[selectedRoleType]}
+                    // onChange={(e) => {
+                    //   changeRoleType(e);
+                    // }}
+                    onChange={changeRoleType}
+                  >
+                    {roleTypeOptions.map((status) => (
+                      <SelectItem key={`${status.key}`}>
+                        {status.value}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
               </div>
               <div className="w-full space-y-3">
                 <label htmlFor="mobile">Mobile</label>
                 <Input
-                  type="text"
-                  isDisabled={!isEdit}
                   defaultValue={`${profile?.mobile ?? ""}`}
+                  isDisabled={!isEdit}
+                  type="text"
                   {...register("mobile")}
                   placeholder={`${profile?.mobile ?? "Enter Mobile"}`}
                 />
               </div>
             </div>
-
 
             {/* CTO */}
             <div className={`py-2`}>

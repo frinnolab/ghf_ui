@@ -38,7 +38,6 @@ export default function DashProfilesListPage() {
   const [isLoading, setIsloading] = useState<boolean>(false);
   const nav = useNavigate();
 
-
   const handleSelectedRow = (p: Profile) => {
     nav(`/dashboard/profiles/${p?.profileId}`, {
       state: p?.profileId,
@@ -59,11 +58,11 @@ export default function DashProfilesListPage() {
     }
   };
 
-  const handleAddProfile = ()=>{
+  const handleAddProfile = () => {
     nav(`/dashboard/profiles/create`, {
-      state: null
+      state: null,
     });
-  }
+  };
 
   const roleName = (role: number) => {
     switch (role) {
@@ -73,6 +72,10 @@ export default function DashProfilesListPage() {
         return "Super Admin";
       case AuthRole.Alumni:
         return "Alumni";
+      case AuthRole.Employee:
+        return "Employee";
+      case AuthRole.Volunteer:
+        return "Volunteer";
       default:
         return "User";
     }
@@ -113,42 +116,48 @@ export default function DashProfilesListPage() {
         }, 2000);
       });
   }, [api]);
-
+  
 
   const handleDelete = (i: Profile) => {
+    setIsloading(true);
 
-    if(i?.profileId === authed?.profileId){
+    //Current User
+    if (i?.profileId === authed?.profileId) {
       alert(`Can't delete current user!.`);
-    }else{
+      setIsloading(false);
+    }
 
-      if(Number(authed?.role) === Number(AuthRole?.SuperAdmin)){
+    //Super admin
+    if (Number(i?.role) === Number(AuthRole?.SuperAdmin)) {
+      alert(`Can't delete Super Admin user.`);
+      setIsloading(false);
+    }
 
-        if( Number(i?.role)  === Number(AuthRole?.SuperAdmin) ){
-          alert(`Can't delete current user!.`);
-        }else{
-          axios
-            .delete(`${api}/profiles/${i?.profileId}`, {
-              headers:{
-                "Authorization":`Bearer ${authed?.token}`
-              },
-              method: "DELETE",
-            })
-            .then((res: AxiosResponse) => {
-              if (res) {
-                window.location.reload();
-              }
-            })
-            .catch((err: AxiosError) => {
-              console.log(err);
-            });
-        }
-      }else{
-        alert(`No Permission to delete.`);
-      }
-      
+    //Super admin delete all
+    if (
+      Number(i?.role) !== Number(AuthRole?.SuperAdmin) &&
+      Number(authed?.role) === Number(AuthRole?.SuperAdmin)
+    ) {
+      alert(`Deleting user: ${i?.email}.`);
+
+      axios
+        .delete(`${api}/profiles/${i?.profileId}`, {
+          headers: {
+            Authorization: `Bearer ${authed?.token}`,
+          },
+          method: "DELETE",
+        })
+        .then((res: AxiosResponse) => {
+          if (res) {
+            window.location.reload();
+          }
+        })
+        .catch((err: AxiosError) => {
+          console.error(err);
+        });
+      setIsloading(false);
     }
   };
-  
 
   return (
     <DashboardLayout>
@@ -157,7 +166,7 @@ export default function DashProfilesListPage() {
         <div className="w-full flex justify-between ">
           <h1 className=" text-2xl ">Manage Profiles</h1>
 
-          <Button variant="solid" color="primary" onPress={handleAddProfile}>
+          <Button color="primary" variant="solid" onPress={handleAddProfile}>
             Add{" "}
             <span>
               <GoPlus size={20} />
@@ -169,10 +178,10 @@ export default function DashProfilesListPage() {
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading..."
+              size="lg"
             />
           </>
         ) : (

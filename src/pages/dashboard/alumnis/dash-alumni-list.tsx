@@ -35,8 +35,8 @@ export default function DashAlumniList() {
   const handleSelectedRow = (p: Alumni) => {
     nav(`/dashboard/alumni/${p?.alumniId}`, {
       state:{
-        'alumniId':`${p?.alumniId}`,
-        'alumniProfileId':`${p?.profileId}`
+        alumniId: `${p?.alumniId}`,
+        alumniProfileId: `${p?.profileId}`,
       },
     });
   };
@@ -108,7 +108,7 @@ export default function DashAlumniList() {
               isPublished: Boolean(Number(res?.data["isPublished"])),
             };
 
-            console.log(Number(res?.data["isPublished"]));
+            console.log(Number(res?.data[0]["isPublished"]));
             
 
             const isAlumniPub =

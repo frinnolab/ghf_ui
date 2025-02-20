@@ -76,7 +76,7 @@ export default function DashAlumniView() {
     data.append("participationSchool", `${pSchoolRef?.current?.value}`);
     data.append("participationYear", `${pYearRef?.current?.value}`);
     data.append("currenctOccupation", `${occupationRef?.current?.value}`);
-    data.append("story", `${pStoryRef?.current?.value}`);
+    data.append("story", `${quillValue}`);
 
     setIsEdit(false);
 
@@ -178,6 +178,10 @@ export default function DashAlumniView() {
       axios
         .get(`${api}/alumnis/${alumniId}/${alumniProfileId}`)
         .then((res: AxiosResponse) => {
+
+          console.log(res?.data);
+          
+
           const profData: Profile = {
             profileId: res.data?.alumniProfile?.profileId,
             firstname: res.data?.alumniProfile?.firstname,
@@ -186,13 +190,14 @@ export default function DashAlumniView() {
             role: Number(res.data.alumniProfile?.roleType) ?? AuthRole.Alumni,
             avatarUrl: `${res.data?.alumniProfile?.avatarUrl ?? ""}`,
             position: res.data?.alumniProfile?.position,
+            mobile: res?.data?.alumniProfile?.mobile
           };
 
           const data: Alumni = {
             age: Number(res?.data?.age ?? 0),
-            alumniId: `${res?.data?.alumniId}`,
-            profileId: `${res?.data?.profileId}`,
-            participationSchool: `${res?.data?.participationSchool}`,
+            alumniId: res?.data?.alumniId,
+            profileId: res?.data?.profileId,
+            participationSchool: res?.data?.participationSchool,
             participationYear: `${res?.data?.participationYear}`,
             currenctOccupation: res?.data?.currenctOccupation,
             story: res?.data?.story,
@@ -206,7 +211,7 @@ export default function DashAlumniView() {
           setAlumni(data);
           setAlumniProfile(profData);
           setIsPublished(isAlumniPublished);
-          setQuillValue(res?.data["story"]);
+          setQuillValue(res?.data["story"] ?? '');
         })
         .catch((err: AxiosError) => {
           console.log(err);
@@ -486,7 +491,7 @@ export default function DashAlumniView() {
                       overflowX: "hidden",
                     }}
                     theme="snow"
-                    value={quillValue.substring(0, 110)}
+                    value={quillValue}
                     onChange={(e) => {
                       if (e.length === 105) {
                         alert(`Maximum character length reached.`);

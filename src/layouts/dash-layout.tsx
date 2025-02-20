@@ -28,6 +28,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     logOut();
   }, [authedProfile]);
+
   return (
     <AuthContext.Provider value={authedProfile}>
       <div className="w-full flex flex-col justify-between cursor-default overflow-hidden relative">
@@ -35,6 +36,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <Link className="flex items-center gap-1" to={"/"}>
             Back Home <GoHome size={20} />
           </Link>
+
+          <h1>Welcome back {authedProfile?.email}</h1>
 
           <Button
             color="danger"
@@ -67,7 +70,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             color="primary"
           >
             {config.dashNavMenuItems.map((t) => (
-              <Tab title={t.label} key={t.href} href={t.href}></Tab>
+              <Tab title={t.label} key={t.href} href={t.href} />
             ))}
           </Tabs>
           <main className="rounded-2xl bg-default-50 shadow">{children}</main>

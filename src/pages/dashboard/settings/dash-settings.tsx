@@ -34,7 +34,7 @@ export type StatsInfo = {
 export default function DashSettingsPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);  
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<CompanyInfo>();
 
@@ -60,6 +60,7 @@ export default function DashSettingsPage() {
   };
 
   const onUpdateInfo = (data: any) => {
+    setIsloading(true);
     axios
       .put(`${api}/settings/companyinfo/${data?.id}`, data, {
         headers: {
@@ -249,7 +250,7 @@ export default function DashSettingsPage() {
             </form>
 
             <div className="w-full flex flex-col p-5">
-              <CompanyAssetsUi company={companyInfo} isLoading = {isLoading} />
+              <CompanyAssetsUi company={companyInfo} isLoading={isLoading} />
             </div>
           </div>
         )}
@@ -268,6 +269,8 @@ function CompanyAssetsUi({
   const thumbRef = useRef<HTMLInputElement | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [isAssetLoading, setIsAssetloading] = useState<boolean>(isLoading);
+
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
 
@@ -297,7 +300,9 @@ function CompanyAssetsUi({
     if (company === null) {
       alert("Add Company info to upload asset(s)");
     } else {
+      setIsAssetloading(true);
       const data = new FormData();
+
       data.append("_method", "PUT");
 
       if (selectedImage) {
@@ -315,24 +320,23 @@ function CompanyAssetsUi({
             "Content-Type": "multipart/form-data",
           },
         })
-        .then((res: AxiosResponse) => {
-          if (res) {
-            console.log(res?.data);
-
-            window.location.reload();
-          }
+        .then(() => {
+          window.location.reload();
         })
         .catch((err: AxiosError) => {
           if (err) {
             console.log(err.response);
 
-            window.location.reload();
+            //window.location.reload();
           }
         });
     }
   };
+
   return (
-    <div className={`w-full ${isLoading ? 'disabled' : 'flex flex-col items-center'}  rounded-xl  h-[40dvh] gap-5`}>
+    <div
+      className={`w-full ${isLoading ? "disabled" : "flex flex-col items-center"}  rounded-xl  h-[40dvh] gap-5`}
+    >
       <div className={`w-full flex items-center justify-between`}>
         <h1>Manage Assets</h1>
 
@@ -349,104 +353,117 @@ function CompanyAssetsUi({
 
       {/* Assets */}
       <div className={`w-full flex justify-between gap-5`}>
-        {/* Image Asset */}
-        <div className={`w-full border rounded-xl p-2`}>
-          <h1>Main Logo</h1>
-
-          {selectedImage ? (
-            <div className={`w-full flex items-center justify-center`}>
-              <Image
-                className={`h-[25vh] object-cover self-center`}
-                isZoomed
-                src={URL.createObjectURL(selectedImage)}
-              />
-            </div>
-          ) : (
-            <div className={`w-full flex items-center justify-center`}>
-              <Image
-                className={`h-[25vh] object-cover self-center`}
-                src={
-                  company?.logoUrl === null
-                    ? siteConfig.staticAssets.staticLogo
-                    : company?.logoUrl
-                }
-              />
-            </div>
-          )}
-
-          <div className="p-3 flex items-center">
-            <input
-              accept="image/*"
-              ref={thumbRef}
-              type="file"
-              onChange={(e) => {
-                onChangePic(e);
-              }}
+        {isAssetLoading ? (
+          <div className="w-full flex justify-center items-center">
+            <Spinner
+              size="lg"
+              className=" flex justify-center "
+              label="Uploading..."
+              color="primary"
             />
-
-            <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-              <GoTrash
-                size={20}
-                className=" text-danger-500"
-                onClick={removeSelectedImage}
-              />
-            </span>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Image Asset */}
+            <div className={`w-full border rounded-xl p-2`}>
+              <h1>Main Logo</h1>
 
-        {/* Image Asset End*/}
+              {selectedImage ? (
+                <div className={`w-full flex items-center justify-center`}>
+                  <Image
+                    className={`h-[25vh] object-cover self-center`}
+                    isZoomed
+                    src={URL.createObjectURL(selectedImage)}
+                  />
+                </div>
+              ) : (
+                <div className={`w-full flex items-center justify-center`}>
+                  <Image
+                    className={`h-[25vh] object-cover self-center`}
+                    src={
+                      company?.logoUrl === null
+                        ? siteConfig.staticAssets.staticLogo
+                        : company?.logoUrl
+                    }
+                  />
+                </div>
+              )}
 
-        {/* Video Asset */}
-        <div className={`w-full border rounded-xl p-2`}>
-          <h1>Main Video</h1>
+              <div className="p-3 flex items-center">
+                <input
+                  accept="image/*"
+                  ref={thumbRef}
+                  type="file"
+                  onChange={(e) => {
+                    onChangePic(e);
+                  }}
+                />
 
-          {selectedVideo ? (
-            <>
-              <video
-                className={`h-[25vh] object-cover`}
-                autoPlay={false}
-                muted
-                controls
-                src={URL.createObjectURL(selectedVideo)}
-              />
-            </>
-          ) : (
-            <>
-              <video
-                autoPlay={false}
-                muted
-                controls
-                className={`h-[25vh] object-cover`}
-                src={
-                  company?.introVideoUrl === null
-                    ? siteConfig.staticAssets.staticIntroVideo
-                    : company?.introVideoUrl
-                }
-              />
-            </>
-          )}
+                <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                  <GoTrash
+                    size={20}
+                    className=" text-danger-500"
+                    onClick={removeSelectedImage}
+                  />
+                </span>
+              </div>
+            </div>
 
-          <div className="p-3 flex items-center">
-            <input
-              accept="video/*"
-              ref={thumbRef}
-              type="file"
-              onChange={(e) => {
-                onChangeVideo(e);
-              }}
-            />
+            {/* Image Asset End*/}
 
-            <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-              <GoTrash
-                size={20}
-                className=" text-danger-500"
-                onClick={removeSelectedVideo}
-              />
-            </span>
-          </div>
-        </div>
+            {/* Video Asset */}
+            <div className={`w-full border rounded-xl p-2`}>
+              <h1>Main Video</h1>
 
-        {/* Video Asset End*/}
+              {selectedVideo ? (
+                <>
+                  <video
+                    className={`h-[25vh] object-cover`}
+                    autoPlay={false}
+                    muted
+                    controls
+                    src={URL.createObjectURL(selectedVideo)}
+                  />
+                </>
+              ) : (
+                <>
+                  <video
+                    autoPlay={false}
+                    muted
+                    controls
+                    className={`h-[25vh] object-cover`}
+                    src={
+                      company?.introVideoUrl === null
+                        ? siteConfig.staticAssets.staticIntroVideo
+                        : company?.introVideoUrl
+                    }
+                  />
+                </>
+              )}
+
+              <div className="p-3 flex items-center">
+                <input
+                  accept="video/*"
+                  ref={thumbRef}
+                  type="file"
+                  onChange={(e) => {
+                    onChangeVideo(e);
+                  }}
+                />
+
+                <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+                  <GoTrash
+                    size={20}
+                    className=" text-danger-500"
+                    onClick={removeSelectedVideo}
+                  />
+                </span>
+              </div>
+            </div>
+
+            {/* Video Asset End*/}
+          </>
+        )}
       </div>
     </div>
   );
