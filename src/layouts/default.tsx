@@ -26,12 +26,12 @@ export default function DefaultLayout({
     <div className="w-full relative flex flex-col h-screen">
       <Navbar />
       {/* <main className="container mx-auto max-w-7xl px-0 flex-grow pt-16"> */}
-      <main className="w-full px-0 flex-grow pt-16 bg-default-50">
+      <main className="w-full px-0 flex-grow pt-16 bg-default-200">
         {children}
       </main>
       {/* FOOTER */}
 
-      <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20 border-t-2">
+      <footer className="w-full flex flex-col gap-5  items-center justify-between p-5 xl:p-10 md:p-20 border-t-2 bg-default-50 z-10">
         <div className="w-full flex flex-col-reverse md:flex-row gap-5 justify-between items-center ">
           <Link
             className="w-full flex justify-start items-center gap-1"

@@ -1,6 +1,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable prettier/prettier */
-import { Button, Spinner, Image } from "@nextui-org/react";
+import {
+  Button,
+  Spinner,
+  Image,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalContent,
+  useDisclosure,
+  ModalFooter,
+} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +26,7 @@ export default function CareersPage() {
 
   const [careers, setCareers] = useState<Career[] | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const careerTypeText = (cType: CareerType) => {
     switch (cType) {
@@ -87,7 +98,7 @@ export default function CareersPage() {
           </div>
         </div>
         {/* Main Actions */}
-        <div className="w-full z-20 p-10 bg-default-50 space-y-5">
+        <div className="w-full bg-default-200 z-10 p-10 space-y-5">
           <div className="w-full flex flex-col gap-5 space-y-5">
             <h1 className={title()}>Join us</h1>
             <p className={` text-2xl text-balance`}>
@@ -98,6 +109,8 @@ export default function CareersPage() {
               students. Write to us, with the intention of becoming a volunteer.
             </p>
           </div>
+
+          {/* Career Content */}
           {isLoading ? (
             <>
               <Spinner
@@ -112,7 +125,7 @@ export default function CareersPage() {
               {careers?.length === 0 ? (
                 <>
                   <div className="w-full flex justify-center">
-                    <p>No Careers open at the momment</p>
+                    {/* <p>No Careers open at the momment</p> */}
                   </div>
                 </>
               ) : (
@@ -121,7 +134,7 @@ export default function CareersPage() {
                     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                     <div
                       key={`${ca?.careerId}`}
-                      className="w-full p-5 border rounded-lg space-y-3 hover:border-transparent"
+                      className="w-full p-5 bg-default-100 rounded-lg space-y-3 hover:border-transparent"
                       onClick={() => {
                         nav(`/careers/${ca?.careerId}`, {
                           state: `${ca?.careerId}`,
@@ -158,6 +171,43 @@ export default function CareersPage() {
               )}
             </div>
           )}
+          {/* Career Content End*/}
+
+          {/* Career Constant form */}
+
+          <div className="w-full flex justify-center">
+            <Button color="primary" variant="solid" onPress={onOpen}>
+              {" "}
+              Apply as Volunteer
+            </Button>
+
+            {/* Career Form */}
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+              <ModalContent>
+                {(onClose) => (
+                  <>
+                    <ModalHeader>
+                      <h1>Apply as a Volunteer</h1>
+                    </ModalHeader>
+                    <ModalBody>
+                      <form>
+
+                      </form>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" variant="light" onPress={onClose}>Close</Button>
+                      <Button color="primary" variant="solid" onPress={()=>{
+                        onClose();
+                      }}>Submit</Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+            {/* Career Form End */}
+          </div>
+
+          {/* Career Constant form End */}
         </div>
       </section>
     </DefaultLayout>

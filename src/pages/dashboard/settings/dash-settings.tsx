@@ -62,7 +62,7 @@ export default function DashSettingsPage() {
   const onUpdateInfo = (data: any) => {
     setIsloading(true);
     axios
-      .put(`${api}/settings/companyinfo/${data?.id}`, data, {
+      .put(`${api}/settings/companyinfo/${companyInfo?.id}`, data, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${authed?.token}`,

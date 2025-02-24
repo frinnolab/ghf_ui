@@ -19,7 +19,7 @@ export default function DocsPage() {
       axios
         .get(`${api}/teams/members/team`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
+          // console.log(res?.data);
 
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
@@ -51,17 +51,17 @@ export default function DocsPage() {
         <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
           <motion.div className={`w-full absolute top-[-20%] saturate-[100%]`}>
             <Image
-              className=" object-fill"
               alt="About Bg"
+              className=" object-fill"
               radius="none"
+              src="assets/images/static/ABOUT_US_FINAL.jpg"
               width={5000}
-              src="assets/images/static/ABOUT_US_3.JPG"
             />
           </motion.div>
 
           <div className="inline-block max-w-lg text-center justify-center p-3 z-10">
             <motion.h1
-              className={`text-3xl md:text-5xl font-semibold`}
+              className={`text-3xl md:text-5xl text-orange-500 font-semibold`}
               initial={{
                 opacity: 0,
               }}
@@ -76,11 +76,27 @@ export default function DocsPage() {
             >
               About Us
             </motion.h1>
+
+            <motion.span
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+                transition: {
+                  ease: "linear",
+                  delay: 0.8,
+                  duration: 1,
+                },
+              }}
+            >
+              <Divider className="p-1 bg-orange-500 -rotate-3" />
+            </motion.span>
           </div>
 
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/50"
+            className="rounded-2xl z-10 bg-default-50/70"
             initial={{
               opacity: 0,
             }}

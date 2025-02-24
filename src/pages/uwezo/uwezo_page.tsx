@@ -1,16 +1,20 @@
-import DefaultLayout from "@/layouts/default";
 import { useEffect, useState } from "react";
-import { Project } from "../dashboard/projects/dash-projects";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Button, Image } from "@nextui-org/react";
+import { Button, Image, Spinner } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { GoArrowUpRight } from "react-icons/go";
+
+import { Project } from "../dashboard/projects/dash-projects";
+
+import DefaultLayout from "@/layouts/default";
 import { siteConfig } from "@/config/site";
 // import * as motion from "motion/react-client";
 
 export default function UwezoPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const [projects, setProjects] = useState<Project[] | null>(null);
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const toDetail = (p: Project) => {
@@ -22,6 +26,7 @@ export default function UwezoPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (projects === null) {
+      setIsloading(true);
       axios
         .get(`${api}/projects`, {
           headers: {
@@ -30,6 +35,8 @@ export default function UwezoPage() {
           },
         })
         .then((res: AxiosResponse) => {
+          // setIsloading(false);
+
           const dataList: Project[] = Array.from(res.data).flatMap((p: any) => {
             const data: Project = {
               projectId: `${p?.projectId}`,
@@ -48,6 +55,10 @@ export default function UwezoPage() {
           });
 
           setProjects(dataList);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 1000);
         })
         .catch((err: AxiosError) => {
           console.error(err.response);
@@ -58,7 +69,6 @@ export default function UwezoPage() {
   return (
     <DefaultLayout>
       <section className="w-full flex flex-col items-center justify-center py-2 md:py-3">
-
         <div className="sm:h-[50dvh] w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
@@ -81,56 +91,69 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col p-5 md:px-20  gap-5 relative bg-default-50">
-          <h1 className="text-2xl md:text-3xl  font-semibold">OUR PROJECTS</h1>
+        <div className="w-full flex flex-col p-5 md:p-20  gap-5 bg-default-200 z-10">
+          <h1 className="text-2xl md:text-3xl  font-semibold">
+            UWEZO PROJECTS
+          </h1>
 
-          <div className="w-full flex flex-col justify-center gap-5">
-            {projects?.length === 0 ? (
-              <>
-                <h1 className=" text-2xl ">No Projects at the momment</h1>
-              </>
-            ) : (
-              <div className="w-full flex flex-col justify-center gap-10 md:gap-14">
-                {projects?.flatMap((p: Project, i) => (
-                  <div
-                    key={i}
-                    className="md:w-full  rounded-3xl flex flex-col shadow-md bg-default-200"
-                  >
-                    <Image
-                      className={`w-[500px] md:w-screen md:h-[60dvh] object-cover`}
-                      src={
-                        p?.thumbnailUrl !== "" || null
-                          ? p?.thumbnailUrl
-                          : siteConfig?.staticAssets?.staticLogo
-                      }
-                    />
+          {isLoading ? (
+            <>
+              <Spinner
+                className=" flex justify-center "
+                color="primary"
+                label="Loading..."
+                size="lg"
+              />
+            </>
+          ) : (
+            <div className="w-full flex flex-col justify-center gap-5">
+              {projects?.length === 0 ? (
+                <>
+                  {/* <h1 className=" text-2xl ">No Projects at the momment</h1> */}
+                </>
+              ) : (
+                <div className="w-full flex flex-col justify-center gap-10 md:gap-14">
+                  {projects?.flatMap((p: Project, i) => (
+                    <div
+                      key={i}
+                      className="md:w-full  rounded-3xl flex flex-col bg-default-100"
+                    >
+                      <Image
+                        className={`w-[500px] md:w-screen md:h-[60dvh] object-cover`}
+                        src={
+                          p?.thumbnailUrl !== "" || null
+                            ? p?.thumbnailUrl
+                            : siteConfig?.staticAssets?.staticLogo
+                        }
+                      />
 
-                    {/* Content */}
-                    <div className="p-5 w-full flex flex-col gap-5">
-                      <h1 className=" text-2xl font-semibold ">
-                        {p?.title?.toLocaleUpperCase()}
-                      </h1>
-                      {/* <p className="text-xl">{p?.description}</p> */}
-                      <div className={` `}>
-                        <Button
-                          variant="light"
-                          color="primary"
-                          className="flex items-center border border-primary-400 hover:border-transparent"
-                          onClick={() => {
-                            toDetail(p);
-                          }}
-                        >
-                          View <GoArrowUpRight size={20} />
-                        </Button>
+                      {/* Content */}
+                      <div className="p-5 w-full flex flex-col gap-5">
+                        <h1 className=" text-2xl font-semibold ">
+                          {p?.title?.toLocaleUpperCase()}
+                        </h1>
+                        {/* <p className="text-xl">{p?.description}</p> */}
+                        <div className={` `}>
+                          <Button
+                            className="flex items-center border border-primary-400 hover:border-transparent"
+                            color="primary"
+                            variant="light"
+                            onClick={() => {
+                              toDetail(p);
+                            }}
+                          >
+                            View <GoArrowUpRight size={20} />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
-                <div>{/* Pagination */}</div>
-              </div>
-            )}
-          </div>
+                  <div>{/* Pagination */}</div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </DefaultLayout>

@@ -39,7 +39,7 @@ export default function DashAlumniView() {
   const occupationRef = useRef<HTMLInputElement>(null);
   const pSchoolRef = useRef<HTMLInputElement>(null);
   const pYearRef = useRef<HTMLInputElement>(null);
-  const pStoryRef = useRef<HTMLTextAreaElement>(null);
+  // const pStoryRef = useRef<HTMLTextAreaElement>(null);
   // Alumni Info Refs End
   const authed = useAuthedProfile();
 

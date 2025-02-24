@@ -71,11 +71,11 @@ export default function BlogPage() {
 
           <div className="w-full absolute top-[-20%] filter saturate-[90%]">
             <Image
-              className=" object-fill "
               alt="Blogs Bg"
+              className=" object-fill "
               radius="none"
-              width={3000}
               src="assets/images/static/Blogs_BG.jpg"
+              width={3000}
             />
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function BlogPage() {
           <h1 className={title()}>Blogs</h1>
         </div>
 
-        <div className="w-full flex flex-col p-20 gap-5 z-10 bg-default-50 ">
+        <div className="w-full flex flex-col p-20 gap-5 z-10 bg-default-200">
           <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}
@@ -104,7 +104,7 @@ export default function BlogPage() {
                 {blogs?.length === 0 ? (
                   <>
                     <h1 className=" text-2xl text-center ">
-                      No Blogs at the momment!. Please check back soon
+                      {/* No Blogs at the momment!. Please check back soon */}
                     </h1>
                   </>
                 ) : (
@@ -112,7 +112,7 @@ export default function BlogPage() {
                     {blogs?.flatMap((b: Blog) => (
                       <div
                         key={b?.blogId}
-                        className="md:w-[30%] flex flex-col justify-between shadow bg-default-100 rounded-2xl "
+                        className="md:w-[30%] flex flex-col justify-between bg-default-100 rounded-2xl "
                       >
                         <div className="w-full">
                           <Image
@@ -125,16 +125,18 @@ export default function BlogPage() {
                           />
                         </div>
                         <div className="p-5">
-                          <h1 className="text-2xl font-semibold">{b?.title}</h1>
+                          <h1 className="text-2xl truncate font-semibold">
+                            {b?.title}
+                          </h1>
 
                           {/* <p>{b?.description}</p> */}
                         </div>
 
                         <div className="p-1">
                           <Button
-                            variant="light"
-                            color="primary"
                             className="flex items-center border border-primary-400 hover:border-transparent"
+                            color="primary"
+                            variant="light"
                             onClick={() => {
                               toDetail(b);
                             }}

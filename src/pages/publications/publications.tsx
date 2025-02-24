@@ -91,7 +91,7 @@ export default function Publications() {
             {pubs === null || pubs?.length === 0 ? (
               <>
                 <h1 className=" text-2xl text-center ">
-                  No Publications at the momment!. Please check back soon
+                  {/* No Publications at the momment!. Please check back soon */}
                 </h1>
               </>
             ) : (
@@ -111,7 +111,7 @@ export default function Publications() {
                         (p) => p?.publishType === PublishTypeEnum.Newsletter
                       ).length === 0 ? (
                         <>
-                          <h1>No Newsletters at the momment.</h1>
+                          {/* <h1>No Newsletters at the momment.</h1> */}
                         </>
                       ) : (
                         <CardBody className="w-full flex flex-col md:flex-row md:flex-wrap  items-center gap-5 p-5 bg-transparent">
@@ -138,7 +138,7 @@ export default function Publications() {
                                     </p>
                                   </div>
 
-                                  <div></div>
+                                  <div />
                                 </div>
 
                                 <div className="w-full p-1  justify-between">

@@ -418,7 +418,7 @@ export default function HomePage() {
     <DefaultLayout>
       <motion.div
         ref={mainSectionRef}
-        className="w-full flex flex-col items-center justify-center bg-default-50"
+        className="w-full flex flex-col items-center justify-center"
         transition={{
           duration: 0.8,
           delay: 0.5,
@@ -553,7 +553,7 @@ export default function HomePage() {
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
           <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
             {/* Regions */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
               <FaMapMarkedAlt className="text-green-500" size={30} />
               {/* <h1 className=" text-6xl" ref={sumRegRef}>
                 {summaryInfo?.regions?.value ?? 0}
@@ -569,7 +569,7 @@ export default function HomePage() {
             </div>
 
             {/* Districts */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
               <FaMapPin className="text-red-500" size={30} />
               {/* <h1 className=" text-6xl ">
                 {summaryInfo?.districts?.value ?? 0}
@@ -586,7 +586,7 @@ export default function HomePage() {
 
           <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
             {/* Schools */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
               <FaUniversity className="text-blue-500" size={30} />
               {/* <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1> */}
               <CountUp
@@ -599,7 +599,7 @@ export default function HomePage() {
             </div>
 
             {/* Studentes */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent">
+            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
               <FaPeopleGroup className="text-orange-500" size={30} />
               {/* <h1 className=" text-6xl ">
                 {summaryInfo?.students?.value ?? 0}
