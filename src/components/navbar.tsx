@@ -58,6 +58,7 @@ export const Navbar = () => {
             avatarUrl: res.data?.avatarUrl ?? "",
             position: res.data?.position ?? "",
           };
+
           setCurrentProfile(data);
         });
     }

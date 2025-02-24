@@ -41,7 +41,7 @@ export default function DefaultLayout({
             {/* <Logo /> */}
 
             <Image
-              isZoomed
+              // isZoomed
               alt="logo of ghf"
               src={config?.staticAssets?.staticLogoLine}
               width={500}
