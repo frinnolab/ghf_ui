@@ -1,13 +1,13 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alumni } from "./dash-alumni-list";
 import { Button } from "@nextui-org/button";
 import {
   GoArrowLeft,
   GoEye,
+  GoInfo,
   GoLock,
   GoPencil,
-  GoTrash,
   GoUnlock,
 } from "react-icons/go";
 import { Avatar, Divider, Input } from "@nextui-org/react";
@@ -15,11 +15,11 @@ import { Switch } from "@nextui-org/switch";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
+
 import { Profile } from "../profiles/dash-profiles-list";
+
 import { AuthRole } from "@/types";
-
 import { siteConfig } from "@/config/site";
-
 import useAuthedProfile from "@/hooks/use-auth";
 import "react-quill/dist/quill.snow.css";
 
@@ -28,10 +28,10 @@ export default function DashAlumniView() {
   const nav = useNavigate();
   const route = useLocation();
   const [alumni, setAlumni] = useState<Alumni | null>(null);
-  const [alumniProfile, setAlumniProfile] = useState<Profile | null>(null);
+  const [, setAlumniProfile] = useState<Profile | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isPublished, setIsPublished] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage] = useState<File | null>(null);
   const [quillValue, setQuillValue] = useState<string>("");
 
   // Alumni Info Refs
@@ -114,6 +114,12 @@ export default function DashAlumniView() {
       data.append("avatar", selectedImage);
     }
 
+    // console.log(d);
+
+    // console.log(selectedImage);
+
+    // console.log(alumniProfileId);
+
     axios
       .post(`${api}/profiles/${alumniProfileId}`, data, {
         headers: {
@@ -130,20 +136,20 @@ export default function DashAlumniView() {
         }
       })
       .catch((err: AxiosError) => {
-        console.log(err?.response);
+        console.error(err?.response);
       });
   };
 
-  const removeSelectedImage = () => {
-    setSelectedImage(null);
-    window.location.reload();
-  };
+  // const removeSelectedImage = () => {
+  //   setSelectedImage(null);
+  //   window.location.reload();
+  // };
 
-  const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedImage(e.target.files[0]);
-    }
-  };
+  // const onChangePic = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSelectedImage(e.target.files[0]);
+  //   }
+  // };
 
   const handleAlumniPublish = (isAlumniPublished: boolean) => {
     const data: Alumni = {
@@ -178,9 +184,7 @@ export default function DashAlumniView() {
       axios
         .get(`${api}/alumnis/${alumniId}/${alumniProfileId}`)
         .then((res: AxiosResponse) => {
-
-          console.log(res?.data);
-          
+          //console.log(res?.data);
 
           const profData: Profile = {
             profileId: res.data?.alumniProfile?.profileId,
@@ -190,7 +194,7 @@ export default function DashAlumniView() {
             role: Number(res.data.alumniProfile?.roleType) ?? AuthRole.Alumni,
             avatarUrl: `${res.data?.alumniProfile?.avatarUrl ?? ""}`,
             position: res.data?.alumniProfile?.position,
-            mobile: res?.data?.alumniProfile?.mobile
+            mobile: res?.data?.alumniProfile?.mobile,
           };
 
           const data: Alumni = {
@@ -211,7 +215,7 @@ export default function DashAlumniView() {
           setAlumni(data);
           setAlumniProfile(profData);
           setIsPublished(isAlumniPublished);
-          setQuillValue(res?.data["story"] ?? '');
+          setQuillValue(res?.data["story"] ?? "");
         })
         .catch((err: AxiosError) => {
           console.log(err);
@@ -237,6 +241,11 @@ export default function DashAlumniView() {
             <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
             <Switch
+              defaultSelected={isEdit}
+              endContent={<GoEye />}
+              size="lg"
+              startContent={<GoPencil />}
+              title={`${isEdit ? "Edit mode" : "View mode"}`}
               onClick={() => {
                 if (!isEdit) {
                   setIsEdit(true);
@@ -244,11 +253,6 @@ export default function DashAlumniView() {
                   setIsEdit(false);
                 }
               }}
-              defaultSelected={isEdit}
-              size="lg"
-              startContent={<GoPencil />}
-              endContent={<GoEye />}
-              title={`${isEdit ? "Edit mode" : "View mode"}`}
             />
           </div>
         </div>
@@ -289,9 +293,9 @@ export default function DashAlumniView() {
                 {" "}
                 <Avatar
                   isBordered
-                  size="lg"
-                  radius="full"
                   className=" w-[20%] h-[35%] "
+                  radius="full"
+                  size="lg"
                   src={`${
                     alumni?.alumniProfile?.avatarUrl === "" || null
                       ? siteConfig?.staticAssets?.staticLogo
@@ -306,9 +310,9 @@ export default function DashAlumniView() {
                       Firstname
                     </label>
                     <Input
-                      disabled={!isEdit ? true : false}
-                      type="text"
+                      isDisabled
                       defaultValue={alumni?.alumniProfile?.firstname ?? ""}
+                      type="text"
                       {...register("alumniProfile.firstname")}
                       placeholder={`${alumni?.alumniProfile?.firstname ?? "Enter Firstname"}`}
                     />
@@ -320,9 +324,9 @@ export default function DashAlumniView() {
                       Lastname
                     </label>
                     <Input
-                      disabled={!isEdit ? true : false}
-                      type="text"
+                      isDisabled
                       defaultValue={`${alumni?.alumniProfile?.lastname ?? ""}`}
+                      type="text"
                       {...register("alumniProfile.lastname")}
                       placeholder={`${alumni?.alumniProfile?.lastname ?? "Enter Lastname"}`}
                     />
@@ -337,9 +341,9 @@ export default function DashAlumniView() {
                       Email
                     </label>
                     <Input
-                      disabled={!isEdit ? true : false}
-                      type="email"
+                      isDisabled
                       defaultValue={`${alumni?.alumniProfile?.email ?? ""}`}
+                      type="email"
                       {...register("alumniProfile.email")}
                       placeholder={`${alumni?.alumniProfile?.email ?? "Enter Email"}`}
                     />
@@ -351,17 +355,28 @@ export default function DashAlumniView() {
                       Mobile
                     </label>
                     <Input
-                      disabled={!isEdit ? true : false}
-                      type="number"
-                      min={0}
+                      isDisabled
                       defaultValue={`${alumni?.alumniProfile?.mobile ?? ""}`}
+                      min={0}
+                      type="number"
                       {...register("alumniProfile.mobile")}
                       placeholder={`${alumni?.alumniProfile?.mobile ?? "Enter Mobile"}`}
                     />
                   </div>
                 </div>
+                <div className="py-3 px-1 bg-slate-100 rounded-xl">
+                  <p className="flex items-center gap-3 text-gray-400">
+                    {" "}
+                    <span>
+                      {" "}
+                      <GoInfo size={20} />{" "}
+                    </span>{" "}
+                    Navigate to Profiles Tab to update Alumni profile
+                    information
+                  </p>
+                </div>
                 {/* Contacts End*/}
-                <div className="w-full space-y-1">
+                {/* <div className="w-full space-y-1">
                   <label className="text-default-500" htmlFor="profilePic">
                     Attach profile picture (Optional)
                   </label>
@@ -370,8 +385,8 @@ export default function DashAlumniView() {
                     className={`p-3 flex items-center ${isEdit ? "" : "disabled:"} `}
                   >
                     <input
-                      disabled={!isEdit ? true : false}
                       accept="image/*"
+                      disabled={!isEdit ? true : false}
                       type="file"
                       onChange={(e) => {
                         onChangePic(e);
@@ -388,17 +403,17 @@ export default function DashAlumniView() {
                       />
                     </span>
                   </div>
-                </div>
+                </div> */}
                 {/* Actions */}
-                <div className="w-full space-y-1 items-center justify-end">
+                {/* <div className="w-full space-y-1 items-center justify-end">
                   <Button
                     className={`${alumni === null ? "bg-default" : "bg-primary"}`}
-                    type="submit"
                     disabled={!isEdit ? true : false}
+                    type="submit"
                   >
                     {`${alumniProfile === null ? "Add Alumni Profile" : "Update Alumni Profile"}`}
                   </Button>
-                </div>
+                </div> */}
               </form>
 
               {/* Profile Info End */}

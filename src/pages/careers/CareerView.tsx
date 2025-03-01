@@ -1,18 +1,20 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Career,
-  CareerApplication,
-  CareerStatus,
-  CareerType,
-} from "../dashboard/careers/dash-careers";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Divider, Input, Spinner, Textarea } from "@nextui-org/react";
 import { GoArrowLeft, GoTrash } from "react-icons/go";
 import { Button } from "@nextui-org/react";
 import axios, { AxiosError } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AuthRole } from "@/types";
 import { AxiosResponse } from "axios";
+
+import {
+  Career,
+  CareerApplication,
+  CareerStatus,
+  CareerType,
+} from "../dashboard/careers/dash-careers";
+
+import { AuthRole } from "@/types";
 
 const CareerView = () => {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -46,7 +48,7 @@ const CareerView = () => {
           value: "Accepted",
         },
       ];
-    }
+    },
   );
 
   const [selectedStatus, setSelectedStatus] = useState<{
@@ -75,7 +77,7 @@ const CareerView = () => {
   const { register, handleSubmit } = useForm<CareerApplication>();
 
   const handleCreate: SubmitHandler<CareerApplication> = (
-    data: CareerApplication
+    data: CareerApplication,
   ) => {
     setIsloading(true);
 
@@ -112,7 +114,7 @@ const CareerView = () => {
         }
       })
       .catch((e: AxiosError) => {
-        console.log(e);
+        console.error(e);
         setIsloading(false);
         //window.location.reload();
       });
@@ -160,7 +162,7 @@ const CareerView = () => {
 
   const removeSelectedCV = () => {
     setSelectedCV(null);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const onChangeCV = (e: ChangeEvent<HTMLInputElement>) => {

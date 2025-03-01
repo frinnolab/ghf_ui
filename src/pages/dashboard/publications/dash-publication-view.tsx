@@ -1,12 +1,7 @@
 import useAuthedProfile from "@/hooks/use-auth";
+
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Publication,
-  PublicationAsset,
-  PublicationStatus,
-  PublishTypeEnum,
-} from "./dash-publications";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
 import {
@@ -28,8 +23,16 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Qformats, Qmodules } from "../blog/dash-blog-create";
 import fileDownload from "js-file-download";
+
+import { Qformats, Qmodules } from "../blog/dash-blog-create";
+
+import {
+  Publication,
+  PublicationAsset,
+  PublicationStatus,
+  PublishTypeEnum,
+} from "./dash-publications";
 
 //var fileDownload = require('js-file-download');
 export default function DashPublicationsView() {
@@ -133,7 +136,6 @@ export default function DashPublicationsView() {
           method: "put",
         })
         .then(() => {
-
           setIsEdit(false);
           //nav(`/dashboard/publications`);
 
@@ -286,6 +288,10 @@ export default function DashPublicationsView() {
     }
   };
 
+  const handlePublishToSubs = () => {
+    alert(`Publishing to Subscribers.`);
+  };
+
   useEffect(() => {
     setIsloading(true);
     if (pubId) {
@@ -306,6 +312,7 @@ export default function DashPublicationsView() {
             description: `${res.data["description"]}`,
             publishType: Number(`${res.data["publishType"]}`),
             publishDate: res?.data["publishDate"],
+            isSubscription: res?.data["isSubscription"] ?? false,
           };
 
           const statusVal = pubStatus.find(
@@ -324,7 +331,7 @@ export default function DashPublicationsView() {
     } else {
       setIsloading(false);
     }
-  }, [publication]);
+  }, []);
 
   //fetch assets
   useEffect(() => {
@@ -353,7 +360,7 @@ export default function DashPublicationsView() {
           console.warn(err?.response);
         });
     }
-  }, [publication]);
+  }, []);
 
   return (
     <div className="w-full">
@@ -479,14 +486,25 @@ export default function DashPublicationsView() {
                 </div>
 
                 {/* Actions */}
-                <div className="w-full space-y-3 flex items-center justify-end">
-                  <Button
-                    color={!isEdit ? "default" : "primary"}
-                    disabled={!isEdit ? true : false}
-                    type="submit"
-                  >
-                    {pubId === null ? "Save" : "Update"}
-                  </Button>
+                <div className="w-full space-y-3 flex items-center justify-end gap-5">
+                  <div className="flex items-center gap-5">
+                    <Button
+                      className={`${publication?.publishType === PublishTypeEnum?.Newsletter ? "" : "hidden"}`}
+                      color={!isEdit ? "default" : "primary"}
+                      disabled={!isEdit ? true : false}
+                      onClick={handlePublishToSubs}
+                    >
+                      {"Publish Newsletter to Subscribers"}
+                    </Button>
+
+                    <Button
+                      color={!isEdit ? "default" : "primary"}
+                      disabled={!isEdit ? true : false}
+                      type="submit"
+                    >
+                      {pubId === null ? "Save" : "Update"}
+                    </Button>
+                  </div>
                 </div>
               </form>
 

@@ -93,7 +93,7 @@ export default function UwezoPage() {
 
         <div className="w-full flex flex-col p-5 md:p-20  gap-5 bg-default-200 z-10">
           <h1 className="text-2xl md:text-3xl  font-semibold">
-            UWEZO PROJECTS
+            UWEZO PROGRAM COMPONENTS
           </h1>
 
           {isLoading ? (

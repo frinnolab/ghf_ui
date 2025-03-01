@@ -10,6 +10,7 @@ import { Button } from "@nextui-org/button";
 import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
 import { Divider } from "@nextui-org/react";
 import fileDownload from "js-file-download";
+// import { Document, Page } from "react-pdf";
 
 export default function PublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -24,6 +25,13 @@ export default function PublicationsView() {
 
   const [publication, setPublication] = useState<Publication | null>(null);
   const [pubsAssets, setPubsAssets] = useState<PublicationAsset[] | null>(null);
+
+  // const [numPages, setNumPages] = useState<number>();
+  // const [pageNumber, setPageNumber] = useState<number>(1);
+
+  // function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+  //   setNumPages(numPages);
+  // }
 
   // const setTypeName = (pubType: PublishTypeEnum) => {
   //   switch (pubType) {
@@ -43,7 +51,7 @@ export default function PublicationsView() {
           const data: Publication = {
             publishId: `${res.data["publishId"]}`,
             title: res?.data["title"],
-            description: res?.data["description"],
+            description: res?.data["description"] ?? "",
             publishType: Number(`${res.data["publishType"] ?? 0}`),
             publishDate: res?.data["publishDate"],
           };
@@ -51,7 +59,7 @@ export default function PublicationsView() {
           setPublication(data);
         })
         .catch((err: AxiosError) => {
-          console.log(err);
+          console.error(err);
         });
     }
   }, [publication]);
@@ -92,7 +100,7 @@ export default function PublicationsView() {
       method: "GET",
       responseType: "blob", // important
     }).then((res: AxiosResponse) => {
-      console.log(res);
+      console.error(res);
 
       const contentType = res.headers["content-type"];
 
@@ -156,8 +164,8 @@ export default function PublicationsView() {
 
                   <Button>
                     <GoDownload
-                      size={20}
                       className=" text-primary-500"
+                      size={20}
                       onClick={() => {
                         downloadPubAsset2(`${d?.assetId}`, `${d?.title}`);
                       }}

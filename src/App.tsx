@@ -57,7 +57,7 @@ function App() {
       {/* <Route element={<IndexPage />} path="/" /> */}
       <Route element={<HomePage />} path="/" />
       <Route element={<UwezoPage />} path="/whatwedo" />
-      <Route element={<DonationPage />} path="/donation" />
+      <Route element={<DonationPage />} path="/donate" />
       <Route element={<UwezoDetailPage />} path="/whatwedo/:id" />
       <Route element={<CareersPage />} path="/careers" />
       <Route element={<CareerView />} path="/careers/:id" />

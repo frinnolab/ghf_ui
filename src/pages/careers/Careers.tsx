@@ -10,15 +10,26 @@ import {
   ModalContent,
   useDisclosure,
   ModalFooter,
+  Textarea,
+  Input,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-import { Career, CareerType } from "../dashboard/careers/dash-careers";
+import {
+  Career,
+  CareerApplication,
+  CareerStatus,
+  CareerType,
+} from "../dashboard/careers/dash-careers";
 
 import DefaultLayout from "@/layouts/default";
 import { title } from "@/components/primitives";
+import { AuthRole } from "@/types";
+
+// import { GoTrash } from "react-icons/go";
 
 export default function CareersPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -26,7 +37,104 @@ export default function CareersPage() {
 
   const [careers, setCareers] = useState<Career[] | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  // const [selectedCV, setSelectedCV] = useState<File | null>(null);
+  // const [career] = useState<Career | null>(null);
+  const [careerStatuses] = useState<{ key: CareerStatus; value: string }[]>(
+    () => {
+      return [
+        {
+          key: CareerStatus.Pending,
+          value: "Pending",
+        },
+        {
+          key: CareerStatus.Denied,
+          value: "Denied",
+        },
+        {
+          key: CareerStatus.Accepted,
+          value: "Accepted",
+        },
+      ];
+    }
+  );
+  const [selectedStatus] = useState<{
+    key: CareerStatus;
+    value: string;
+  }>(careerStatuses[0]);
+
+  const [careerRoles] = useState<{ key: AuthRole; value: string }[]>(() => {
+    return [
+      {
+        key: AuthRole.Employee,
+        value: "Employee",
+      },
+      {
+        key: AuthRole.Volunteer,
+        value: "Volunteer",
+      },
+    ];
+  });
+
+  const [careerRoleType] = useState<{
+    key: AuthRole;
+    value: string;
+  }>(careerRoles[1]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CareerApplication>();
+
+  const handleCreate: SubmitHandler<CareerApplication> = (
+    data: CareerApplication
+  ) => {
+    setIsloading(true);
+
+    onClose();
+
+    const cData = new FormData();
+
+    // cData.append("careerId", null);
+    cData.append("email", `${data?.email}`);
+    cData.append("firstname", `${data?.firstname}`);
+    cData.append("lastname", `${data?.lastname}`);
+    cData.append("mobile", `${data?.mobile}`);
+    cData.append("biography", ``);
+    cData.append("city", `${data?.city}`);
+    cData.append("country", `${data?.country}`);
+    cData.append("careerStatus", `${selectedStatus?.key}`);
+    cData.append("careerRoleType", `${careerRoleType?.key}`);
+
+    // console.log(`Selected Career: ${careerRoleType?.key}`);
+    // console.log(`Selected Career Status: ${selectedStatus?.key}`);
+
+    // if (selectedCV) {
+    //   cData.append("cv", selectedCV);
+    // }
+
+    axios
+      .post(`${api}/careers/applications/volunteer`, cData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          //console.log(res?.data);
+          setIsloading(false);
+          alert(`Application submitted succesfully!`);
+          window.location.reload();
+        }
+      })
+      .catch((e: AxiosError) => {
+        console.log(e);
+        setIsloading(false);
+        //window.location.reload();
+      });
+  };
 
   const careerTypeText = (cType: CareerType) => {
     switch (cType) {
@@ -64,6 +172,17 @@ export default function CareersPage() {
         }
       });
   };
+
+  // const removeSelectedCV = () => {
+  //   setSelectedCV(null);
+  //   window.location.reload();
+  // };
+
+  // const onChangeCV = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSelectedCV(e.target.files[0]);
+  //   }
+  // };
 
   useEffect(() => {
     if (careers === null) {
@@ -175,14 +294,14 @@ export default function CareersPage() {
 
           {/* Career Constant form */}
 
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center relative">
             <Button color="primary" variant="solid" onPress={onOpen}>
               {" "}
               Apply as Volunteer
             </Button>
 
             {/* Career Form */}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
               <ModalContent>
                 {(onClose) => (
                   <>
@@ -190,16 +309,203 @@ export default function CareersPage() {
                       <h1>Apply as a Volunteer</h1>
                     </ModalHeader>
                     <ModalBody>
-                      <form>
+                      <form
+                        className=" flex flex-col gap-1 p-4 space-y-1"
+                        onSubmit={handleSubmit(handleCreate)}
+                      >
+                        <div className="w-full space-y-2">
+                          <label htmlFor="email">Email</label>
+                          <Input
+                            id="email"
+                            placeholder="Enter your email"
+                            type="email"
+                            {...register("email", { required: true })}
+                            // required
+                          />
+                          {errors.email && (
+                            <span className="text-danger">
+                              Email field is required
+                            </span>
+                          )}
+                        </div>
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="w-full space-y-2">
+                            <label htmlFor="firstName">Firstname</label>
+                            <Input
+                              // required
+                              id="firstName"
+                              placeholder="Enter your first name"
+                              type="text"
+                              {...register("firstname", { required: true })}
+                            />
+                            {errors.firstname && (
+                              <span className="text-danger">
+                                Firstname field is required
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="w-full space-y-2">
+                            <label htmlFor="lastName">Lastname</label>
+                            <Input
+                              id="lastName"
+                              placeholder="Enter your last name"
+                              type="text"
+                              {...register("lastname", { required: true })}
+                            />
+                            {errors.lastname && (
+                              <span className="text-danger">
+                                Lastname field is required
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="w-full space-y-2">
+                            <label htmlFor="city">City</label>
+                            <Input
+                              // required
+                              id="firstNamcitye"
+                              placeholder="Enter your city"
+                              type="text"
+                              {...register("city", { required: true })}
+                            />
+                            {errors.city && (
+                              <span className="text-danger">
+                                City field is required
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="w-full space-y-2">
+                            <label htmlFor="country">Country</label>
+                            <Input
+                              // required
+                              id="country"
+                              placeholder="Enter your country"
+                              type="text"
+                              {...register("country", { required: true })}
+                            />
+                            {errors.country && (
+                              <span className="text-danger">
+                                Country field is required
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="w-full space-y-2">
+                          <div className="w-full space-y-2">
+                            <label htmlFor="phone">Phone number</label>
+                            <Input
+                              id="phone"
+                              placeholder="Enter your phone number"
+                              type="number"
+                              {...register("mobile")}
+                              // required
+                            />
+                          </div>
+                        </div>
+
+                        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                          <div className="w-full space-y-2">
+                            <label htmlFor="phone">Phone number</label>
+                            <Input
+                              id="phone"
+                              placeholder="Enter your phone number"
+                              type="text"
+                              {...register("mobile")}
+                              required
+                            />
+                          </div>
+
+                          <div className="w-full space-y-2">
+                            <label htmlFor="role">Role</label>
+                            <Input
+                              disabled
+                              placeholder={`${careerTypeText(Number(careerRoleType?.key))}`}
+                              type="text"
+                              {...register("careerRoleType")}
+                              required
+                            />
+                          </div>
+                        </div> */}
+
+                        {/* CV Upload */}
+                        {/* <div className="w-full flex justify-between items-center gap-5" >
+                          <div className="w-full space-y-2">
+                            <label htmlFor="resume">Resume/CV</label>
+                            <Input
+                              accept=".pdf,.doc,.docx"
+                              id="resume"
+                              type="file"
+                              onChange={(e) => {
+                                onChangeCV(e);
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex flex-col p-5 items-end">
+                            <span
+                              className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedCV ? "" : "hidden"}`}
+                            >
+                              <GoTrash
+                                className=" text-danger-500"
+                                size={20}
+                                onClick={removeSelectedCV}
+                              />
+                            </span>
+                          </div>
+                        </div> */}
+                        {/* CV Upload End */}
+
+                        <div hidden className="w-full space-y-2">
+                          <label htmlFor="careerStatus">Status</label>
+                          <Input
+                            disabled
+                            id="role"
+                            type="text"
+                            {...register("careerStatus")}
+                            required
+                          />
+                        </div>
+
+                        <div hidden className="w-full space-y-2">
+                          <label htmlFor="coverLetter">Cover Letter</label>
+                          <Textarea
+                            id="coverLetter"
+                            placeholder="Write your cover letter here..."
+                            rows={5}
+                          />
+                        </div>
+
+                        {/* <div className="w-full flex justify-end">
+                          <Button color="primary" type="submit">
+                            Submit Application
+                          </Button>
+                        </div> */}
+                        <ModalFooter>
+                          <Button
+                            color="danger"
+                            variant="light"
+                            onPress={onClose}
+                          >
+                            Close
+                          </Button>
+
+                          <Button
+                            color="primary"
+                            type="submit"
+                            // onPress={onClose}
+                          >
+                            Submit
+                          </Button>
+                        </ModalFooter>
                       </form>
                     </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onPress={onClose}>Close</Button>
-                      <Button color="primary" variant="solid" onPress={()=>{
-                        onClose();
-                      }}>Submit</Button>
-                    </ModalFooter>
                   </>
                 )}
               </ModalContent>

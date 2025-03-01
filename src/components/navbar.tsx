@@ -119,7 +119,7 @@ export const Navbar = () => {
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <Link
-                className={`${item?.href === currentRoute?.pathname ? "text-orange-400" : " text-green-700 "}`}
+                className={`text-lg ${item?.href === currentRoute?.pathname ? "text-orange-500 underline underline-offset-8" : " text-black "}`}
                 // color={
                 //   item?.href === currentRoute?.pathname
                 //     ? "primary"

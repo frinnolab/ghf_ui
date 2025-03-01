@@ -22,12 +22,13 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 
-import axios, { AxiosResponse, AxiosError, HttpStatusCode } from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
+
 import { Qformats, Qmodules } from "../blog/dash-blog-create";
 
 const DashCareersList = () => {
@@ -81,7 +82,7 @@ const DashCareersList = () => {
   };
 
   const handleSelectedRow = (p: Career) => {
-    console.log(p);
+    //console.log(p);
     nav(`/dashboard/careers/${p.careerId}`, {
       state: p.careerId,
     });
@@ -104,9 +105,9 @@ const DashCareersList = () => {
   };
 
   const handleDelete = (b: Career) => {
-    if (authed?.role !== AuthRole.SuperAdmin || AuthRole.Admin) {
-      alert(HttpStatusCode.Unauthorized);
-      console.log(HttpStatusCode);
+    if (Number(authed?.role) !== Number(AuthRole.SuperAdmin)) {
+      alert(`You are not Authorised to perform this action!.`);
+      //console.log(HttpStatusCode);
       
     } else {
       axios

@@ -25,8 +25,8 @@ export const siteConfig = {
       href: "/publications",
     },
     {
-      label: "Donation",
-      href: "/donation",
+      label: "Donate",
+      href: "/donate",
     },
     {
       label: "Alumni",

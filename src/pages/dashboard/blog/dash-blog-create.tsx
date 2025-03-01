@@ -1,7 +1,14 @@
 import { Button } from "@nextui-org/button";
 import { Divider, Image, Input, Spinner, Switch } from "@nextui-org/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { GoArrowLeft, GoEye, GoPencil, GoTrash } from "react-icons/go";
+import {
+  GoArrowLeft,
+  GoEye,
+  GoLock,
+  GoPencil,
+  GoTrash,
+  GoUnlock,
+} from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Blog } from "./dash-blogs";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -54,6 +61,7 @@ export default function DashBlogCreate() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [quillValue, setQuillValue] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isArchived, setIsArchived] = useState<boolean>(false);
 
   //From Inputs End
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -90,13 +98,17 @@ export default function DashBlogCreate() {
           },
         })
         .then((res: AxiosResponse) => {
+
           const data: Blog = {
             blogId: res?.data["blogId"] ?? null,
             title: res?.data["title"] ?? null,
             description: res?.data["description"] ?? null,
             thumbnailUrl: res?.data["thumbnailUrl"] ?? null,
             authorId: res.data["authorId"] ?? null,
+            isArchived: Boolean(res?.data["isArchived"]),
           };
+
+          setIsArchived(Boolean(res?.data["isArchived"]));
 
           setBlog(data);
           setQuillValue(res?.data["description"]);
@@ -127,6 +139,7 @@ export default function DashBlogCreate() {
       data.append("authorId", `${authed?.profileId}`);
       data.append("title", `${d?.title}`);
       data.append("description", `${quillValue}`);
+      data.append("isArchived", `${isArchived ? 1 : 0}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
@@ -143,7 +156,7 @@ export default function DashBlogCreate() {
           nav("/dashboard/blogs");
         })
         .catch((err: AxiosError) => {
-          console.log(err.response?.statusText);
+          console.error(err.response?.statusText);
         });
     }
   };
@@ -158,14 +171,11 @@ export default function DashBlogCreate() {
       data.append("authorId", `${blog?.authorId ?? authed?.profileId}`);
       data.append("title", `${d?.title ?? blog?.title}`);
       data.append("description", `${quillValue ?? blog?.description}`);
+      data.append("isArchived", `${isArchived ? 1 : 0}`);
 
       if (selectedImage) {
         data.append("image", selectedImage);
       }
-
-      data.forEach((d) => {
-        console.log(d);
-      });
 
       axios
         .post(`${api}/blogs/${blog?.blogId}`, data, {
@@ -202,6 +212,8 @@ export default function DashBlogCreate() {
           <p>{`Mode: ${isEdit ? "Edit" : "View"}`}</p>
 
           <Switch
+            // isDisabled={isEdit}
+            // disabled={!isEdit}
             onClick={() => {
               if (!isEdit) {
                 setIsEdit(true);
@@ -214,7 +226,7 @@ export default function DashBlogCreate() {
             startContent={<GoPencil />}
             endContent={<GoEye />}
             title={`${isEdit ? "Edit mode" : "View mode"}`}
-          ></Switch>
+          />
         </div>
 
         {/* Content */}
@@ -222,10 +234,10 @@ export default function DashBlogCreate() {
           {isLoading ? (
             <div className="w-full flex justify-center">
               <Spinner
-                size="lg"
                 className=" flex justify-center "
-                label="Loading..."
                 color="primary"
+                label="Loading..."
+                size="lg"
               />
             </div>
           ) : (
@@ -245,23 +257,47 @@ export default function DashBlogCreate() {
                   />
                 </div>
 
+                <div>
+                  <div
+                    className={` self-end flex justify-between items-center gap-5`}
+                  >
+                    <p>{`${isArchived ? "Archived" : "Not Archived"}`}</p>
+
+                    <Switch
+                      defaultSelected={isArchived}
+                      endContent={<GoUnlock />}
+                      isDisabled={isEdit ? false : true}
+                      size="lg"
+                      startContent={<GoLock />}
+                      title={`${isArchived ? "Archived" : "Not Archived"}`}
+                      onClick={() => {
+                        if (isArchived) {
+                          setIsArchived(false);
+                        } else {
+                          setIsArchived(true);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+
                 {/* Editor */}
                 <div className="w-full space-y-3 overflow-hidden scrollbar-hide">
                   <label htmlFor="description">Description</label>
 
                   <div className={`w-full h-[30dvh]`}>
                     <ReactQuill
+                      formats={Qformats}
+                      modules={Qmodules}
                       placeholder={`${blogId ? blog?.description : "Enter description"}`}
-                      theme="snow"
                       style={{
-                        height: "30dvh",
+                        height: "20dvh",
                         overflow: "scroll",
                         overflowX: "hidden",
                       }}
+                      theme="snow"
                       value={quillValue}
                       onChange={setQuillValue}
-                      formats={Qformats}
-                      modules={Qmodules}
                     />
                   </div>
                 </div>
@@ -309,9 +345,9 @@ export default function DashBlogCreate() {
 
                 <div className="p-3 flex items-center">
                   <input
-                    disabled={isEdit ? false : true}
-                    accept="image/*"
                     ref={thumbRef}
+                    accept="image/*"
+                    disabled={isEdit ? false : true}
                     type="file"
                     onChange={(e) => {
                       onChangePic(e);

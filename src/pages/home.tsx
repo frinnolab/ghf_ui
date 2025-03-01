@@ -455,7 +455,7 @@ export default function HomePage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-16 md:top-[-1%] xl:top-[3%] ">
+          <div className="w-full absolute top-16 md:top-[-1%] xl:top-[6%] ">
             <Image
               alt="Header img"
               radius="none"

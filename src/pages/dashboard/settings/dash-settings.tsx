@@ -341,9 +341,9 @@ function CompanyAssetsUi({
         <h1>Manage Assets</h1>
 
         <Button
+          color={selectedImage || selectedVideo ? "primary" : "default"}
           disabled={selectedImage || selectedVideo ? false : true}
           variant="solid"
-          color={selectedImage || selectedVideo ? "primary" : "default"}
           onClick={handleAsetUploads}
         >
           Upload Asset(s)

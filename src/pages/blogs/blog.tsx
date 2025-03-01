@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Button, Image, Spinner } from "@nextui-org/react";
+import { Button, Image, Spinner, Tab, Tabs } from "@nextui-org/react";
 import { GoArrowUpRight } from "react-icons/go";
 
 import { Blog } from "../dashboard/blog/dash-blogs";
@@ -14,6 +14,8 @@ export default function BlogPage() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState<Blog[] | null>(null);
+  const [archivedBlogs, setArchivedBlogs] = useState<Blog[]>([]);
+
   const [isLoading, setIsloading] = useState<boolean>(false);
 
   const toDetail = (b: Blog) => {
@@ -41,11 +43,15 @@ export default function BlogPage() {
               title: b?.title ?? "",
               description: b?.description ?? "",
               thumbnailUrl: b?.thumbnailUrl ?? "",
+              isArchived: Boolean(b?.isArchived ?? false),
             };
+
             return [data];
           });
 
           setBlogs(datas);
+
+          setArchivedBlogs(datas.filter((d) => d?.isArchived === true));
 
           setIsloading(false);
         })
@@ -84,7 +90,7 @@ export default function BlogPage() {
           <h1 className={title()}>Blogs</h1>
         </div>
 
-        <div className="w-full flex flex-col p-20 gap-5 z-10 bg-default-200">
+        <div className="w-full flex flex-col p-10 gap-5 z-10 bg-default-200">
           <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}
@@ -109,43 +115,97 @@ export default function BlogPage() {
                   </>
                 ) : (
                   <div className="w-full flex flex-wrap gap-5 md:gap-10">
-                    {blogs?.flatMap((b: Blog) => (
-                      <div
-                        key={b?.blogId}
-                        className="md:w-[30%] flex flex-col justify-between bg-default-100 rounded-2xl "
-                      >
-                        <div className="w-full">
-                          <Image
-                            className="w-screen h-[30vh] object-cover"
-                            src={
-                              b?.thumbnailUrl !== "" || null
-                                ? b?.thumbnailUrl
-                                : siteConfig?.staticAssets?.staticLogo
-                            }
-                          />
-                        </div>
-                        <div className="p-5">
-                          <h1 className="text-2xl truncate font-semibold">
-                            {b?.title}
-                          </h1>
+                    <Tabs
+                      fullWidth
+                      aria-label="Options"
+                      color="primary"
+                      radius="sm"
+                      size="lg"
+                    >
+                      <Tab key="blogs" title="Blogs">
+                        <div className="w-full flex justify-start gap-5 flex-wrap">
+                          {blogs?.flatMap((b: Blog) => (
+                            <div
+                              key={b?.blogId}
+                              className="md:w-[30%] flex flex-col justify-between bg-default-100 rounded-2xl "
+                            >
+                              <div className="w-full">
+                                <Image
+                                  className="w-screen h-[30vh] object-cover"
+                                  src={
+                                    b?.thumbnailUrl !== "" || null
+                                      ? b?.thumbnailUrl
+                                      : siteConfig?.staticAssets?.staticLogo
+                                  }
+                                />
+                              </div>
+                              <div className="p-5">
+                                <h1 className="text-2xl truncate font-semibold">
+                                  {b?.title}
+                                </h1>
 
-                          {/* <p>{b?.description}</p> */}
-                        </div>
+                                {/* <p>{b?.description}</p> */}
+                              </div>
 
-                        <div className="p-1">
-                          <Button
-                            className="flex items-center border border-primary-400 hover:border-transparent"
-                            color="primary"
-                            variant="light"
-                            onClick={() => {
-                              toDetail(b);
-                            }}
-                          >
-                            Read more <GoArrowUpRight size={20} />
-                          </Button>
+                              <div className="p-1">
+                                <Button
+                                  className="flex items-center border border-primary-400 hover:border-transparent"
+                                  color="primary"
+                                  variant="light"
+                                  onClick={() => {
+                                    toDetail(b);
+                                  }}
+                                >
+                                  Read more <GoArrowUpRight size={20} />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      </div>
-                    ))}
+                      </Tab>
+
+                      <Tab key="blogsArchived" title="Archives">
+                        <div className="w-full flex justify-start gap-5 flex-wrap">
+                          {archivedBlogs?.flatMap((b: Blog) => (
+                            <div
+                              key={b?.blogId}
+                              className="md:w-[30%] flex flex-col justify-between bg-default-100 rounded-2xl "
+                            >
+                              <div className="w-full">
+                                <Image
+                                  className="w-screen h-[30vh] object-cover"
+                                  src={
+                                    b?.thumbnailUrl !== "" || null
+                                      ? b?.thumbnailUrl
+                                      : siteConfig?.staticAssets?.staticLogo
+                                  }
+                                />
+                              </div>
+                              <div className="p-5">
+                                <h1 className="text-2xl truncate font-semibold">
+                                  {b?.title}
+                                </h1>
+
+                                {/* <p>{b?.description}</p> */}
+                              </div>
+
+                              <div className="p-1">
+                                <Button
+                                  className="flex items-center border border-primary-400 hover:border-transparent"
+                                  color="primary"
+                                  variant="light"
+                                  onClick={() => {
+                                    toDetail(b);
+                                  }}
+                                >
+                                  Read more <GoArrowUpRight size={20} />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </Tab>
+                    </Tabs>
                   </div>
                 )}
               </>

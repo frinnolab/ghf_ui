@@ -24,6 +24,7 @@ export type Blog = {
   title?: string;
   description?: string;
   authorId?: string;
+  isArchived?: boolean;
 };
 export default function DashBlogsListPage() {
   const columns = ["Title", "Actions"];
@@ -48,6 +49,9 @@ export default function DashBlogsListPage() {
           },
         })
         .then((res: AxiosResponse) => {
+
+          console.log(res?.data);
+          
           const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
             const data: Blog = {
               blogId: `${b.blogId}`,
@@ -55,11 +59,14 @@ export default function DashBlogsListPage() {
               title: `${b.title}`,
               description: `${b.description}`,
               thumbnailUrl: `${b.thumbnailUrl}`,
+              isArchived: Boolean(b?.isArchived)
             };
+
             return [data];
           });
 
           setBlogs(datas);
+          // setArchivedBlogs(datas.filter((d) => d.isArchived === true));
           setIsBlogs(true);
 
           setTimeout(() => {
@@ -115,7 +122,7 @@ export default function DashBlogsListPage() {
         window.location.reload();
       })
       .catch((err: AxiosError) => {
-        console.log(err.response?.data ?? err.response?.statusText);
+        console.error(err.response?.data ?? err.response?.statusText);
       });
   };
 
@@ -132,7 +139,7 @@ export default function DashBlogsListPage() {
         <div className="w-full flex justify-between ">
           <h1 className=" text-2xl ">Manage Blogs</h1>
 
-          <Button variant="solid" color="primary" onClick={handleCreate}>
+          <Button color="primary" variant="solid" onClick={handleCreate}>
             Add{" "}
             <span>
               <GoPlus size={20} />
@@ -144,10 +151,10 @@ export default function DashBlogsListPage() {
         {isLoading ? (
           <>
             <Spinner
-              size="lg"
               className=" flex justify-center "
-              label="Loading..."
               color="primary"
+              label="Loading..."
+              size="lg"
             />
           </>
         ) : (

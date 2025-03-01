@@ -34,6 +34,7 @@ export type ImpactAsset = {
   impactId?: string;
   impactAssetId?: string;
   assetUrl?: string;
+  isGeneralVideo?: boolean;
 };
 
 
