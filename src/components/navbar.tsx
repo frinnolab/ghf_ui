@@ -25,10 +25,11 @@ import {
   Divider,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
-import { AuthRole } from "@/types";
 import axios, { AxiosResponse } from "axios";
 import { motion } from "motion/react";
+
+import { AuthRole } from "@/types";
+import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
 
 // import { Logo } from "@/components/icons";
 
@@ -219,11 +220,12 @@ export const Navbar = () => {
           {siteConfig.navItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  item?.href === currentRoute?.pathname
-                    ? "primary"
-                    : "foreground"
-                }
+                // color={
+                //   item?.href === currentRoute?.pathname
+                //     ? "primary"
+                //     : "foreground"
+                // }
+                className={`text-lg ${item?.href === currentRoute?.pathname ? "text-orange-500 underline underline-offset-8" : " text-black "}`}
                 href={`${item?.href}`}
                 size="lg"
               >

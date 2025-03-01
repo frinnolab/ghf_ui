@@ -96,7 +96,7 @@ export default function DocsPage() {
 
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/70"
+            className="rounded-2xl z-10 bg-default-50/85"
             initial={{
               opacity: 0,
             }}

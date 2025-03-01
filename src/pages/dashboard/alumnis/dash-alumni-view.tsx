@@ -184,7 +184,7 @@ export default function DashAlumniView() {
       axios
         .get(`${api}/alumnis/${alumniId}/${alumniProfileId}`)
         .then((res: AxiosResponse) => {
-          //console.log(res?.data);
+          console.log(res?.data);
 
           const profData: Profile = {
             profileId: res.data?.alumniProfile?.profileId,
@@ -214,7 +214,7 @@ export default function DashAlumniView() {
 
           setAlumni(data);
           setAlumniProfile(profData);
-          setIsPublished(isAlumniPublished);
+          setIsPublished(Number(res?.data["isPublished"]) === 1 ? true : false);
           setQuillValue(res?.data["story"] ?? "");
         })
         .catch((err: AxiosError) => {
@@ -265,17 +265,18 @@ export default function DashAlumniView() {
             <Switch
               defaultSelected={isPublished}
               endContent={<GoUnlock />}
+              isDisabled={!isEdit}
               size="lg"
               startContent={<GoLock />}
               title={`${isPublished ? "Published" : "Not Published"}`}
               onClick={() => {
                 if (isPublished) {
                   handleAlumniPublish(false);
-                  // setIsPublished(false);
+                  setIsPublished(false);
                   //UnPublish
                 } else {
                   handleAlumniPublish(true);
-                  // setIsPublished(true);
+                  setIsPublished(true);
                   //Publish
                 }
               }}
