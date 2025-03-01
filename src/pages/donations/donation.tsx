@@ -244,7 +244,7 @@ export default function DonationPage() {
           </motion.div>
 
           {/* Donate Pop-up */}
-          <div className="w-full flex justify-center relative">
+          <div className="w-full flex justify-center relative pb-5 md:p-1">
             <Button
               className=" bg-orange-400 "
               size="lg"

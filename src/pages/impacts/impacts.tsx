@@ -65,18 +65,18 @@ const ImpactList = () => {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
-        <div className="sm:h-[50dvh] w-full flex flex-col justify-center">
+        <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%]">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
-              <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+              <div className="hidden text-primary md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">IMPACT</h1>
               </div>
             </div>
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[-3%] filter saturate-[80%]">
+          <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%]">
             <Image
               className="z-0"
               alt="Header img"
@@ -90,7 +90,7 @@ const ImpactList = () => {
         <div className="w-full flex flex-col z-10  bg-default-200 p-y-5">
           {/* <h1 className={title()}>Impact</h1> */}
           {/* Impacts Content */}
-          <div className="w-full flex flex-col px-20 py-10 gap-5 ">
+          <div className="w-full flex flex-col p-10 md:px-20 md:py-10 gap-5 ">
             <h1 className=" text-2xl  font-semibold ">Community Impact</h1>
 
             {isLoading ? (
@@ -115,7 +115,7 @@ const ImpactList = () => {
                     {impacts?.flatMap((mp) => (
                       <div
                         key={mp?.impactId}
-                        className={`md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
+                        className={`w-full md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
                       >
                         <Image
                           src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}

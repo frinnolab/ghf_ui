@@ -6,7 +6,7 @@ import { GoArrowUpRight } from "react-icons/go";
 
 import { Blog } from "../dashboard/blog/dash-blogs";
 
-import { title } from "@/components/primitives";
+// import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import { siteConfig } from "@/config/site";
 
@@ -64,18 +64,18 @@ export default function BlogPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-2 md:py-5">
-        <div className="sm:h-[50dvh] w-full flex flex-col justify-center">
+        <div className="h-[20dvh] md:h-[50dvh] w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
-              <div className="text-primary flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+              <div className="hidden text-primary md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">BLOG</h1>
               </div>
             </div>
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[-20%] filter saturate-[90%]">
+          <div className="w-full absolute top-[5%] md:top-[-20%] filter saturate-[90%]">
             <Image
               alt="Blogs Bg"
               className=" object-fill "
@@ -86,11 +86,14 @@ export default function BlogPage() {
           </div>
         </div>
 
-        <div className="inline-block max-w-lg text-center justify-center">
+        {/* <div
+          hidden
+          className="inline-block max-w-lg text-center justify-center"
+        >
           <h1 className={title()}>Blogs</h1>
-        </div>
+        </div> */}
 
-        <div className="w-full flex flex-col p-10 gap-5 z-10 bg-default-200">
+        <div className="w-full flex flex-col p-5 md:p-10 gap-5 z-10 bg-default-200">
           <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
 
           {/* Blog Content */}
@@ -123,7 +126,7 @@ export default function BlogPage() {
                       size="lg"
                     >
                       <Tab key="blogs" title="Blogs">
-                        <div className="w-full flex justify-start gap-5 flex-wrap">
+                        <div className="w-full flex justify-start gap-5 md:gap-10 flex-wrap">
                           {blogs?.flatMap((b: Blog) => (
                             <div
                               key={b?.blogId}
@@ -165,7 +168,7 @@ export default function BlogPage() {
                       </Tab>
 
                       <Tab key="blogsArchived" title="Archives">
-                        <div className="w-full flex justify-start gap-5 flex-wrap">
+                        <div className="w-full flex justify-start gap-5 md:gap-10 flex-wrap">
                           {archivedBlogs?.flatMap((b: Blog) => (
                             <div
                               key={b?.blogId}

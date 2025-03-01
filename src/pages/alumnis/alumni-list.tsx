@@ -207,8 +207,8 @@ export default function AlumniList() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
-        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-50%] saturate-[100%]`}>
+        <div className="w-full flex flex-col items-center gap-5  md:p-10 md:min-h-[80dvh] relative">
+          <motion.div className={`w-full absolute top-[-25%] md:top-[-50%] saturate-[100%]`}>
             <Image
               alt="About Bg"
               radius="none"
@@ -549,10 +549,10 @@ export default function AlumniList() {
         {/* <Divider /> */}
 
         <div
-          className={` ${alumnis === null || alumnis.length === 0 ? "hidden" : "w-full flex flex-col bg-default-200 px-20 gap-5 z-10"}`}
+          className={` ${alumnis === null || alumnis.length === 0 ? "hidden" : "w-full flex flex-col bg-default-200 p-5 md:px-20 gap-5 z-10"}`}
         >
-          <div className="w-full flex pb-5">
-            <h1 className=" text-2xl font-semibold p-5 rounded-md">
+          <div className="w-full flex md:pb-3">
+            <h1 className=" text-2xl font-semibold md:p-5 rounded-md">
               {" "}
               UWEZO Program Alumni stories
             </h1>
@@ -560,7 +560,7 @@ export default function AlumniList() {
             <div />
           </div>
 
-          <div className="w-full flex justify-center flex-wrap text-center gap-5 space-y-5">
+          <div className="w-full flex justify-center flex-wrap text-center gap-5 space-y-3">
             {isLoading ? (
               <>
                 <Spinner
