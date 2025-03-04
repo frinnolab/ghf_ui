@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Alumni } from "./dash-alumni-list";
 import { Button } from "@nextui-org/button";
 import {
   GoArrowLeft,
@@ -17,6 +16,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 
 import { Profile } from "../profiles/dash-profiles-list";
+
+import { Alumni } from "./dash-alumni-list";
 
 import { AuthRole } from "@/types";
 import { siteConfig } from "@/config/site";
@@ -209,8 +210,8 @@ export default function DashAlumniView() {
             isPublished: Boolean(Number(res?.data["isPublished"])),
           };
 
-          const isAlumniPublished =
-            Number(res?.data["isPublished"]) === 1 ? true : false;
+          // const isAlumniPublished =
+          //   Number(res?.data["isPublished"]) === 1 ? true : false;
 
           setAlumni(data);
           setAlumniProfile(profData);

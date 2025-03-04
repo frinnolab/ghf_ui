@@ -8,7 +8,7 @@ import {
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
-import { Divider } from "@nextui-org/react";
+import { Divider, Spinner } from "@nextui-org/react";
 import fileDownload from "js-file-download";
 // import { Document, Page } from "react-pdf";
 
@@ -16,33 +16,21 @@ export default function PublicationsView() {
   const api = `${import.meta.env.VITE_API_URL}`;
   const route = useLocation();
   const navigate = useNavigate();
+  const [isLoading, setIsloading] = useState<boolean>(false);
+
   const [publishId] = useState<string | null>(() => {
     if (route?.state) {
       return `${route?.state}`;
     }
+
     return null;
   });
 
   const [publication, setPublication] = useState<Publication | null>(null);
   const [pubsAssets, setPubsAssets] = useState<PublicationAsset[] | null>(null);
 
-  // const [numPages, setNumPages] = useState<number>();
-  // const [pageNumber, setPageNumber] = useState<number>(1);
-
-  // function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
-  //   setNumPages(numPages);
-  // }
-
-  // const setTypeName = (pubType: PublishTypeEnum) => {
-  //   switch (pubType) {
-  //     case PublishTypeEnum.Report:
-  //       return "Report";
-  //     default:
-  //       return "Newsletter";
-  //   }
-  // };
-
   useEffect(() => {
+    setIsloading(true);
     window.scrollTo(0, 0);
     if (!publication) {
       axios
@@ -57,6 +45,10 @@ export default function PublicationsView() {
           };
 
           setPublication(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
           console.error(err);
@@ -86,6 +78,7 @@ export default function PublicationsView() {
           setPubsAssets([...datas]);
         })
         .catch((err: AxiosError) => {
+          // eslint-disable-next-line no-console
           console.log(JSON.stringify(err?.response));
         });
     }
@@ -126,59 +119,72 @@ export default function PublicationsView() {
 
       <Divider />
 
-      <div className="w-full flex flex-col gap-5 p-10">
-        <div className=" space-y-5 ">
-          <h1 className="text-3xl">{publication?.title}</h1>
-        </div>
-
-        <Divider />
-
-        <div className=" space-y-5 ">
-          <label htmlFor="description">Description</label>
-          <div
-            dangerouslySetInnerHTML={{ __html: `${publication?.description}` }}
-            className=" text-xl text-balance p-5 bg-default-200 rounded-2xl "
+      {isLoading ? (
+        <>
+          <Spinner
+            className=" flex justify-center py-5 "
+            color="primary"
+            label="Loading..."
+            size="lg"
           />
+        </>
+      ) : (
+        <div className="w-full flex flex-col gap-5 p-10">
+          <div className=" space-y-5 ">
+            <h1 className="text-3xl">{publication?.title}</h1>
+          </div>
+
+          <Divider />
+
+          <div className=" space-y-5 ">
+            {/* <label htmlFor="description">Description</label> */}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `${publication?.description ?? ""}`,
+              }}
+              className={` ${publication?.description ? "text-xl text-balance p-5 bg-default-200" : "hidden"} `}
+            />
+          </div>
+
+          {/* Assets */}
+          <div
+            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-3 scrollbar-hide`}
+          >
+            {/* <h1 className="text-3xl">{publication?.title} assets</h1> */}
+
+            {pubsAssets === null || pubsAssets?.length === 0 ? (
+              <>
+                {/* <p className=" text-center ">No Asset(s) for Publication</p> */}
+              </>
+            ) : (
+              <div className={`w-full flex gap-5`}>
+                {pubsAssets?.flatMap((d: PublicationAsset) => (
+                  <div
+                    key={d?.publishId}
+                    className={`bg-default-100 rounded-xl flex flex-col justify-between items-center gap-1 p-5`}
+                  >
+                    <GoFile size={20} />
+
+                    <h1 className=" text-2xl ">{d?.title}</h1>
+
+                    <Button>
+                      <GoDownload
+                        className=" text-primary-500"
+                        size={20}
+                        onClick={() => {
+                          downloadPubAsset2(`${d?.assetId}`, `${d?.title}`);
+                        }}
+                      />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Assets End */}
         </div>
-
-        {/* Assets */}
-        <div
-          className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-3 scrollbar-hide`}
-        >
-          <h1 className="text-3xl">{publication?.title} assets</h1>
-
-          {pubsAssets === null || pubsAssets?.length === 0 ? (
-            <>
-              <p className=" text-center ">No Asset(s) for Publication</p>
-            </>
-          ) : (
-            <div className={`w-full flex gap-5`}>
-              {pubsAssets?.flatMap((d: PublicationAsset) => (
-                <div
-                  key={d?.publishId}
-                  className={`bg-default-100 rounded-xl flex flex-col justify-between items-center gap-1 p-5`}
-                >
-                  <GoFile size={20} />
-
-                  <h1 className=" text-2xl ">{d?.title}</h1>
-
-                  <Button>
-                    <GoDownload
-                      className=" text-primary-500"
-                      size={20}
-                      onClick={() => {
-                        downloadPubAsset2(`${d?.assetId}`, `${d?.title}`);
-                      }}
-                    />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Assets End */}
-      </div>
+      )}
     </div>
   );
 }

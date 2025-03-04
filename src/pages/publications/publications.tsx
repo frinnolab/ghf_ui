@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
-import { GoArrowUpRight, GoChecklist, GoNote } from "react-icons/go";
+import { GoArrowRight, GoChecklist, GoNote } from "react-icons/go";
 import {
   Tabs,
   Tab,
@@ -175,14 +175,14 @@ export default function Publications() {
                       color="primary"
                       radius="sm"
                       size="lg"
+                      variant="underlined"
                     >
                       <Tab key="newsletters" title="Newsletters">
                         <Card
                           className={`w-full border-transparent shadow-none bg-transparent`}
                         >
                           {pubs?.filter(
-                            (p) =>
-                              p?.publishType === PublishTypeEnum.Newsletter,
+                            (p) => p?.publishType === PublishTypeEnum.Newsletter
                           ).length === 0 ? (
                             <>{/* <h1>No Newsletters at the momment.</h1> */}</>
                           ) : (
@@ -219,7 +219,7 @@ export default function Publications() {
                                     <div className="w-full p-1  justify-between">
                                       <div />
                                       <Button
-                                        className=" flex items-center border border-primary-400 hover:border-transparent"
+                                        className=" flex items-center hover:border-transparent"
                                         color="primary"
                                         variant="light"
                                         onClick={() => {
@@ -227,7 +227,7 @@ export default function Publications() {
                                         }}
                                       >
                                         {" "}
-                                        View <GoArrowUpRight size={20} />{" "}
+                                        View <GoArrowRight size={20} />{" "}
                                       </Button>{" "}
                                     </div>
                                   </div>
@@ -274,21 +274,21 @@ export default function Publications() {
                                         </p>
                                       </div>
 
-                                      <div></div>
+                                      <div />
                                     </div>
 
                                     <div className="w-full p-1  justify-between">
-                                      <div></div>
+                                      <div />
                                       <Button
-                                        variant="light"
+                                        className=" flex items-center hover:border-transparent"
                                         color="primary"
-                                        className=" flex items-center border border-primary-400 hover:border-transparent"
+                                        variant="light"
                                         onClick={() => {
                                           toDetail(mp);
                                         }}
                                       >
                                         {" "}
-                                        View <GoArrowUpRight size={20} />{" "}
+                                        View <GoArrowRight size={20} />{" "}
                                       </Button>{" "}
                                     </div>
                                   </div>
@@ -338,21 +338,21 @@ export default function Publications() {
                                         </p>
                                       </div>
 
-                                      <div></div>
+                                      <div />
                                     </div>
 
                                     <div className="w-full p-1  justify-between">
-                                      <div></div>
+                                      <div />
                                       <Button
                                         variant="light"
                                         color="primary"
-                                        className=" flex items-center border border-primary-400 hover:border-transparent"
+                                        className=" flex items-center hover:border-transparent"
                                         onClick={() => {
                                           toDetail(mp);
                                         }}
                                       >
                                         {" "}
-                                        View <GoArrowUpRight size={20} />{" "}
+                                        View <GoArrowRight size={20} />{" "}
                                       </Button>{" "}
                                     </div>
                                   </div>

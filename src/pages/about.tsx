@@ -48,8 +48,8 @@ export default function DocsPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
-        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-20%] saturate-[100%]`}>
+        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:h-[80dvh] relative">
+          <motion.div className={`w-full absolute top-[-30%] saturate-[100%]`}>
             <Image
               alt="About Bg"
               className=" object-fill"
@@ -69,7 +69,7 @@ export default function DocsPage() {
                 opacity: 1,
                 transition: {
                   ease: "linear",
-                  delay: 0.8,
+                  delay: 0.5,
                   duration: 1,
                 },
               }}
@@ -93,37 +93,9 @@ export default function DocsPage() {
               <Divider className="p-1 bg-orange-500 -rotate-3" />
             </motion.span>
           </div>
-
-          {/* Bio */}
-          <motion.div
-            className="rounded-2xl z-10 bg-default-50/85"
-            initial={{
-              opacity: 0,
-            }}
-            whileInView={{
-              opacity: 1,
-              transition: {
-                ease: "linear",
-                delay: 0.8,
-                duration: 1.5,
-              },
-            }}
-          >
-            <motion.p className=" text-2xl md:text-4xl text-pretty md:text-justify p-5 md:py-10">
-              Great Hope Foundation (GHF) is a local Non - Governmental
-              Organization, legally registered in Tanzania, with a registration
-              number of 3976 in 2010. Since its initiation, the NGO has been
-              working to develop platforms that capacitate young people with
-              both entrepreneurial and 21st Century Skills. We believe in
-              bringing the best out of young people, in a way that benefits them
-              and the community around them. We aim at being an organization
-              that enlightens young people potential, giving them hope and
-              courage to bring the very best out of themselves.
-            </motion.p>
-          </motion.div>
         </div>
 
-        <Divider />
+        {/* <Divider /> */}
 
         {/* Vision Section */}
         <div
@@ -134,7 +106,26 @@ export default function DocsPage() {
             {/* Our vision */}
             <div className="w-full flex flex-col md:space-y-3">
               <h1 className="text-4xl md:text-6xl py-3 md:py-5 font-semibold">
-                Our vision
+                About Us
+              </h1>
+
+              <p className="text-2xl text-balance">
+                Great Hope Foundation (GHF) is a local Non - Governmental
+                Organization, legally registered in Tanzania, with a
+                registration number of 3976 in 2010. Since its initiation, the
+                NGO has been working to develop platforms that capacitate young
+                people with both entrepreneurial and 21st Century Skills. We
+                believe in bringing the best out of young people, in a way that
+                benefits them and the community around them. We aim at being an
+                organization that enlightens young people potential, giving them
+                hope and courage to bring the very best out of themselves.
+              </p>
+            </div>
+
+            {/* Our vision */}
+            <div className="w-full flex flex-col md:space-y-3">
+              <h1 className="text-4xl md:text-6xl py-3 md:py-5 font-semibold">
+                Our Vision
               </h1>
 
               <p className="text-2xl text-balance">

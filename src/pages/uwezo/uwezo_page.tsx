@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Image, Spinner } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowRight } from "react-icons/go";
 
 import { Project } from "../dashboard/projects/dash-projects";
 
@@ -91,7 +91,7 @@ export default function UwezoPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col p-5 md:p-20  gap-5 bg-default-200 z-10">
+        <div className="w-full flex flex-col p-5 md:px-20  gap-5 bg-default-200 z-10">
           <h1 className="text-2xl md:text-3xl  font-semibold">
             UWEZO PROGRAM COMPONENTS
           </h1>
@@ -116,10 +116,11 @@ export default function UwezoPage() {
                   {projects?.flatMap((p: Project, i) => (
                     <div
                       key={i}
-                      className="md:w-full  rounded-3xl flex flex-col bg-default-100"
+                      className="md:w-full  flex flex-col bg-default-100"
                     >
                       <Image
                         className={`w-[500px] md:w-screen md:h-[60dvh] object-cover`}
+                        radius="none"
                         src={
                           p?.thumbnailUrl !== "" || null
                             ? p?.thumbnailUrl
@@ -135,14 +136,14 @@ export default function UwezoPage() {
                         {/* <p className="text-xl">{p?.description}</p> */}
                         <div className={` `}>
                           <Button
-                            className="flex items-center border border-primary-400 hover:border-transparent"
+                            className="flex items-center hover:border-transparent"
                             color="primary"
                             variant="light"
                             onClick={() => {
                               toDetail(p);
                             }}
                           >
-                            View <GoArrowUpRight size={20} />
+                            Read more <GoArrowRight size={20} />
                           </Button>
                         </div>
                       </div>

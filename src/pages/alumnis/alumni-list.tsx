@@ -18,7 +18,7 @@ import {
   ModalFooter,
   Divider,
 } from "@nextui-org/react";
-import { GoArrowUpRight, GoPersonFill, GoTrash } from "react-icons/go";
+import { GoArrowRight, GoPersonFill, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 import * as motion from "motion/react-client";
@@ -208,7 +208,9 @@ export default function AlumniList() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
         <div className="w-full flex flex-col items-center gap-5  md:p-10 md:min-h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-25%] md:top-[-50%] saturate-[100%]`}>
+          <motion.div
+            className={`w-full absolute top-[-25%] md:top-[-50%] saturate-[100%]`}
+          >
             <Image
               alt="About Bg"
               radius="none"
@@ -218,7 +220,7 @@ export default function AlumniList() {
           </motion.div>
 
           {/* <div className="inline-block max-w-lg text-center justify-center p-3 z-10"> */}
-          <div className="flex flex-col z-10">
+          <div className="hidden z-10">
             <motion.h1
               className={`text-3xl md:text-5xl text-orange-500 font-semibold`}
               initial={{
@@ -252,10 +254,13 @@ export default function AlumniList() {
             </motion.span>
             <div />
           </div>
+        </div>
 
+        {/* <Divider /> */}
+        <div className="z-20">
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/85"
+            className="bg-default-100"
             initial={{
               opacity: 0,
             }}
@@ -263,12 +268,12 @@ export default function AlumniList() {
               opacity: 1,
               transition: {
                 ease: "linear",
-                delay: 0.8,
-                duration: 1.5,
+                delay: 0.5,
+                duration: 1,
               },
             }}
           >
-            <motion.p className=" text-2xl md:text-4xl text-balance md:text-justify p-5 md:py-10">
+            <motion.p className=" text-2xl md:text-3xl text-pretty p-5 md:py-10">
               Great Hope Foundation asked a few Alumni of UWEZO PROGRAM who are
               now in the labor market to share any Impact they can trace and the
               contribution of UWEZO PROGRAM to what they have been able to
@@ -278,281 +283,13 @@ export default function AlumniList() {
               captured.
             </motion.p>
           </motion.div>
-        {/* Donate Pop-up */}
-        <div className="w-full flex justify-center py-5 relative">
-          <Button
-            className=" bg-orange-400 "
-            size="lg"
-            variant="solid"
-            onPress={onOpen}
-          >
-            {" "}
-            Add Your Story
-          </Button>
-
-          {/* Donate Form */}
-          <Modal
-            backdrop="blur"
-            isOpen={isOpen}
-            size="2xl"
-            onOpenChange={onOpenChange}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader>
-                    <h1>Add Alumni Story</h1>
-                  </ModalHeader>
-                  <ModalBody>
-                    <form
-                      className={` flex flex-col gap-1 p-4 space-y-1`}
-                      onSubmit={handleSubmit(onAlumniSubmit)}
-                    >
-                      {/* Fullnames */}
-                      <div className="w-full gap-5 flex justify-between items-center">
-                        {/* Fname */}
-                        <div className="w-full space-y-1">
-                          <label
-                            className="text-default-500"
-                            htmlFor="Firstname"
-                          >
-                            Firstname
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.alumniProfile?.firstname ?? ""}`}
-                            type="text"
-                            {...register("alumniProfile.firstname")}
-                            placeholder={`${alumni?.alumniProfile?.firstname ?? "Enter Firstname"}`}
-                          />
-                        </div>
-
-                        {/* Lname */}
-                        <div className="w-full space-y-1">
-                          <label
-                            className="text-default-500"
-                            htmlFor="Lastname"
-                          >
-                            Lastname
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.alumniProfile?.lastname ?? ""}`}
-                            type="text"
-                            {...register("alumniProfile.lastname")}
-                            placeholder={`${alumni?.alumniProfile?.lastname ?? "Enter Lastname"}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Fullnames End*/}
-
-                      {/* Contacts */}
-                      <div className="w-full gap-5 flex justify-between items-center">
-                        {/* Email */}
-                        <div className="w-full space-y-1">
-                          <label className="text-default-500" htmlFor="email">
-                            Email
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.alumniProfile?.email ?? ""}`}
-                            type="email"
-                            {...register("alumniProfile.email")}
-                            placeholder={`${alumni?.alumniProfile?.email ?? "Enter Email"}`}
-                          />
-                        </div>
-
-                        {/* Contact */}
-                        <div className="w-full space-y-1">
-                          <label className="text-default-500" htmlFor="mobile">
-                            Mobile
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.alumniProfile?.mobile ?? ""}`}
-                            min={0}
-                            type="number"
-                            {...register("alumniProfile.mobile")}
-                            placeholder={`${alumni?.alumniProfile?.mobile ?? "Enter Mobile"}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Contacts End*/}
-
-                      {/* Ages */}
-                      <div className="w-full gap-5 flex justify-between items-center">
-                        {/* Age */}
-                        <div className="w-full space-y-1">
-                          <label className="text-default-500" htmlFor="age">
-                            Age
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.age ?? ""}`}
-                            min={0}
-                            type="number"
-                            {...register("age")}
-                            placeholder={`${alumni?.age ?? "Enter your age"}`}
-                          />
-                        </div>
-
-                        {/* Occupation */}
-                        <div className="w-full space-y-1">
-                          <label
-                            className="text-default-500"
-                            htmlFor="ocuupation"
-                          >
-                            Current Occupation
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.currenctOccupation ?? ""}`}
-                            type="text"
-                            {...register("currenctOccupation")}
-                            placeholder={`${alumni?.currenctOccupation ?? "Enter Occupation"}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Ages End*/}
-
-                      {/* Schools */}
-                      <div className="w-full gap-5 flex justify-between items-center">
-                        {/* School */}
-                        <div className="w-full space-y-1">
-                          <label className="text-default-500" htmlFor="school">
-                            Participation School
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.participationSchool ?? ""}`}
-                            type="text"
-                            {...register("participationSchool")}
-                            placeholder={`${alumni?.participationSchool ?? "Enter School Name"}`}
-                          />
-                        </div>
-
-                        {/* Year */}
-                        <div className="w-full space-y-1">
-                          <label className="text-default-500" htmlFor="year">
-                            Participation Year
-                          </label>
-                          <Input
-                            defaultValue={`${alumni?.participationYear ?? ""}`}
-                            min={2000}
-                            type="number"
-                            {...register("participationYear")}
-                            placeholder={`${alumni?.participationYear ?? "Enter Year"}`}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Schools End*/}
-
-                      {/* Editor */}
-                      <div className="w-full space-y-1">
-                        <label className="text-default-500" htmlFor="story">
-                          In 100 words how did you benefit with the program
-                        </label>
-                        {/* <Textarea
-                    defaultValue={`${alumni?.story ?? ""}`}
-                    type="text"
-                    {...register("story")}
-                    placeholder={`${alumni?.story ?? "Enter Brief story"}`}
-                  /> */}
-
-                        <ReactQuill
-                          formats={Alumniformats}
-                          modules={Alumnimodules}
-                          placeholder={`${"Enter story description"}`}
-                          style={{
-                            border: "none",
-                            height: "10dvh",
-                            width: "80dvh",
-                            overflow: "hidden",
-                            overflowX: "hidden",
-                          }}
-                          theme="snow"
-                          value={quillValue.substring(0, 110)}
-                          // onChange={(e) => {
-                          //   if (e.length === 105) {
-                          //     onClose();
-                          //     alert(`Maximum character length reached.`);
-                          //   } else {
-                          //     setQuillValue(e);
-                          //   }
-                          // }}
-                        />
-
-                        {/* <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/> */}
-                      </div>
-
-                      <div className="w-full space-y-1">
-                        <label
-                          className="text-default-500"
-                          htmlFor="profilePic"
-                        >
-                          Attach profile picture (Optional)
-                        </label>
-
-                        <div className="p-3 flex items-center">
-                          <input
-                            accept="image/*"
-                            type="file"
-                            onChange={(e) => {
-                              onChangePic(e);
-                            }}
-                          />
-
-                          <span
-                            className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedImage ? "" : "hidden"}`}
-                          >
-                            <GoTrash
-                              className=" text-danger-500"
-                              size={20}
-                              onClick={removeSelectedImage}
-                            />
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      {/* <div className="w-full space-y-2 flex items-center justify-end">
-                          <Button color="primary" type="submit">
-                            {"Submit"}
-                          </Button>
-                        </div> */}
-
-                      <ModalFooter>
-                        <Button
-                          color="danger"
-                          variant="light"
-                          onPress={onClose}
-                        >
-                          Close
-                        </Button>
-
-                        <Button
-                          color="primary"
-                          type="submit"
-                          // onPress={onClose}
-                        >
-                          Submit
-                        </Button>
-                      </ModalFooter>
-                    </form>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-          {/* Donate Form End */}
         </div>
-        {/* Donate Pop-up End */}
-        </div>
-
-        {/* <Divider /> */}
 
         <div
           className={` ${alumnis === null || alumnis.length === 0 ? "hidden" : "w-full flex flex-col bg-default-200 p-5 md:px-20 gap-5 z-10"}`}
         >
-          <div className="w-full flex md:pb-3">
-            <h1 className=" text-2xl font-semibold md:p-5 rounded-md">
+          <div className="w-full flex">
+            <h1 className=" text-2xl font-semibold">
               {" "}
               UWEZO Program Alumni stories
             </h1>
@@ -579,11 +316,11 @@ export default function AlumniList() {
                     </h1>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col md:flex-row flex-wrap gap-10">
+                  <div className="w-full flex flex-col md:flex-row  flex-wrap gap-10">
                     {alumnis?.flatMap((d) => (
                       <div
                         key={d?.alumniId}
-                        className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[25%]`}
+                        className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl text-end md:w-[25%]`}
                       >
                         <div>
                           <Avatar
@@ -601,7 +338,7 @@ export default function AlumniList() {
                         <div>
                           <div className="">
                             <label
-                              className="text-small text-slate-500"
+                              className="text-small text-default-500"
                               htmlFor="pname"
                             >
                               Fullname
@@ -614,34 +351,34 @@ export default function AlumniList() {
 
                           <div className="">
                             <label
-                              className="text-small text-slate-500"
+                              className="text-small text-default-500"
                               htmlFor="pAlumni"
                             />
-                            <h1>
+                            <h1 className="text-default-500">
                               GHF {setRoleName(Number(d?.alumniProfile?.role))}
                             </h1>
                           </div>
 
                           <div className="">
                             <label
-                              className="text-small text-slate-500"
+                              className="text-small text-default-500"
                               htmlFor="pYear"
                             >
-                              Year
+                              Participation Year
                             </label>
                             <h1>{d?.participationYear}</h1>
                           </div>
 
                           <div className="p-1">
                             <Button
-                              variant="light"
+                              className="flex items-center hover:border-transparent"
                               color="primary"
-                              className="flex items-center border border-primary-400 hover:border-transparent"
+                              variant="light"
                               onClick={() => {
                                 toDetail(d);
                               }}
                             >
-                              View Alumni <GoArrowUpRight size={20} />
+                              View Alumni <GoArrowRight size={20} />
                             </Button>
                           </div>
                         </div>
@@ -652,6 +389,277 @@ export default function AlumniList() {
                 )}
               </>
             )}
+          </div>
+
+          <div className="w-full flex justify-center py-5 relative">
+            <Button
+              className=" bg-orange-400 "
+              size="lg"
+              variant="solid"
+              onPress={onOpen}
+            >
+              {" "}
+              Add Your Story
+            </Button>
+
+            {/* Donate Form */}
+            <Modal
+              backdrop="blur"
+              isOpen={isOpen}
+              size="2xl"
+              onOpenChange={onOpenChange}
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <>
+                    <ModalHeader>
+                      <h1>Add Alumni Story</h1>
+                    </ModalHeader>
+                    <ModalBody>
+                      <form
+                        className={` flex flex-col gap-1 p-4 space-y-1`}
+                        onSubmit={handleSubmit(onAlumniSubmit)}
+                      >
+                        {/* Fullnames */}
+                        <div className="w-full gap-5 flex justify-between items-center">
+                          {/* Fname */}
+                          <div className="w-full space-y-1">
+                            <label
+                              className="text-default-500"
+                              htmlFor="Firstname"
+                            >
+                              Firstname
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.alumniProfile?.firstname ?? ""}`}
+                              type="text"
+                              {...register("alumniProfile.firstname")}
+                              placeholder={`${alumni?.alumniProfile?.firstname ?? "Enter Firstname"}`}
+                            />
+                          </div>
+
+                          {/* Lname */}
+                          <div className="w-full space-y-1">
+                            <label
+                              className="text-default-500"
+                              htmlFor="Lastname"
+                            >
+                              Lastname
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.alumniProfile?.lastname ?? ""}`}
+                              type="text"
+                              {...register("alumniProfile.lastname")}
+                              placeholder={`${alumni?.alumniProfile?.lastname ?? "Enter Lastname"}`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Fullnames End*/}
+
+                        {/* Contacts */}
+                        <div className="w-full gap-5 flex justify-between items-center">
+                          {/* Email */}
+                          <div className="w-full space-y-1">
+                            <label className="text-default-500" htmlFor="email">
+                              Email
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.alumniProfile?.email ?? ""}`}
+                              type="email"
+                              {...register("alumniProfile.email")}
+                              placeholder={`${alumni?.alumniProfile?.email ?? "Enter Email"}`}
+                            />
+                          </div>
+
+                          {/* Contact */}
+                          <div className="w-full space-y-1">
+                            <label
+                              className="text-default-500"
+                              htmlFor="mobile"
+                            >
+                              Mobile
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.alumniProfile?.mobile ?? ""}`}
+                              min={0}
+                              type="number"
+                              {...register("alumniProfile.mobile")}
+                              placeholder={`${alumni?.alumniProfile?.mobile ?? "Enter Mobile"}`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Contacts End*/}
+
+                        {/* Ages */}
+                        <div className="w-full gap-5 flex justify-between items-center">
+                          {/* Age */}
+                          <div className="w-full space-y-1">
+                            <label className="text-default-500" htmlFor="age">
+                              Age
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.age ?? ""}`}
+                              min={0}
+                              type="number"
+                              {...register("age")}
+                              placeholder={`${alumni?.age ?? "Enter your age"}`}
+                            />
+                          </div>
+
+                          {/* Occupation */}
+                          <div className="w-full space-y-1">
+                            <label
+                              className="text-default-500"
+                              htmlFor="ocuupation"
+                            >
+                              Current Occupation
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.currenctOccupation ?? ""}`}
+                              type="text"
+                              {...register("currenctOccupation")}
+                              placeholder={`${alumni?.currenctOccupation ?? "Enter Occupation"}`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Ages End*/}
+
+                        {/* Schools */}
+                        <div className="w-full gap-5 flex justify-between items-center">
+                          {/* School */}
+                          <div className="w-full space-y-1">
+                            <label
+                              className="text-default-500"
+                              htmlFor="school"
+                            >
+                              Participation School
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.participationSchool ?? ""}`}
+                              type="text"
+                              {...register("participationSchool")}
+                              placeholder={`${alumni?.participationSchool ?? "Enter School Name"}`}
+                            />
+                          </div>
+
+                          {/* Year */}
+                          <div className="w-full space-y-1">
+                            <label className="text-default-500" htmlFor="year">
+                              Participation Year
+                            </label>
+                            <Input
+                              defaultValue={`${alumni?.participationYear ?? ""}`}
+                              min={2000}
+                              type="number"
+                              {...register("participationYear")}
+                              placeholder={`${alumni?.participationYear ?? "Enter Year"}`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Schools End*/}
+
+                        {/* Editor */}
+                        <div className="w-full space-y-1">
+                          <label className="text-default-500" htmlFor="story">
+                            In 100 words how did you benefit with the program
+                          </label>
+                          {/* <Textarea
+                    defaultValue={`${alumni?.story ?? ""}`}
+                    type="text"
+                    {...register("story")}
+                    placeholder={`${alumni?.story ?? "Enter Brief story"}`}
+                  /> */}
+
+                          <ReactQuill
+                            formats={Alumniformats}
+                            modules={Alumnimodules}
+                            placeholder={`${"Enter story description"}`}
+                            style={{
+                              border: "none",
+                              height: "10dvh",
+                              width: "80dvh",
+                              overflow: "hidden",
+                              overflowX: "hidden",
+                            }}
+                            theme="snow"
+                            value={quillValue.substring(0, 110)}
+                            // onChange={(e) => {
+                            //   if (e.length === 105) {
+                            //     onClose();
+                            //     alert(`Maximum character length reached.`);
+                            //   } else {
+                            //     setQuillValue(e);
+                            //   }
+                            // }}
+                          />
+
+                          {/* <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/> */}
+                        </div>
+
+                        <div className="w-full space-y-1">
+                          <label
+                            className="text-default-500"
+                            htmlFor="profilePic"
+                          >
+                            Attach profile picture (Optional)
+                          </label>
+
+                          <div className="p-3 flex items-center">
+                            <input
+                              accept="image/*"
+                              type="file"
+                              onChange={(e) => {
+                                onChangePic(e);
+                              }}
+                            />
+
+                            <span
+                              className={`flex items-center p-1 hover:bg-default-200 hover:rounded-full ${selectedImage ? "" : "hidden"}`}
+                            >
+                              <GoTrash
+                                className=" text-danger-500"
+                                size={20}
+                                onClick={removeSelectedImage}
+                              />
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        {/* <div className="w-full space-y-2 flex items-center justify-end">
+                          <Button color="primary" type="submit">
+                            {"Submit"}
+                          </Button>
+                        </div> */}
+
+                        <ModalFooter>
+                          <Button
+                            color="danger"
+                            variant="light"
+                            onPress={onClose}
+                          >
+                            Close
+                          </Button>
+
+                          <Button
+                            color="primary"
+                            type="submit"
+                            // onPress={onClose}
+                          >
+                            Submit
+                          </Button>
+                        </ModalFooter>
+                      </form>
+                    </ModalBody>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+            {/* Donate Form End */}
           </div>
 
           {/* <Divider /> */}

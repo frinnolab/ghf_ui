@@ -179,7 +179,7 @@ export default function DonationPage() {
           </motion.div>
 
           {/* <div className="inline-block max-w-lg text-center justify-center p-3 z-10"> */}
-          <div className="flex flex-col z-10">
+          <div className="hidden">
             <motion.h1
               className={`text-3xl md:text-5xl text-orange-500 font-semibold`}
               initial={{
@@ -213,10 +213,12 @@ export default function DonationPage() {
             </motion.span>
             <div />
           </div>
+        </div>
 
+        <div className="z-30 bg-default-200">
           {/* Bio */}
           <motion.div
-            className="rounded-2xl z-10 bg-default-50/75"
+            className=""
             initial={{
               opacity: 0,
             }}
@@ -224,12 +226,12 @@ export default function DonationPage() {
               opacity: 1,
               transition: {
                 ease: "linear",
-                delay: 0.8,
-                duration: 1.5,
+                delay: 0.5,
+                duration: 1,
               },
             }}
           >
-            <motion.p className=" text-2xl md:text-4xl text-balance md:text-justify p-5 md:py-10">
+            <motion.p className=" text-xl md:text-2xl text-pretty p-5 md:py-10">
               “At Great Hope Foundation, we believe in the limitless potential
               of our youth. Our empowerment programs equip young minds with the
               skills, resources, and opportunities they need to lead, innovate,
@@ -244,7 +246,7 @@ export default function DonationPage() {
           </motion.div>
 
           {/* Donate Pop-up */}
-          <div className="w-full flex justify-center relative pb-5 md:p-1">
+          <div className="w-full flex justify-center relative py-5">
             <Button
               className=" bg-orange-400 "
               size="lg"

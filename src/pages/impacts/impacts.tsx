@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { FaUniversity, FaMapMarkedAlt } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowRight } from "react-icons/go";
 import { Button } from "@nextui-org/button";
 import { Image, Spinner } from "@nextui-org/react";
 
@@ -65,7 +65,29 @@ const ImpactList = () => {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
-        <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%]">
+        <div className="h-[20dvh] md:h-[50dvh] w-full flex flex-col justify-center">
+          {/* Header Text */}
+          <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
+            <div className="w-full flex justify-end">
+              <div className="text-primary hidden md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+                <h1 className=" text-2xl md:text-4xl font-semibold">IMPACT</h1>
+              </div>
+            </div>
+          </div>
+          {/* Header Text End*/}
+
+          <div className="w-full absolute filter saturate-[80%] top-[0%]">
+            <Image
+              alt="Header img"
+              className="z-0"
+              radius="none"
+              src="/assets/images/static/Impact_BG.JPG"
+              width={3000}
+            />
+          </div>
+        </div>
+
+        <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%] hidden">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
@@ -78,8 +100,8 @@ const ImpactList = () => {
 
           <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%]">
             <Image
-              className="z-0"
               alt="Header img"
+              className="z-0"
               radius="none"
               src="/assets/images/static/Impact_BG.JPG"
               width={3000}
@@ -139,14 +161,14 @@ const ImpactList = () => {
 
                           <div className="p-1">
                             <Button
-                              className="flex items-center border border-primary-400 hover:border-transparent"
+                              className="flex items-center hover:border-transparent"
                               color="primary"
                               variant="light"
                               onClick={() => {
                                 toDetail(mp);
                               }}
                             >
-                              View Impact <GoArrowUpRight size={20} />
+                              View Impact <GoArrowRight size={20} />
                             </Button>
                           </div>
                         </div>

@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Project, ProjectAsset } from "../dashboard/projects/dash-projects";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button } from "@nextui-org/button";
 import { GoArrowLeft } from "react-icons/go";
-import { Divider, Image } from "@nextui-org/react";
+import { Divider, Image, Spinner } from "@nextui-org/react";
+import ReactPlayer from "react-player/youtube";
+
+import { Project, ProjectAsset } from "../dashboard/projects/dash-projects";
 
 import { siteConfig } from "@/config/site";
-import ReactPlayer from "react-player/youtube";
 // import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 
 export default function UwezoDetailPage() {
   const route = useLocation();
+  const [isLoading, setIsloading] = useState<boolean>(false);
   const api = `${import.meta.env.VITE_API_URL}`;
   // const [selected, setSelected] = useState("photos");
   const [projectId] = useState<string | null>(() => {
     if (route?.state) {
       return `${route?.state}`;
     }
+
     return null;
   });
 
@@ -31,6 +34,7 @@ export default function UwezoDetailPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsloading(true);
     window.scrollTo(0, 0);
     if (project === null) {
       axios
@@ -41,26 +45,31 @@ export default function UwezoDetailPage() {
           },
         })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
+          // console.log(res.data);
 
           const data: Project = {
             projectId: `${res.data["projectId"]}`,
-            title: `${res.data["title"]}`,
-            description: `${res.data["description"]}`,
+            title: `${res.data["title"] ?? ""}`,
+            description: `${res.data["description"] ?? ""}`,
             regionsReached: Number(res.data["regionsReached"] ?? 0),
             districtsReached: Number(res.data["districtsReached"] ?? 0),
             schoolsReached: Number(res.data["schoolsReached"] ?? 0),
             studentsReached: Number(res.data["studentsReached"] ?? 0),
-            dateStart: `${res.data["dateStart"]}`,
-            dateEnd: `${res.data["dateEnd"]}`,
-            publisherId: `${res.data["publisherId"]}`,
-            status: Number(`${res?.data["status"]}`),
+            dateStart: `${res.data["dateStart"] ?? ""}`,
+            dateEnd: `${res.data["dateEnd"] ?? ""}`,
+            publisherId: `${res.data["publisherId"] ?? ""}`,
+            status: Number(`${res?.data["status"] ?? ""}`),
             thumbnailUrl: `${res.data["thumbnailUrl"] ?? ""}`,
           };
 
           setProject(data);
+
+          setTimeout(() => {
+            setIsloading(false);
+          }, 2000);
         })
         .catch((err: AxiosError) => {
+          // eslint-disable-next-line no-console
           console.log(err.response);
         });
     }
@@ -95,7 +104,6 @@ export default function UwezoDetailPage() {
 
   return (
     <div className="w-full flex flex-col">
-      
       <div className="w-full p-5">
         <Button
           className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
@@ -111,71 +119,85 @@ export default function UwezoDetailPage() {
       </div>
 
       <Divider />
-      <div className="w-full flex flex-col justify-center">
-        {/* New Container */}
-        <div className="w-full">
-          <Image
-            radius="none"
-            className={`w-[100dvw] object-fill`}
-            src={
-              project?.thumbnailUrl !== "" || null
-                ? project?.thumbnailUrl
-                : siteConfig?.staticAssets?.staticLogo
-            }
+
+      {isLoading ? (
+        <>
+          <Spinner
+            className=" flex justify-center "
+            color="primary"
+            label="Loading..."
+            size="lg"
           />
-        </div>
-        {/* New Container End */}
+        </>
+      ) : (
+        <div className="w-full flex flex-col justify-center">
+          {/* New Container */}
+          <div className="w-full h-[30dvh] md:h-[50dvh]">
+            <Image
+              className={`object-fill`}
+              radius="none"
+              src={
+                project?.thumbnailUrl !== "" || null
+                  ? project?.thumbnailUrl
+                  : siteConfig?.staticAssets?.staticLogo
+              }
+              width={400}
+            />
+          </div>
+          {/* New Container End */}
 
-        {/* Contents */}
+          {/* Contents */}
 
-        <div className="w-full flex flex-col gap-5 p-10">
-          <h1 className=" text-3xl font-semibold ">
-            {project?.title?.toUpperCase() ?? ""}
-          </h1>
+          <div className="w-full flex flex-col gap-5 p-10">
+            <h1 className=" text-3xl font-semibold ">
+              {project?.title?.toUpperCase() ?? ""}
+            </h1>
 
-          {/* Description */}
-          <div className=" space-y-3">
-            <h1 className=" text-2xl ">Description</h1>
-            <Divider />
-            {/* <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
+            {/* Description */}
+            <div className=" space-y-3">
+              {/* <h1 className=" text-2xl ">Description</h1> */}
+              <Divider />
+              {/* <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
               {project?.description}
             </p> */}
 
-            <div
-              dangerouslySetInnerHTML={{ __html: `${project?.description}` }}
-            ></div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: `${project?.description ?? ""}`,
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <Divider />
-        {/* Assets */}
-        <div
-          className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
-        >
-          <h1 className="text-xl md:text-3xl">{project?.title} assets</h1>
+          <Divider />
+          {/* Assets */}
+          <div
+            className={`w-full flex flex-col gap-5 overflow-y-scroll h-[80dvh] p-5 scrollbar-hide`}
+          >
+            {/* <h1 className="text-xl md:text-3xl">{project?.title} assets</h1> */}
 
-          {projectAssets === null || projectAssets?.length === 0 ? (
-            <></>
-          ) : (
-            <div
-              className={`w-full flex flex-col md:flex-row justify-center gap-5`}
-            >
-              <div className="w-full flex flex-wrap">
-                {projectAssets?.flatMap((d: ProjectAsset) => (
-                  <div
-                    key={d?.assetId}
-                    className={` p-2 flex items-center gap-1 P-2`}
-                  >
-                    <ReactPlayer
-                      width={300}
-                      height={300}
-                      url={d?.videoUrl}
-                      controls
-                    />
-                  </div>
-                ))}
+            {projectAssets === null || projectAssets?.length === 0 ? (
+              <></>
+            ) : (
+              <div
+                className={`w-full flex flex-col md:flex-row justify-center gap-5`}
+              >
+                <div className="w-full flex flex-wrap">
+                  {projectAssets?.flatMap((d: ProjectAsset) => (
+                    <div
+                      key={d?.assetId}
+                      className={` p-2 flex items-center gap-1 P-2`}
+                    >
+                      <ReactPlayer
+                        controls
+                        height={300}
+                        url={d?.videoUrl}
+                        width={300}
+                      />
+                    </div>
+                  ))}
 
-                {/* <Tabs
+                  {/* <Tabs
                   fullWidth
                   size="lg"
                   radius="md"
@@ -245,12 +267,13 @@ export default function UwezoDetailPage() {
                     </Card>
                   </Tab>
                 </Tabs> */}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          {/* Assets End */}
         </div>
-        {/* Assets End */}
-      </div>
+      )}
     </div>
   );
 }

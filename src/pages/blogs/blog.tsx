@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Image, Spinner, Tab, Tabs } from "@nextui-org/react";
-import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowRight, GoArrowUpRight } from "react-icons/go";
 
 import { Blog } from "../dashboard/blog/dash-blogs";
 
@@ -124,6 +124,7 @@ export default function BlogPage() {
                       color="primary"
                       radius="sm"
                       size="lg"
+                      variant="underlined"
                     >
                       <Tab key="blogs" title="Blogs">
                         <div className="w-full flex justify-start gap-5 md:gap-10 flex-wrap">
@@ -152,14 +153,14 @@ export default function BlogPage() {
 
                               <div className="p-1">
                                 <Button
-                                  className="flex items-center border border-primary-400 hover:border-transparent"
+                                  className="flex items-center hover:border-transparent"
                                   color="primary"
                                   variant="light"
                                   onClick={() => {
                                     toDetail(b);
                                   }}
                                 >
-                                  Read more <GoArrowUpRight size={20} />
+                                  Read more <GoArrowRight size={20} />
                                 </Button>
                               </div>
                             </div>
@@ -194,14 +195,14 @@ export default function BlogPage() {
 
                               <div className="p-1">
                                 <Button
-                                  className="flex items-center border border-primary-400 hover:border-transparent"
+                                  className="flex items-center:border-transparent"
                                   color="primary"
                                   variant="light"
                                   onClick={() => {
                                     toDetail(b);
                                   }}
                                 >
-                                  Read more <GoArrowUpRight size={20} />
+                                  Read more <GoArrowRight size={20} />
                                 </Button>
                               </div>
                             </div>
