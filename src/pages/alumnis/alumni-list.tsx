@@ -205,9 +205,9 @@ export default function AlumniList() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 md:py-5">
-        <div className="w-full flex flex-col items-center gap-5  md:p-10 md:min-h-[80dvh] relative">
+        <div className="w-full flex flex-col items-center gap-5  md:p-10 h-[30dvh] md:min-h-[80dvh] relative">
           <motion.div
-            className={`w-full absolute top-[-25%] md:top-[-50%] saturate-[100%]`}
+            className={`w-full absolute top-[-35%] md:top-[-50%] saturate-[100%]`}
           >
             <Image
               alt="About Bg"
@@ -591,7 +591,7 @@ export default function AlumniList() {
                     </h1>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col md:flex-row  flex-wrap gap-10">
+                  <div className="w-full flex flex-col md:flex-row  flex-wrap gap-10 pb-5">
                     {alumnis?.flatMap((d) => (
                       <div
                         key={d?.alumniId}

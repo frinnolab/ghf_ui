@@ -82,10 +82,9 @@ export default function AlumniView() {
       <Divider />
 
       <div className="w-full flex flex-col">
-        <div className=" w-full flex gap-10 justify-between p-10">
+        <div className=" w-full flex flex-col-reverse md:flex-row gap-10 justify-between p-10">
           <div className=" w-full space-y-3 ">
             {/* <h1 className=" text-3xl font-semibold ">Alumni Profile{""}</h1> */}
-
             {/* Impact */}
             <div className=" space-y-3 w-full">
               <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
