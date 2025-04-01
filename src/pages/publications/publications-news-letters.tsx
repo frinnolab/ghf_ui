@@ -101,7 +101,7 @@ export default function PublicationsNewsLetters() {
       axios
         .get(`${api}/publications`)
         .then((res: AxiosResponse) => {
-          console.log(res?.data);
+          //console.log(res?.data);
 
           const data: Publication[] = Array.from(res?.data).flatMap(
             (d: any) => {
@@ -196,7 +196,7 @@ export default function PublicationsNewsLetters() {
                     {pubs?.flatMap((p) => (
                       <div
                         key={p?.publishId}
-                        className="w-[16%] flex flex-col bg-white rounded-xl"
+                        className="w-full md:w-[16%] flex flex-col bg-white rounded-xl"
                       >
                         {/* content */}
 

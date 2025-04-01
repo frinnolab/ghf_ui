@@ -149,7 +149,7 @@ export default function PublicationsReports() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[-5%]">
+          <div className="w-full absolute md:top-[-5%]">
             <Image
               alt="Header img"
               className="z-0"
@@ -193,7 +193,7 @@ export default function PublicationsReports() {
                     {pubs?.flatMap((p) => (
                       <div
                         key={p?.publishId}
-                        className=" w-[16%] flex flex-col bg-white rounded-xl"
+                        className="w-full md:w-[16%] flex flex-col bg-white rounded-xl"
                       >
                         {/* content */}
 
