@@ -36,7 +36,6 @@ import SappyPage from "./pages/sappy/sappy-page";
 import SabbyPage from "./pages/sappy/sabby-page";
 import DashPublications from "./pages/dashboard/publications/dash-publications";
 import DashPublicationsView from "./pages/dashboard/publications/dash-publication-view";
-import Publications from "./pages/publications/publications";
 import PublicationsView from "./pages/publications/publication-view";
 import DashDonations from "./pages/dashboard/donations/dash-donations-list";
 import DashDonationView from "./pages/dashboard/donations/dash-donation-view";
@@ -50,6 +49,9 @@ import CareersPage from "./pages/careers/Careers";
 import DashCareersList from "./pages/dashboard/careers/dash-careers";
 import DashCareerView from "./pages/dashboard/careers/dash-career-view";
 import CareerView from "./pages/careers/CareerView";
+import PublicationsReports from "./pages/publications/publications-reports";
+import PublicationsManuals from "./pages/publications/publications-manuals";
+import PublicationsNewsLetters from "./pages/publications/publications-news-letters";
 
 function App() {
   return (
@@ -68,7 +70,9 @@ function App() {
       <Route element={<BlogPage />} path="/blog" />
       <Route element={<BlogDetailPage />} path="/blog/:id" />
       {/* <Route element={<BlogPage />} path="/careers" /> */}
-      <Route element={<Publications />} path="/publications" />
+      <Route element={<PublicationsNewsLetters />} path="/newsletters" />
+      <Route element={<PublicationsReports />} path="/reports" />
+      <Route element={<PublicationsManuals />} path="/studentmanuals" />
       <Route element={<PublicationsView />} path="/publications/:id" />
       <Route element={<AlumniList />} path="/alumni" />
       <Route element={<AlumniView />} path="/alumni/:id" />

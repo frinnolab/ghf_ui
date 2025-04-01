@@ -39,7 +39,7 @@ export default function DashImpactView() {
   const route = useLocation();
   const reportTitleRef = useRef<HTMLInputElement>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  // const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [impactId] = useState<string | null>(() => {
     if (route?.state !== null) {
       return route?.state;
@@ -49,14 +49,14 @@ export default function DashImpactView() {
   });
   const [impact, setImpact] = useState<Impact | null>(null);
   const [impactAssets, setImpactAssets] = useState<ImpactAsset[] | null>(null);
-  const [impactVideoAsset] = useState<ImpactAsset | null>(
-    null
-  );
+  // const [impactVideoAsset] = useState<ImpactAsset | null>(
+  //   null
+  // );
   const [impactReports, setImpacReports] = useState<ImpactReport[] | null>(
     null
   );
   const [isLoading, setIsloading] = useState<boolean>(true);
-  const thumbRef = useRef<HTMLInputElement | null>(null);
+  // const thumbRef = useRef<HTMLInputElement | null>(null);
 
   const handleBack = () => nav("/dashboard/impacts");
 
@@ -398,71 +398,71 @@ export default function DashImpactView() {
   // Impact Report End
 
   // Impact General Video Asset
-  const onChangeVideo = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedVideo(e.target.files[0]);
-    }
-  };
+  // const onChangeVideo = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSelectedVideo(e.target.files[0]);
+  //   }
+  // };
 
-  const removeSelectedVideo = () => {
-    setSelectedVideo(null);
-    window.location.reload();
-  };
+  // const removeSelectedVideo = () => {
+  //   setSelectedVideo(null);
+  //   window.location.reload();
+  // };
 
-  const handleVideoSave = () => {
-    setIsloading(true);
+  // const handleVideoSave = () => {
+  //   setIsloading(true);
 
-    const asset = new FormData();
+  //   const asset = new FormData();
 
-    if (impactId) {
-      if (selectedVideo === null) {
-        alert("No video file chosen");
-      } else {
-        asset.append("_method", "POST");
-        asset.append("impactId", `${impact?.impactId}`);
-        if (selectedVideo) {
-          asset.append("video", selectedVideo);
-        }
+  //   if (impactId) {
+  //     if (selectedVideo === null) {
+  //       alert("No video file chosen");
+  //     } else {
+  //       asset.append("_method", "POST");
+  //       asset.append("impactId", `${impact?.impactId}`);
+  //       if (selectedVideo) {
+  //         asset.append("video", selectedVideo);
+  //       }
 
-        axios
-          .post(`${api}/impacts/assets/${impact?.impactId}`, asset, {
-            headers: {
-              Authorization: `Bearer ${authed?.token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then(() => {
-            // const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
-            //   (d: any) => {
-            //     const data: ImpactAsset = {
-            //       assetUrl: d?.assetUrl,
-            //       impactAssetId: d?.assetId,
-            //       impactId: d?.impactId,
-            //     };
+  //       axios
+  //         .post(`${api}/impacts/assets/${impact?.impactId}`, asset, {
+  //           headers: {
+  //             Authorization: `Bearer ${authed?.token}`,
+  //             "Content-Type": "multipart/form-data",
+  //           },
+  //         })
+  //         .then(() => {
+  //           // const datas: ImpactAsset[] = Array.from(res?.data).flatMap(
+  //           //   (d: any) => {
+  //           //     const data: ImpactAsset = {
+  //           //       assetUrl: d?.assetUrl,
+  //           //       impactAssetId: d?.assetId,
+  //           //       impactId: d?.impactId,
+  //           //     };
 
-            //     return [data];
-            //   }
-            // );
+  //           //     return [data];
+  //           //   }
+  //           // );
 
-            // setImpactAssets([...datas]);
-            // setSelectedImage(null);
+  //           // setImpactAssets([...datas]);
+  //           // setSelectedImage(null);
 
-            // setIsloading(false);
-            window.location.reload();
-          })
-          .catch((err: AxiosError) => {
-            setSelectedVideo(null);
-            console.error(err?.response);
+  //           // setIsloading(false);
+  //           window.location.reload();
+  //         })
+  //         .catch((err: AxiosError) => {
+  //           setSelectedVideo(null);
+  //           console.error(err?.response);
 
-            //alert(`${err?.response?.data}`);
+  //           //alert(`${err?.response?.data}`);
 
-            // window.location.reload();
-          });
-      }
-    } else {
-      alert("Create Impact before video adding asset.");
-    }
-  };
+  //           // window.location.reload();
+  //         });
+  //     }
+  //   } else {
+  //     alert("Create Impact before video adding asset.");
+  //   }
+  // };
 
   // const handleVideoUpdate = () => {
   //   setIsloading(true);
@@ -977,92 +977,6 @@ export default function DashImpactView() {
                     </div>
                     {/* Asets End */}
                   </Tab>
-
-                  <Tab key="AssetVideo" title="Asset General Video">
-                    <div className={`w-full border rounded-xl p-2 space-y-5`}>
-                      <div className="w-full flex justify-between">
-                        <h1 className={`text-xl`}>General Video</h1>
-
-                        <Button
-                          color="primary"
-                          disabled={!isEdit ? true : false}
-                          onClick={() => {
-                            handleVideoSave();
-                            // if (impactVideoAsset == null) {
-                            // } else {
-                            //   handleVideoUpdate();
-                            // }
-                          }}
-                        >
-                          {impactVideoAsset === null ? "Save Video" : "Update Video"}
-                        </Button>
-                      </div>
-
-                      {selectedVideo ? (
-                        <>
-                          <video
-                            className={`h-[25vh] object-cover`}
-                            autoPlay={false}
-                            muted
-                            controls
-                            src={URL.createObjectURL(selectedVideo)}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <video
-                            autoPlay={false}
-                            muted
-                            controls
-                            className={`h-[25vh] object-cover`}
-                            src={
-                              impactVideoAsset?.assetUrl === null
-                                ? "siteConfig.staticAssets.staticIntroVideo"
-                                : impactVideoAsset?.assetUrl
-                            }
-                          />
-                        </>
-                      )}
-
-                      <div className="p-3 flex items-center">
-                        <input
-                          disabled={!isEdit}
-                          accept="video/*"
-                          ref={thumbRef}
-                          type="file"
-                          onChange={(e) => {
-                            onChangeVideo(e);
-                          }}
-                        />
-
-                        <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
-                          <GoTrash
-                            size={20}
-                            className=" text-danger-500"
-                            onClick={removeSelectedVideo}
-                          />
-                        </span>
-                      </div>
-
-                      {/* Video Action */}
-                      {/* <div className="p-3 flex items-center">
-                        <Button
-                          color="primary"
-                          disabled={!isEdit ? true : false}
-                          onClick={() => {
-                            if (impactVideoAsset == null) {
-                              handleSave();
-                            } else {
-                              handleUpdate();
-                            }
-                          }}
-                        >
-                          {impactId === null ? "Save Video" : "Update Video"}
-                        </Button>
-                      </div> */}
-                      {/* Video Action End */}
-                    </div>
-                  </Tab>
                 </Tabs>
               </div>
               {/* Asset & Reports End */}
@@ -1074,3 +988,71 @@ export default function DashImpactView() {
     </div>
   );
 }
+
+{/* <Tab key="AssetVideo" title="Asset General Video">
+  <div className={`w-full border rounded-xl p-2 space-y-5`}>
+    <div className="w-full flex justify-between">
+      <h1 className={`text-xl`}>General Video</h1>
+
+      <Button
+        color="primary"
+        disabled={!isEdit ? true : false}
+        onClick={() => {
+          handleVideoSave();
+          // if (impactVideoAsset == null) {
+          // } else {
+          //   handleVideoUpdate();
+          // }
+        }}
+      >
+        {impactVideoAsset === null ? "Save Video" : "Update Video"}
+      </Button>
+    </div>
+
+    {selectedVideo ? (
+      <>
+        <video
+          className={`h-[25vh] object-cover`}
+          autoPlay={false}
+          muted
+          controls
+          src={URL.createObjectURL(selectedVideo)}
+        />
+      </>
+    ) : (
+      <>
+        <video
+          autoPlay={false}
+          muted
+          controls
+          className={`h-[25vh] object-cover`}
+          src={
+            impactVideoAsset?.assetUrl === null
+              ? "siteConfig.staticAssets.staticIntroVideo"
+              : impactVideoAsset?.assetUrl
+          }
+        />
+      </>
+    )}
+
+    <div className="p-3 flex items-center">
+      <input
+        disabled={!isEdit}
+        accept="video/*"
+        ref={thumbRef}
+        type="file"
+        onChange={(e) => {
+          onChangeVideo(e);
+        }}
+      />
+
+      <span className="flex items-center p-1 hover:bg-default-200 hover:rounded-full">
+        <GoTrash
+          size={20}
+          className=" text-danger-500"
+          onClick={removeSelectedVideo}
+        />
+      </span>
+    </div>
+  </div>
+</Tab>; */}

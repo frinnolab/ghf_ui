@@ -73,7 +73,7 @@ export default function UwezoPage() {
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
-              <div className="hidden text-primary md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+              <div className="hidden text-black hover:text-orange-400 md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">
                   UWEZO PROGRAM
                 </h1>
@@ -92,7 +92,7 @@ export default function UwezoPage() {
         </div>
 
         <div className="w-full flex flex-col p-5 md:px-20  gap-5 bg-default-200 z-10">
-          <h1 className="text-2xl md:text-3xl  font-semibold">
+          <h1 className="text-3xl md:text-4xl text-black hover:text-orange-500 uppercase  font-semibold">
             UWEZO PROGRAM COMPONENTS
           </h1>
 
@@ -136,9 +136,9 @@ export default function UwezoPage() {
                         {/* <p className="text-xl">{p?.description}</p> */}
                         <div className={` `}>
                           <Button
-                            className="flex items-center hover:border-transparent"
-                            color="primary"
-                            variant="light"
+                            className="text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                            // color="primary"
+                            // variant="light"
                             onClick={() => {
                               toDetail(p);
                             }}

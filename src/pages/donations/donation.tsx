@@ -231,7 +231,7 @@ export default function DonationPage() {
               },
             }}
           >
-            <motion.p className=" text-xl md:text-2xl text-pretty p-5 md:py-10">
+            <motion.p className=" text-2xl md:text-3xl text-pretty text-black p-5 md:py-10 ">
               “At Great Hope Foundation, we believe in the limitless potential
               of our youth. Our empowerment programs equip young minds with the
               skills, resources, and opportunities they need to lead, innovate,

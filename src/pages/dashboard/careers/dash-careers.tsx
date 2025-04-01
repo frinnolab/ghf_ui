@@ -10,6 +10,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Radio,
+  RadioGroup,
   Spinner,
   Table,
   TableBody,
@@ -29,7 +31,44 @@ import { GoEye, GoPlus, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 
-import { Qformats, Qmodules } from "../blog/dash-blog-create";
+// import { Qformats, Qmodules } from "../blog/dash-blog-create";
+
+export const carQformats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  // "strike",
+  // "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  // "link",
+  // "image",
+  // "video",
+];
+
+export const carQmodules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    [
+      "bold",
+      "italic",
+      "underline",
+      // "strike", "blockquote"
+    ],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    // ["image"],
+    // ["video"],
+    // ["link"],
+    // ["clean"],
+  ],
+};
 
 const DashCareersList = () => {
   const columns = ["Position", "Type", "Validity", "Actions"];
@@ -41,20 +80,42 @@ const DashCareersList = () => {
   //const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [quillValue, setQuillValue] = useState<string>("");
 
+  const careerRadioTypes = [
+    {
+      key: 0,
+      label: "Volunteering",
+      type: CareerType.Volunteering,
+    },
+    {
+      key: 1,
+      label: "Employment",
+      type: CareerType.Employment,
+    },
+    {
+      key: 2,
+      label: "Internship",
+      type: CareerType.Internship,
+    },
+  ];
+
+  const [selectedCareerRadio, setSelectedCareeRadio] = useState(
+    careerRadioTypes[0]
+  );
+
   const api = `${import.meta.env.VITE_API_URL}`;
   const authed = useAuthedProfile();
   const nav = useNavigate();
   const { register, handleSubmit } = useForm<Career>();
 
   const handleCreate: SubmitHandler<Career> = (data: Career) => {
-
     setIsloading(true);
 
     const newData: Career = {
       position: data?.position,
       description: data?.description,
       requirements: quillValue,
-      careerType: Number(data?.careerType ?? CareerType.Volunteering),
+      // careerType: Number(data?.careerType ?? CareerType.Volunteering),
+      careerType: Number(selectedCareerRadio?.type),
       careerValidity: Number(data?.careerValidity ?? CareerValidity?.Open),
     };
 
@@ -68,15 +129,15 @@ const DashCareersList = () => {
       })
       .then((res: AxiosResponse) => {
         if (res) {
-          console.log(res?.data);
+          // console.log(res?.data);
           setIsloading(false);
           onClose();
-          //window.location.reload();
+          window.location.reload();
         }
       })
       .catch((e: AxiosError) => {
-        console.log(e);
-        setIsloading(false);
+        console.error(e);
+        //setIsloading(false);
         //window.location.reload();
       });
   };
@@ -108,7 +169,6 @@ const DashCareersList = () => {
     if (Number(authed?.role) !== Number(AuthRole.SuperAdmin)) {
       alert(`You are not Authorised to perform this action!.`);
       //console.log(HttpStatusCode);
-      
     } else {
       axios
         .delete(`${api}/careers/${b?.careerId}`, {
@@ -132,6 +192,8 @@ const DashCareersList = () => {
         return "Employment";
       case CareerType.Volunteering:
         return "Volunteering";
+      case CareerType.Internship:
+        return "Internship";
     }
   };
 
@@ -179,6 +241,7 @@ const DashCareersList = () => {
     setIsloading(true);
     fetchCareers();
   }, []);
+
   return (
     <DashboardLayout>
       <section className="w-full flex flex-col p-10 gap-3">
@@ -186,7 +249,7 @@ const DashCareersList = () => {
         <div className="w-full flex justify-between">
           <h1 className=" text-2xl ">Manage Careers</h1>
 
-          <Button variant="solid" color="primary" onPress={onOpen}>
+          <Button color="primary" variant="solid" onPress={onOpen}>
             Add{" "}
             <span>
               <GoPlus size={20} />
@@ -255,8 +318,8 @@ const DashCareersList = () => {
       <>
         <Modal
           isOpen={isOpen}
-          onOpenChange={onOpenChange}
           placement="top-center"
+          onOpenChange={onOpenChange}
         >
           <ModalContent>
             {(onClose) => (
@@ -276,22 +339,64 @@ const DashCareersList = () => {
                     </>
                   ) : (
                     <form
-                      onSubmit={handleSubmit(handleCreate)}
                       className="w-full flex flex-col gap-5 "
+                      onSubmit={handleSubmit(handleCreate)}
                     >
                       <ModalBody>
                         <Input
+                          defaultValue={`${career?.position ?? ""}`}
                           label="Position"
                           type="text"
-                          defaultValue={`${career?.position ?? ""}`}
                           {...register("position")}
                           placeholder={`${career?.position?.toUpperCase() ?? "Enter Position"}`}
                         />
 
+                        <RadioGroup
+                          color="warning"
+                          label={`Selected Career Type: ${selectedCareerRadio?.label}`}
+                          orientation="horizontal"
+                          value={`${selectedCareerRadio?.type}`}
+                          onValueChange={(e) => {
+                            // console.log(e);
+
+                            const selCareer = careerRadioTypes.find(
+                              (ct) => ct.type === Number(e)
+                            );
+
+                            // console.log(selCareer);
+
+                            setSelectedCareeRadio(
+                              selCareer ?? selectedCareerRadio
+                            );
+                          }}
+                        >
+                          {/* {careerRadioTypes?.map((ct)=>{
+                            <Radio value={ct?.type}>{ct.label}</Radio>
+                          })} */}
+
+                          <Radio value={`${careerRadioTypes[0]?.type}`}>
+                            {careerRadioTypes[0]?.label}
+                          </Radio>
+                          <Radio value={`${careerRadioTypes[1]?.type}`}>
+                            {careerRadioTypes[1]?.label}
+                          </Radio>
+                          <Radio value={`${careerRadioTypes[2]?.type}`}>
+                            {careerRadioTypes[2]?.label}
+                          </Radio>
+                        </RadioGroup>
+
+                        {/* <Input
+                          label="Career Type"
+                          type="text"
+                          defaultValue={`${career?.position ?? ""}`}
+                          {...register("position")}
+                          placeholder={`${career?.position?.toUpperCase() ?? "Enter Position"}`}
+                        /> */}
+
                         <Textarea
+                          defaultValue={`${career?.description ?? ""}`}
                           label="Description"
                           type="text"
-                          defaultValue={`${career?.description ?? ""}`}
                           {...register("description")}
                           placeholder={`${career?.description?.toUpperCase() ?? "Enter Description"}`}
                         />
@@ -299,12 +404,17 @@ const DashCareersList = () => {
                         <div>
                           <label htmlFor="req">Requirements</label>
                           <ReactQuill
+                            style={{
+                              height: "20dvh",
+                              overflowY: "scroll",
+                              overflowX: "hidden",
+                            }}
+                            formats={carQformats.filter((p) => p)}
+                            modules={carQmodules}
                             placeholder={`${career?.requirements ?? "Enter Requirements"}`}
                             theme="snow"
                             value={quillValue}
                             onChange={setQuillValue}
-                            formats={Qformats.filter((p) => p)}
-                            modules={Qmodules}
                           />
                         </div>
                       </ModalBody>
@@ -343,6 +453,7 @@ export type CareerApplication = {
   careerAppId?: string;
   careerId?: string;
   avatarUrl?: string;
+  cvUrl?: string;
   email?: string;
   firstname?: string;
   lastname?: string;
@@ -357,6 +468,7 @@ export type CareerApplication = {
 export enum CareerType {
   Volunteering = 0,
   Employment = 1,
+  Internship = 2,
 }
 
 export enum CareerStatus {

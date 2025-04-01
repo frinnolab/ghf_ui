@@ -20,9 +20,75 @@ export const siteConfig = {
       label: "Impact",
       href: "/impacts",
     },
+    // {
+    //   label: "Publications",
+    //   href: "/publications",
+    // },
     {
-      label: "Publications",
-      href: "/publications",
+      label: "Donate",
+      href: "/donate",
+    },
+    {
+      label: "Alumni",
+      href: "/alumni",
+    },
+    {
+      label: "Blogs",
+      href: "/blog",
+    },
+    {
+      label: "Careers",
+      href: "/careers",
+    },
+    // {
+    //   label: "sappy",
+    //   href: "/sappy",
+    // },
+    // {
+    //   label: "sabby",
+    //   href: "/sabby",
+    // },
+    // {
+    //   label: "Careers",
+    //   href: "/careers",
+    // },
+    // {
+    //   label: "Docs",
+    //   href: "/docs",
+    // },
+    // {
+    //   label: "Pricing",
+    //   href: "/pricing",
+    // },
+  ],
+  navMobileItems: [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "About Us",
+      href: "/about",
+    },
+    { 
+      label: "What we do",
+      href: "/whatwedo",
+    },
+    {
+      label: "Impact",
+      href: "/impacts",
+    },
+    {
+      label: "Newsletters",
+      href: "/newsletters",
+    },
+    {
+      label: "Reports",
+      href: "/reports",
+    },
+    {
+      label: "Student Center",
+      href: "/studentmanuals",
     },
     {
       label: "Donate",
@@ -128,9 +194,9 @@ export const siteConfig = {
     // },
   ],
   staticAssets:{
-    staticLogo:'/assets/images/static/ghf_default.png',
-    staticLogoLine:'/assets/logos/ghf_default_line.png',
-    staticIntroVideo:'/assets/videos/sample_videoP.mp4'
+    staticLogo: "/assets/images/static/ghf_default.png",
+    staticLogoLine: "/assets/logos/ghf_default_line.png",
+    staticIntroVideo: "/assets/videos/sample_videoP.mp4",
   },
   links: {
     email: "greathopefoundation@gmail.com",
@@ -146,32 +212,32 @@ export const siteConfig = {
   socialLinks:{
     twitterX:{
       name:'X',
-      link:'https://x.com/Greathopetz'
+      link: "https://x.com/Greathopetz",
     },
     linkedin:{
-      name:'Linkedin',
-      link:'https://www.linkedin.com/company/28136797/admin/dashboard/'
+      name: "Linkedin",
+      link: "https://www.linkedin.com/company/28136797/admin/dashboard/",
     },
     facebook:{
-      name:'facebook',
-      link:'https://www.facebook.com/greathopetz'
+      name: "facebook",
+      link: "https://www.facebook.com/greathopetz",
     },
     instagram:{
-      name:'instagram',
-      link:'https://www.instagram.com/greathopetz/'
+      name: "instagram",
+      link: "https://www.instagram.com/greathopetz/",
     },
   },
   
   footerTexts:{
-    footerImage:'/assets/logos/GHF_LOGO.png',
+    footerImage: "/assets/logos/GHF_LOGO.png",
     address:{
-      country:"Tanzania",
-      city:"Ubungo Riverside,Dar es salaam",
+      country: "Tanzania",
+      city: "Ubungo Riverside,Dar es salaam",
       postoffice: "P.O.BOX 2466 DSM",
     },
     contact:{
       email: "info@ghftz.or.tz",
-      contacts:["+255 764 977 365,","+255 783 672 512"]
+      contacts: ["+255 764 977 365,", "+255 783 672 512"],
     }
   }
 };

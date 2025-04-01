@@ -16,7 +16,7 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaMapMarkedAlt, FaUniversity } from "react-icons/fa";
 import { FaMapPin, FaPeopleGroup } from "react-icons/fa6";
-import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowRight, GoArrowUpRight } from "react-icons/go";
 import { siteConfig } from "@/config/site";
 import { Impact } from "./dashboard/impacts/dash-impacts-list";
 import CountUp from "react-countup";
@@ -58,6 +58,7 @@ export default function HomePage() {
   const [donation] = useState<Donation | null>(null);
   const [isLoading, setIsloading] = useState<boolean>(false);
   const [isIntroVideo, setIsIntrovideo] = useState<boolean>(false);
+  // const [, setIsIntrovideo] = useState<boolean>(false);
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState<Blog[] | null>(null);
 
@@ -109,11 +110,11 @@ export default function HomePage() {
       axios
         .get(`${api}/settings/statsinfo`)
         .then((res: AxiosResponse) => {
-          // if (res?.data["introVideoUrl"]) {
-          //   setIsIntrovideo(true);
-          // }
+          if (res?.data["introVideoUrl"]) {
+            setIsIntrovideo(true);
+          }
 
-          // setCompanyInfo(res?.data);
+          setCompanyInfo(res?.data);
 
           const data: StatsInfo = {
             studentsImpacted: Number(res?.data["studentsImpacted"] ?? 0),
@@ -214,13 +215,15 @@ export default function HomePage() {
   const fetchBlogs = () => {
     if (blogs === null) {
       axios
-        .get(`${api}/blogs?limit=3`, {
+        .get(`${api}/blogs?limit=3&&isArchived=false`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
         })
         .then((res: AxiosResponse) => {
+          // console.log(res?.data);
+
           const datas: Blog[] = Array.from(res?.data).flatMap((b: any) => {
             const data: Blog = {
               blogId: b?.blogId,
@@ -228,6 +231,7 @@ export default function HomePage() {
               title: b?.title ?? "",
               description: b?.description ?? "",
               thumbnailUrl: b?.thumbnailUrl ?? "",
+              isArchived: Boolean(b?.isArchived ?? false),
             };
 
             return [data];
@@ -237,7 +241,7 @@ export default function HomePage() {
         })
         .catch((err: AxiosError) => {
           // eslint-disable-next-line no-console
-          console.log(err.response);
+          console.log(err);
         });
     }
   };
@@ -408,6 +412,7 @@ export default function HomePage() {
     if (introVideoRef?.current?.paused) {
       setIsPaused(false);
       introVideoRef?.current?.play();
+      // !introVideoRef?.current?.muted
     } else {
       introVideoRef?.current?.pause();
       setIsPaused(true);
@@ -416,9 +421,10 @@ export default function HomePage() {
 
   return (
     <DefaultLayout>
+      {/* Container */}
       <motion.div
         ref={mainSectionRef}
-        className="w-full flex flex-col items-center justify-center"
+        className="w-full flex flex-col items-center justify-center "
         transition={{
           duration: 0.8,
           delay: 0.5,
@@ -426,63 +432,26 @@ export default function HomePage() {
         }}
       >
         {/* Hero Section */}
-        <div className="h-[40dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
-          {/* Header Text */}
-          <div
-            ref={headerTextsRef}
-            className=" flex flex-col items-center gap-5 md:top-[65%] top-[15%] z-30 absolute p-10"
-          >
-            <motion.div className="w-full flex flex-col  md:flex-row items-center gap-1 text-center md:text-5xl text-white  font-semibold p-5  rounded-xl">
-              <motion.h1
-              className={` uppercase text-balance `}
-                initial={{
-                  opacity: 0,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  transition: {
-                    delay: 0.5,
-                    duration: 0.8,
-                    ease: "linear",
-                  },
-                }}
-              >
-                We design innovative platforms and projects that equip young
-                people with entrepreneurial and 21st-century skills—preparing
-                them for a seamless transition into the marketplace.
-              </motion.h1>
-            </motion.div>
-          </div>
-          {/* Header Text End*/}
 
-          <div className="w-full absolute top-16 md:top-[-1%] xl:top-[6%] ">
-            <Image
-              alt="Header img"
-              radius="none"
-              src="/assets/images/static/MAIN_PAGE.jpg"
-            />
-          </div>
-        </div>
+        <div hidden>
+          {/* New Hero */}
+          <motion.div className="w-full h-screen">
+            <div className="absolute top-[-20%] z-0">
+              <Image
+                alt="Header img"
+                className=""
+                radius="none"
+                src="/assets/images/static/MAIN_PAGE.jpg"
+              />
+            </div>
+            {/* <h1> New Hero</h1> */}
+          </motion.div>
+          {/* New Hero End */}
 
-        {/* Who We're */}
-        <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-20 font-semibold cursor-default panel panel-intro md:relative md:pt-[5%] z-30">
-          <motion.div
-            // animate={{ opacity: 1, scale: 1 }}
-            className=" bg-primary rounded-2xl p-10 text-default-50 "
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-              transition: {
-                duration: 0.5,
-                delay: 0.3,
-                ease: "linear",
-                // ease: [0, 0.71, 0.2, 1.01],
-              },
-            }}
-          >
+          {/* New Header Texts */}
+          <div className="w-full z-10 flex text-center justify-center p-10">
             <motion.h1
-              className="md:text-3xl text-2xl py-3"
+              className={`text-black text-3xl md:text-4xl font-semibold uppercase text-justify `}
               initial={{
                 opacity: 0,
               }}
@@ -495,24 +464,107 @@ export default function HomePage() {
                 },
               }}
             >
-              Who we are
+              We design innovative platforms and projects that equip young
+              people with entrepreneurial and 21st-century skills, preparing
+              them for a seamless transition into the marketplace
             </motion.h1>
+          </div>
+          {/* New Header Texts End */}
+        </div>
 
-            <motion.p
-              className="md:text-xl text-justify"
-              initial={{
-                opacity: 0,
-              }}
+        <div>
+          <div className="h-[25dvh] md:h-screen  w-full flex flex-col justify-center items-center panel panel-main">
+            {/* Header Text */}
+            <div
+              ref={headerTextsRef}
+              className=" flex flex-col items-center gap-5 md:top-[65%] top-[15%] z-30 absolute p-10"
+            >
+              <motion.div className="w-full flex flex-col  md:flex-row items-center gap-1 text-center md:text-5xl text-white  font-semibold p-5  rounded-xl">
+                {/* <div/> */}
+                <motion.h1
+                  className={` uppercase text-balance md:pt-5`}
+                  initial={{
+                    opacity: 0,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    transition: {
+                      delay: 0.5,
+                      duration: 0.8,
+                      ease: "linear",
+                    },
+                  }}
+                >
+                  We design innovative platforms and projects that equip young
+                  people with entrepreneurial and 21st-century skills, preparing
+                  them for a seamless transition into the marketplace
+                </motion.h1>
+              </motion.div>
+            </div>
+            {/* Header Text End*/}
+
+            <div className="absolute top-[-3%] md:top-[-20%] z-0">
+              <Image
+                alt="Header img"
+                radius="none"
+                src="/assets/images/static/MAIN_PAGE.jpg"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Section End */}
+
+        {/* Who We're */}
+        <div>
+          <div className="w-full flex flex-col gap-5 md:space-y-5 px-5 md:px-10 font-semibold cursor-default panel panel-intro md:relative md:pt-[5%] z-30 ">
+            <motion.div
+              // animate={{ opacity: 1, scale: 1 }}
+              className=" bg-primary rounded-2xl p-10 text-default-50 "
+              initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{
                 opacity: 1,
+                scale: 1,
                 transition: {
-                  delay: 0.7,
-                  duration: 0.9,
+                  duration: 0.5,
+                  delay: 0.3,
                   ease: "linear",
+                  // ease: [0, 0.71, 0.2, 1.01],
                 },
               }}
             >
-              {/* Great Hope Foundation (GHF) is a local Non - Governmental
+              <motion.h1
+                className="md:text-3xl text-2xl py-3"
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0.5,
+                    duration: 0.8,
+                    ease: "linear",
+                  },
+                }}
+              >
+                Who we are
+              </motion.h1>
+
+              <motion.p
+                className="md:text-xl text-justify"
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0.7,
+                    duration: 0.9,
+                    ease: "linear",
+                  },
+                }}
+              >
+                {/* Great Hope Foundation (GHF) is a local Non - Governmental
               Organization, legally registered in Tanzania, with a registration
               number of 3976 in 2010. Since its initiation, the NGO has been
               working to develop platforms that capacitate young people with
@@ -521,39 +573,40 @@ export default function HomePage() {
               and the community around them. We aim at being an organization
               that enlightens young people potential, giving them hope and
               courage to bring the very best out of themselves. */}
-              Great Hope Foundation has been empowering youth for over a decade,
-              equipping them with entrepreneurial and 21st-century skills to
-              thrive in the marketplace. Our flagship initiative, the UWEZO
-              PROGRAM, has empowered over 6,700 young people since 2016. As a
-              nonprofit, we believe in investing in young minds today to build a
-              thriving society tomorrow. Through education, mentorship, and
-              leadership programs, we’re shaping the next generation of leaders
-              who will drive change in their communities. Join us in creating a
-              brighter future—because when young minds are empowered, the
-              world transforms.
-            </motion.p>
-          </motion.div>
+                Great Hope Foundation has been empowering youth for over a
+                decade, equipping them with entrepreneurial and 21st-century
+                skills to thrive in the marketplace. Our flagship initiative,
+                the UWEZO PROGRAM, has empowered over 6,700 young people since
+                2016. As a nonprofit, we believe in investing in young minds
+                today to build a thriving society tomorrow. Through education,
+                mentorship, and leadership programs, we’re shaping the next
+                generation of leaders who will drive change in their
+                communities. Join us in creating a brighter future, because when
+                young minds are empowered, the world transforms
+              </motion.p>
+            </motion.div>
 
-          <div className={`w-full flex items-center justify-center`}>
-            <Link
-              className="flex text-center rounded p-3 border border-transparent bg-primary text-default-100"
-              href={`whatwedo`}
-            >
-              What we do <GoArrowUpRight />{" "}
-            </Link>
+            <div className={`w-full flex items-center justify-center`}>
+              <Link
+                className="flex text-center rounded-xl p-3 border border-transparent bg-primary text-default-100"
+                href={`whatwedo`}
+              >
+                What we do <GoArrowUpRight />{" "}
+              </Link>
+            </div>
           </div>
         </div>
         {/* Who We're End */}
 
         {/* Data Summary Section */}
         <div
-          className="w-full xl:h-[60%] md:h-screen flex flex-col gap-5 md:gap-0 justify-center items-center p-5 cursor-default panel panel-sum"
+          className="w-full p-5 md:p-0 xl:h-[60%] md:h-screen flex flex-col gap-5 md:gap-0 justify-center items-center cursor-default panel panel-sum "
           id="infoStats"
         >
           {/* <h1 className=" text-5xl ">Data Summary</h1> */}
-          <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
+          <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10 ">
             {/* Regions */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
+            <div className=" border-3 border-transparent p-5 flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-orange-400 bg-default-100">
               <FaMapMarkedAlt className="text-green-500" size={30} />
               {/* <h1 className=" text-6xl" ref={sumRegRef}>
                 {summaryInfo?.regions?.value ?? 0}
@@ -569,7 +622,7 @@ export default function HomePage() {
             </div>
 
             {/* Districts */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
+            <div className="border-3 border-transparent p-5 flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-orange-400 bg-default-100">
               <FaMapPin className="text-red-500" size={30} />
               {/* <h1 className=" text-6xl ">
                 {summaryInfo?.districts?.value ?? 0}
@@ -586,7 +639,7 @@ export default function HomePage() {
 
           <div className="w-full flex md:flex-row flex-col justify-between gap-5 md:gap-10 md:p-10">
             {/* Schools */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
+            <div className="border-3 border-transparent p-5 flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-orange-400 bg-default-100">
               <FaUniversity className="text-blue-500" size={30} />
               {/* <h1 className=" text-6xl ">{summaryInfo?.schools?.value ?? 0}</h1> */}
               <CountUp
@@ -599,7 +652,7 @@ export default function HomePage() {
             </div>
 
             {/* Studentes */}
-            <div className="border p-5 shadow flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-transparent bg-default-100">
+            <div className="border-3 border-transparent p-5 flex flex-col gap-5 rounded-2xl w-full hover:bg-orange-300 hover:border-orange-400 bg-default-100">
               <FaPeopleGroup className="text-orange-500" size={30} />
               {/* <h1 className=" text-6xl ">
                 {summaryInfo?.students?.value ?? 0}
@@ -616,63 +669,117 @@ export default function HomePage() {
         </div>
         {/* Data Summary Section End*/}
 
+        {/* New About Simple */}
+        <div hidden>
+          <div className="w-full flex flex-col gap-5 md:space-y-5 p-10 font-semibold cursor-default panel panel-intro md:relative z-30  bg-sky-300">
+            <motion.div
+              // animate={{ opacity: 1, scale: 1 }}
+              className=" rounded-2xl p-10 text-black "
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{
+                opacity: 1,
+                scale: 1,
+                transition: {
+                  duration: 0.5,
+                  delay: 0.3,
+                  ease: "linear",
+                  // ease: [0, 0.71, 0.2, 1.01],
+                },
+              }}
+            >
+              <motion.h1
+                className="md:text-4xl text-3xl py-3 font-semibold uppercase"
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0.5,
+                    duration: 0.8,
+                    ease: "linear",
+                  },
+                }}
+              >
+                Who we are
+              </motion.h1>
+
+              <motion.p
+                className="md:text-3xl text-2xl text-justify"
+                initial={{
+                  opacity: 0,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0.7,
+                    duration: 0.9,
+                    ease: "linear",
+                  },
+                }}
+              >
+                {/* Great Hope Foundation (GHF) is a local Non - Governmental
+              Organization, legally registered in Tanzania, with a registration
+              number of 3976 in 2010. Since its initiation, the NGO has been
+              working to develop platforms that capacitate young people with
+              both entrepreneurial and 21st Century Skills. We believe in
+              bringing the best out of young people, in a way that benefits them
+              and the community around them. We aim at being an organization
+              that enlightens young people potential, giving them hope and
+              courage to bring the very best out of themselves. */}
+                Great Hope Foundation has been empowering youth for over a
+                decade, equipping them with entrepreneurial and 21st-century
+                skills to thrive in the marketplace. Our flagship initiative,
+                the UWEZO PROGRAM, has empowered over 6,700 young people since
+                2016. As a nonprofit, we believe in investing in young minds
+                today to build a thriving society tomorrow. Through education,
+                mentorship, and leadership programs, we’re shaping the next
+                generation of leaders who will drive change in their
+                communities. Join us in creating a brighter future, because when
+                young minds are empowered, the world transforms
+              </motion.p>
+            </motion.div>
+
+            <div className={`w-full flex items-center justify-center`}>
+              <Link
+                className="flex text-center rounded p-3 border border-transparent bg-orange-500 text-black hover:border-orange-500 hover:bg-transparent hover:text-orange-500"
+                href={`whatwedo`}
+              >
+                What we do <GoArrowUpRight />{" "}
+              </Link>
+            </div>
+          </div>
+        </div>
+        {/* New About Simple End */}
+
         {/* Vision Section */}
         <div
+          // className="hidden"
           className={`w-full ${!isIntroVideo ? "hidden" : "flex flex-col gap-5 justify-center items-center p-5 md:p-10 bg-orange-500 md:h-screen panel"} `}
           id="aboutInfo"
         >
-          <div className="w-full hidden  md:space-y-5">
-            {/* Our vision */}
-            {/* <div className="w-full flex flex-col md:space-y-5">
-              <h1 className="text-3xl md:text-5xl py-3 md:py-5 font-semibold">
-                Our vision
-              </h1>
-
-              <p className="text-xl text-balance">
-                Great Hope Foundation envisions to build an empowered, developed
-                and responsible young generation that contribute significantly
-                to the social, economic and political development of the
-                continent. We believe youth have tremendous power to bring
-                positive change in the community once, appropriate platforms
-                have been developed for them to understand their potential and
-                bring the best out of it.
-              </p>
-            </div> */}
-
-            {/* Our Mission */}
-            {/* <div className="w-full flex flex-col space-y-5">
-              <h1 className="text-3xl md:text-5xl py-3 md:py-5 font-semibold">
-                Our Mission
-              </h1>
-
-              <p className="text-xl text-balance">
-                Great Hope Foundation mission is to develop and implement
-                programs innovatively, that assist young people to acquire
-                appropriate skills that can help them thrive in the labor market
-                through either self or formal employment.
-              </p>
-            </div> */}
-          </div>
-
           <div
-            className={`w-full flex flex-col justify-center items-center space-y-5`}
+          // className={`w-full flex flex-col justify-center items-center space-y-5`}
           >
-            <h1 className="md:text-3xl text-2xl py-3">Introduction</h1>
+            {/* <h1 className="md:text-3xl text-2xl py-3">Introduction</h1> */}
 
             <div className="flex flex-col gap-5 md:drop-shadow-2xl">
               <video
                 ref={introVideoRef}
                 controls
+                disablePictureInPicture
                 muted
                 className=" md:w-[1000px]"
                 src={companyInfo?.introVideoUrl}
                 style={{
                   borderRadius: "20px",
                 }}
-                onClick={playInftro}
+                onClick={() => {
+                  playInftro();
+                }}
               />
-              <div className=" w-full flex justify-end items-center gap-3 ">
-                <p className=" italic text-small ">A word from our founder</p>
+              <div className=" w-full hidden">
+                {/* <p className=" italic text-small "></p> */}
                 <Button
                   className=" px-10 py-5 "
                   variant="flat"
@@ -696,16 +803,18 @@ export default function HomePage() {
           }}
           whileInView={{ opacity: 1 }}
           // eslint-disable-next-line react/jsx-sort-props
-          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-10 panel"}`}
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center p-5 md:p-10 panel"}`}
         >
-          <h1 className=" text-3xl md:text-5xl ">Our Partners & Donors</h1>
+          <h1 className=" text-3xl md:text-5xl font-semibold text-black py-3">
+            Our Partners & Donors
+          </h1>
 
           <div className="w-full flex flex-col md:flex-row justify-between items-center gap-5 p-5">
             {partners?.map((p: Partner, i) => (
               <motion.div
                 key={i}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-full p-5 md:p-10 rounded-2xl text-center "
+                className="w-full h-[50dvh] rounded-2xl flex flex-col justify-center items-center text-center bg-white"
                 initial={{ opacity: 0, scale: 0 }}
                 transition={{
                   duration: 0.4,
@@ -713,13 +822,15 @@ export default function HomePage() {
                 }}
                 whileHover={{
                   opacity: 1,
-                  scale: 1.1,
+                  scale: 1.05,
                   transition: { duration: 0.5 },
                 }}
               >
-                <h1 className=" text-2xl hidden ">{p?.label}</h1>
+                {/* <h1 className=" text-2xl hidden ">{p?.label}</h1> */}
 
-                <Image width={350} src={`${p?.logo}`} />
+                <Image src={`${p?.logo}`} width={350} />
+
+                {/* <div className="w-full bg-green-600 p-3 flex self-end align-baseline" /> */}
               </motion.div>
             ))}
           </div>
@@ -729,7 +840,7 @@ export default function HomePage() {
 
         {/* Collaborators */}
         <motion.div
-          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center md:p-10 panel"}`}
+          className={`${!isPartners ? "hidden" : "w-full flex flex-col justify-center items-center md:p-10 panel text-black"}`}
           initial={{ opacity: 0 }}
           transition={{
             duration: 1,
@@ -738,14 +849,16 @@ export default function HomePage() {
           }}
           whileInView={{ opacity: 1 }}
         >
-          <div className={`w-full space-y-3 text-center`}>
-            <h1 className="text-3xl md:text-5xl ">Collaborators Since 2016</h1>
-            <p className="md:text-2xl text-default-500 ">
+          <div className={`w-full space-y-3 p-3 text-center`}>
+            <h1 className="text-3xl md:text-5xl font-semibold">
+              Collaborators
+            </h1>
+            <p className="md:text-2xl">
               Happy to have worked with these organization since 2016
             </p>
           </div>
 
-          <div className="w-full flex flex-col md:flex-row flex-wrap  justify-center items-center ">
+          <div className="w-full flex flex-col md:flex-row md:justify-start flex-wrap  justify-center items-center ">
             {collabs?.map((p: Partner) => (
               <motion.div
                 key={p?.logo}
@@ -757,13 +870,13 @@ export default function HomePage() {
                     opacity: { ease: "linear" },
                   },
                 }}
-                className="p-5 rounded-lg text-center "
+                className="p-2 rounded-lg flex flex-col justify-center items-center text-center "
                 whileHover={{
                   scale: 1.1,
                   transition: { duration: 0.5 },
                 }}
               >
-                <h1 className=" text-2xl hidden ">{p?.label}</h1>
+                {/* <h1 className=" text-2xl hidden ">{p?.label}</h1> */}
 
                 <Image
                   className={`h-[100px] w-[100px] md:h-[150px] md:w-[150px]`}
@@ -967,17 +1080,19 @@ export default function HomePage() {
 
         {/* Recent Projects */}
         <div
-          className="hidden"
-          // className={`w-full ${blogs?.length === 0 || null ? "hidden" : "md:h-screen bg-default-200  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
+          // className="hidden"
+          className={`w-full ${blogs?.length === 0 || null ? "hidden" : "md:h-screen bg-default-100  flex flex-col gap-5 justify-center items-center p-10 panel"}`}
         >
           <div className={`w-full space-y-3 text-center`}>
-            <h1 className="text-3xl  md:text-5xl ">Recent Blogs</h1>
+            <h1 className="text-3xl  md:text-5xl font-semibold text-black ">
+              Recent Blogs
+            </h1>
             <p className="text-xl md:text-2xl text-default-500 ">
-              View our recent Blogs
+              {/* View our recent Blogs */}
             </p>
           </div>
 
-          <div className="w-full p-5 flex justify-center ">
+          <div className="w-full flex justify-center ">
             {blogs === null ? (
               <Spinner
                 className={` justify-center items-center `}
@@ -986,21 +1101,21 @@ export default function HomePage() {
             ) : (
               <div className={`w-full flex flex-col gap-3`}>
                 <motion.div
-                  className={`w-full ${blogs?.length === 0 ? "hidden" : "flex flex-col md:flex-row-reverse md:justify-end items-center gap-5"}`}
+                  className={`w-full ${blogs?.length === 0 ? "hidden" : "  flex flex-col md:flex-row md:justify-end items-center gap-5"}`}
                 >
                   {blogs?.map((p) => (
                     <motion.div
                       key={p?.blogId}
-                      className={`shadow md:w-[32%] rounded-xl bg-default-50`}
+                      className={` w-full md:w-[32%] rounded-xl bg-white flex flex-col justify-between`}
                       transition={{
                         duration: 0.3,
                         ease: "easeOut",
                       }}
                       whileHover={{
-                        scale: [null, 1, 1.15],
+                        scale: [null, 1, 1.05],
                         zIndex: 100,
                         transition: {
-                          duration: 0.5,
+                          duration: 0.3,
                           delay: 0.2,
                           times: [0, 0.2, 0.5],
                           ease: ["easeInOut", "easeOut"],
@@ -1008,7 +1123,7 @@ export default function HomePage() {
                       }}
                     >
                       <Image
-                        className={`w-screen h-[30vh] object-cover`}
+                        className={`w-screen h-[30vh] object-cover rounded-b-none`}
                         src={
                           p?.thumbnailUrl !== "" || null
                             ? p?.thumbnailUrl
@@ -1016,21 +1131,22 @@ export default function HomePage() {
                         }
                       />
 
-                      <div className={`w-full flex flex-col p-5`}>
-                        <h1 className=" text-xl font-semibold ">{p?.title}</h1>
+                      <div className={`w-full flex flex-col justify-between`}>
+                        <h1 className=" text-xl font-semibold p-5 ">
+                          {p?.title}
+                        </h1>
 
                         <div className="w-full p-1 flex justify-end">
                           <Button
-                            className="flex items-center border border-primary-400 hover:border-transparent"
-                            color="primary"
-                            variant="light"
+                            className="text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                            // variant="light"
                             onClick={() => {
                               navigate(`blog/${p?.blogId}`, {
                                 state: `${p?.blogId}`,
                               });
                             }}
                           >
-                            Read more <GoArrowUpRight size={20} />
+                            Read more <GoArrowRight size={20} />
                           </Button>
                         </div>
                       </div>
@@ -1039,7 +1155,7 @@ export default function HomePage() {
                 </motion.div>
 
                 <div className="flex justify-end p-5">
-                  <a className=" text-primary " href="/blog">
+                  <a className=" text-orange-500 " href="/blog">
                     View all blogs
                   </a>
                 </div>
@@ -1049,6 +1165,7 @@ export default function HomePage() {
         </div>
         {/* Recent Projects End */}
       </motion.div>
+      {/* Container End */}
     </DefaultLayout>
   );
 }

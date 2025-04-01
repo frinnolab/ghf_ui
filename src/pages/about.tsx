@@ -1,4 +1,17 @@
-import { Avatar, Divider, Image } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Image,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalContent,
+  useDisclosure,
+  ModalFooter,
+  Textarea,
+  Input,
+} from "@nextui-org/react";
 import { GoPersonFill } from "react-icons/go";
 import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -6,20 +19,23 @@ import * as motion from "motion/react-client";
 
 import { TeamMember } from "./dashboard/teams/dash-teams";
 
-import { title } from "@/components/primitives";
+// import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
+// import { Carousel } from 'react-responsive-carousel';
+// import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 export default function DocsPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [hasMembers, setHasMembers] = useState<boolean>(false);
   const api = `${import.meta.env.VITE_API_URL}`;
+  // const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   useEffect(() => {
     if (!hasMembers) {
       axios
-        .get(`${api}/teams/members/team`)
+        .get(`${api}/teams/members/main`)
         .then((res: AxiosResponse) => {
-          // console.log(res?.data);
+          console.log(res?.data);
 
           const datas: TeamMember[] = Array.from(res?.data).flatMap(
             (d: any) => {
@@ -157,14 +173,18 @@ export default function DocsPage() {
         {/* Vision Section End*/}
 
         {/* Team */}
-        <div className="w-full flex flex-col p-5">
+        <div
+          className={` ${hasMembers && members?.length > 0 ? "w-full flex flex-col p-5" : "hidden"} `}
+        >
           <div className={`text-center`}>
-            <h1 className={title()}>Our Team</h1>
+            <h1 className=" text-3xl md:text-5xl font-semibold text-black hover:text-orange-500 py-3">
+              Our Board Members
+            </h1>
 
             {members?.length === 0 ? (
               <>
                 <h1 className={`text-center`}>
-                  No team Currently please check back soon
+                  {/* No team Currently please check back soon */}
                 </h1>
               </>
             ) : (
@@ -187,14 +207,59 @@ export default function DocsPage() {
 }
 
 function TeamCard({ member }: { member: TeamMember }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
     <div
-      className={`flex justify-between bg-default-100 gap-3 p-5 rounded-xl shadow text-end md:w-[30dvw]`}
+      className={`flex flex-col bg-default-100 gap-3 rounded-xl text-end w-full md:w-[30dvw]`}
     >
-      <div>
-        <Avatar
-          defaultValue={`${(<GoPersonFill />)}`}
-          size="lg"
+      <div hidden>
+        <div className="w-full flex justify-between">
+          <div hidden>
+            <Avatar
+              defaultValue={`${(<GoPersonFill />)}`}
+              size="lg"
+              src={
+                member?.memberAvatarUrl !== null
+                  ? member?.memberAvatarUrl
+                  : "assets/images/static/ghf_default.png"
+              }
+            />
+          </div>
+          {/* <Image src={`${member?.member?.avatarUrl ?? <GoPersonFill />}`} /> */}
+
+          <div>
+            <div className="">
+              <label className="text-small text-slate-500" htmlFor="pname">
+                Fullname
+              </label>
+              <h1>
+                {member?.member?.firstname} {member?.member?.lastname}
+              </h1>
+            </div>
+
+            <div className="hidden">
+              <label className="text-small text-slate-500" htmlFor="pname">
+                Email
+              </label>
+              <h1>{member?.member?.email}</h1>
+            </div>
+
+            {/* <div>
+            <label className="text-small text-slate-500" htmlFor="pos">
+              Position
+            </label>
+            <h1>{member?.teamPosition ?? ""}</h1>
+          </div> */}
+          </div>
+        </div>
+      </div>
+
+      {/* New Card */}
+
+      <div className="w-screen md:w-[30dvw] h-[30dvh]">
+        <Image
+          className={`w-screen md:w-[30dvw] h-[30dvh] object-fill rounded-b-none`}
           src={
             member?.memberAvatarUrl !== null
               ? member?.memberAvatarUrl
@@ -202,32 +267,234 @@ function TeamCard({ member }: { member: TeamMember }) {
           }
         />
       </div>
-      {/* <Image src={`${member?.member?.avatarUrl ?? <GoPersonFill />}`} /> */}
 
-      <div>
-        <div className="">
-          <label className="text-small text-slate-500" htmlFor="pname">
-            Fullname
-          </label>
-          <h1>
-            {member?.member?.firstname} {member?.member?.lastname}
-          </h1>
-        </div>
+      <div className="p-3 flex flex-col gap-3">
+        <h1 className="text-2xl md:text-3xl text-black hover:text-orange-500 uppercase">
+          {member?.member?.firstname} {member?.member?.lastname}
+        </h1>
 
-        <div className="">
-          <label className="text-small text-slate-500" htmlFor="pname">
-            Email
-          </label>
-          <h1>{member?.member?.email}</h1>
-        </div>
-
-        <div className="">
-          <label className="text-small text-slate-500" htmlFor="pos">
-            Position
-          </label>
-          <h1>{member?.teamPosition}</h1>
-        </div>
+        <p className=" text-lg md:text-xl text-black hover:text-orange-500/80 uppercase">
+          {member?.member?.position ?? ""}
+        </p>
       </div>
+
+      {/* New Card End */}
+      {/* CTA */}
+      <div className="w-full flex p-0">
+        <Button
+          className="w-full rounded-t-none border-t-1 border-t-orange-500 p-6 text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+          // color="primary"
+          // variant="light"
+          onPress={onOpen}
+        >
+          View full Profile
+          {/* <GoArrowUp size={20} /> */}
+        </Button>
+
+        <div />
+      </div>
+
+      {/* Member Pop Up */}
+      <Modal
+        hideCloseButton
+        backdrop="blur"
+        isOpen={isOpen}
+        size="2xl"
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="p-0 w-full">
+                {/* <h1>Member Profile</h1> */}
+
+                <Image
+                  className=" w-screen h-[50dvh] z-0 rounded-b-none "
+                  // defaultValue={`${(<GoPersonFill />)}`}
+                  // size="lg"
+                  src={
+                    member?.memberAvatarUrl !== null
+                      ? member?.memberAvatarUrl
+                      : "assets/images/static/ghf_default.png"
+                  }
+                />
+              </ModalHeader>
+              <ModalBody className="p-0">
+                <form
+                  className=" flex flex-col gap-1 px-5"
+                  // onSubmit={handleSubmit(handleCreate)}
+                >
+                  {/* Profil Pic */}
+                  {/* <div className="w-full space-y-2 flex justify-center">
+                    <Image
+                      className="w-full h-[30dvh] object-cover"
+                      src={
+                        member?.memberAvatarUrl !== null
+                          ? member?.memberAvatarUrl
+                          : "assets/images/static/ghf_default.png"
+                      }
+                    />
+                  </div> */}
+                  <p className=" text-3xl md:text-4xl text-black hover:text-orange-400 uppercase">
+                    {member?.member?.position ?? ""}
+                  </p>
+                  {/* Profil PicEnd */}
+                  <div className="w-full hidden">
+                    <label htmlFor="email">Email</label>
+                    <Input
+                      isDisabled
+                      className="text-default-200"
+                      id="email"
+                      placeholder={`${member?.member?.email}`}
+                      type="email"
+                      // {...register("email", { required: true })}
+                      // required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="w-full flex flex-col">
+                      <label htmlFor="firstName">Firstname</label>
+                      <label
+                        className=" text-default-600 "
+                        htmlFor="firstName1"
+                      >{`${member?.member?.firstname}`}</label>
+                      <Input
+                        className="text-default-200 hidden"
+                        placeholder={`${member?.member?.firstname}`}
+                        isDisabled
+                        // required
+                        id="firstName"
+                        type="text"
+                        value={`${member?.member?.firstname}`}
+                        // {...register("firstname", { required: true })}
+                      />
+                      {/* {errors.firstname && (
+                        <span className="text-danger">
+                          Firstname field is required
+                        </span>
+                      )} */}
+                    </div>
+
+                    <div className="w-full space-y-2 flex flex-col">
+                      <label htmlFor="lastName">Lastname</label>
+                      <label
+                        className="text-default-600"
+                        htmlFor="lastName1"
+                      >{`${member?.member?.lastname}`}</label>
+                      <Input
+                        className="text-default-200 hidden"
+                        isDisabled
+                        id="lastName"
+                        placeholder={`${member?.member?.lastname}`}
+                        type="text"
+                        // {...register("lastname", { required: true })}
+                      />
+                      {/* {errors.lastname && (
+                        <span className="text-danger">
+                          Lastname field is required
+                        </span>
+                      )} */}
+                    </div>
+                  </div>
+
+                  <div className="w-full space-y-2 hidden">
+                    <label htmlFor="posi">Position</label>
+                    <Input
+                      isDisabled
+                      className="text-default-200"
+                      id="email"
+                      placeholder={`${member?.member?.position ?? ""}`}
+                      type="email"
+                      // {...register("email", { required: true })}
+                      // required
+                    />
+                  </div>
+
+                  <div
+                    hidden
+                    // className="grid grid-cols-1 md:grid-cols-2 gap-5"
+                  >
+                    <div className="w-full space-y-2">
+                      <label htmlFor="city">City</label>
+                      <Input
+                        className="text-default-200"
+                        // required
+                        id="firstNamcitye"
+                        // placeholder={`${member?.member?.ci}`}
+
+                        type="text"
+                        // {...register("city", { required: true })}
+                      />
+                      {/* {errors.city && (
+                        <span className="text-danger">
+                          City field is required
+                        </span>
+                      )} */}
+                    </div>
+
+                    <div className="w-full space-y-2">
+                      <label htmlFor="country">Country</label>
+                      <Input
+                        className="text-default-200"
+                        // required
+                        id="country"
+                        placeholder="Enter your country"
+                        type="text"
+                        // {...register("country", { required: true })}
+                      />
+                      {/* {errors.country && (
+                        <span className="text-danger">
+                          Country field is required
+                        </span>
+                      )} */}
+                    </div>
+                  </div>
+
+                  <div className="w-full space-y-2 hidden">
+                    <div className="w-full space-y-2">
+                      <label htmlFor="phone">Phone number</label>
+                      <Input
+                        isDisabled
+                        className="text-default-200"
+                        id="phone"
+                        placeholder={`${member?.member?.mobile ?? ""}`}
+                        type="number"
+                        // {...register("mobile")}
+                        // required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <label htmlFor="coverLetter">Biography</label>
+                    <Textarea
+                      // isDisabled
+                      isReadOnly
+                      className="text-default-200 text-pretty"
+                      id="coverLetter"
+                      placeholder={`${member?.member?.biography ?? ""}`}
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* <div className="w-full flex justify-end">
+                          <Button color="primary" type="submit">
+                            Submit Application
+                          </Button>
+                        </div> */}
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </form>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      {/* Member Pop Up End */}
     </div>
   );
 }

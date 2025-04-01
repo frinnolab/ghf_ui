@@ -8,12 +8,12 @@ import {
 } from "../dashboard/impacts/dash-impacts-list";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { Button } from "@nextui-org/button";
-import { GoArrowLeft, GoDownload, GoFile } from "react-icons/go";
+import { GoArrowLeft, GoEye } from "react-icons/go";
 import { Divider, Image, Spinner } from "@nextui-org/react";
 import { siteConfig } from "@/config/site";
-import { FaUniversity, FaMapMarkedAlt } from "react-icons/fa";
+import { FaUniversity, FaMapMarkedAlt, FaRegFilePdf } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
-import fileDownload from "js-file-download";
+// import fileDownload from "js-file-download";
 
 export default function ImpactView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -99,7 +99,7 @@ export default function ImpactView() {
       axios
         .get(`${api}/impacts/reports/${impactId}`)
         .then((res: AxiosResponse) => {
-          //console.log(res?.data);
+          console.log(res?.data);
 
           const datas: ImpactReport[] = Array.from(res?.data).flatMap(
             (d: any) => {
@@ -122,32 +122,36 @@ export default function ImpactView() {
     }
   }, [impact]);
 
-  const downloadReport = (
-    reportId: string,
-    filename: string = "Impact Report"
-  ) => {
-    axios
-      .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
-        headers: {
-          // Accept: "application/json",
-          // Authorization: `Bearer ${authed?.token}`,
-          "Content-Disposition": "attachment;",
-          "Content-Type": "application/octet-stream",
-        },
-        responseType: "blob",
-      })
-      .then((res: AxiosResponse) => {
-        if (res) {
-          //console.log(res?.data);
+  // const downloadReport = (
+  //   reportId: string,
+  //   filename: string = "Impact Report"
+  // ) => {
+  //   axios
+  //     .get(`${api}/impacts/reports/${impactId}/${reportId}`, {
+  //       headers: {
+  //         // Accept: "application/json",
+  //         // Authorization: `Bearer ${authed?.token}`,
+  //         "Content-Disposition": "attachment;",
+  //         "Content-Type": "application/octet-stream",
+  //       },
+  //       responseType: "blob",
+  //     })
+  //     .then((res: AxiosResponse) => {
+  //       if (res) {
+  //         //console.log(res?.data);
 
-          fileDownload(res?.data, filename, res.headers["content-type"]);
-        }
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
+  //         fileDownload(res?.data, filename, res.headers["content-type"]);
+  //       }
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       console.log(err.response);
 
-        window.location.reload();
-      });
+  //       window.location.reload();
+  //     });
+  // };
+
+  const viewReport = (reportUrl: String) => {
+    window.open(`${reportUrl}`, "_blank");
   };
 
   return (
@@ -233,21 +237,24 @@ export default function ImpactView() {
                   {impactReports?.flatMap((d: ImpactReport, i) => (
                     <div
                       key={i}
-                      className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
+                      className={` bg-default-100 rounded-xl flex flex-col justify-between items-center gap-1 pt-5`}
                     >
-                      <GoFile size={20} />
+                      {/* <GoFile className="text-orange-500" size={30} /> */}
+                      <FaRegFilePdf className="text-orange-500" size={50}/>
 
                       <h1 className=" text-2xl ">{d?.title}</h1>
 
                       <Button>
-                        <GoDownload
+                        <GoEye
                           size={20}
                           className=" text-primary-500"
                           onClick={() => {
-                            downloadReport(
-                              `${d?.impactReportId}`,
-                              `${d?.title ?? "Impact Report"}`
-                            );
+                            // downloadReport(
+                            //   `${d?.impactReportId}`,
+                            //   `${d?.title ?? "Impact Report"}`
+                            // );
+
+                            viewReport(`${d?.reportUrl}`);
                           }}
                         />
                       </Button>
@@ -276,7 +283,12 @@ export default function ImpactView() {
                       key={d?.impactAssetId}
                       className={`shadow rounded-xl flex flex-col justify-between items-center gap-1 P-2`}
                     >
-                      <Image height={350} src={d?.assetUrl} width={350} />
+                      <Image
+                        radius="none"
+                        height={500}
+                        src={d?.assetUrl}
+                        width={500}
+                      />
                     </div>
                   ))}
                 </div>

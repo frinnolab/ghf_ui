@@ -11,6 +11,8 @@ export enum AuthRole {
   "Employee" = 3,
   "User" = 0,
   "Volunteer" = 4,
+  "Intern" = 5,
+  "BoardMember" = 6,
 }
 
 export enum PartnerType {

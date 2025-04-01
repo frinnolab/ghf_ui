@@ -26,6 +26,7 @@ export type Profile = {
   lastname?: string;
   mobile?: string;
   position?: string;
+  biography?: string;
   role?: number;
 };
 
@@ -76,6 +77,10 @@ export default function DashProfilesListPage() {
         return "Employee";
       case AuthRole.Volunteer:
         return "Volunteer";
+      case AuthRole.Intern:
+        return "Intern";
+      case AuthRole.BoardMember:
+        return "Board Member";
       default:
         return "User";
     }

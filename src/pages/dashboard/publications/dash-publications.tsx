@@ -498,6 +498,7 @@ export type Publication = {
   publishId?: string;
   title?: string;
   description?: string;
+  assetUrl?: string;
   publishType?: PublishTypeEnum;
   publishDate?: string;
   authorId?: string;

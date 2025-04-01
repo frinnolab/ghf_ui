@@ -10,6 +10,7 @@ import {
   Image,
   Select,
   SelectItem,
+  Textarea,
 } from "@nextui-org/react";
 import { GoArrowLeft, GoTrash } from "react-icons/go";
 
@@ -64,6 +65,10 @@ export default function DashboardProfilePage() {
         key: AuthRole.Volunteer,
         value: "Volunteer",
       },
+      {
+        key: AuthRole.BoardMember,
+        value: "Board Member",
+      },
     ];
   });
 
@@ -100,24 +105,25 @@ export default function DashboardProfilePage() {
           .then((res: AxiosResponse) => {
             const data: Profile = {
               profileId: res.data?.profileId,
-              firstname: res.data?.firstname ?? "",
-              lastname: res.data?.lastname ?? "",
-              email: res.data?.email ?? "",
+              firstname: res.data?.firstname ?? null,
+              lastname: res.data?.lastname ?? null,
+              email: res.data?.email ?? null,
               role: Number(res.data.roleType) ?? AuthRole.User,
-              avatarUrl: res.data?.avatarUrl ?? "",
-              mobile: res.data?.mobile ?? "",
-              position: res.data?.position ?? "",
+              avatarUrl: res.data?.avatarUrl ?? null,
+              mobile: res.data?.mobile ?? null,
+              position: res.data?.position ?? null,
+              biography: res.data?.biography ?? null,
             };
 
             setProfile(data);
 
-            console.log(res?.data);
+            //console.log(res?.data);
 
             const statusVal = roleTypeOptions.find(
               (p) => p?.key === Number(res.data.roleType)
             );
 
-            console.log(statusVal);
+            //console.log(statusVal);
 
             setSelectedRoleType(statusVal ?? roleTypeOptions[4]);
 
@@ -161,11 +167,12 @@ export default function DashboardProfilePage() {
 
     data.append("email", `${d?.email ?? profile?.email}`);
     data.append("creatorProfileId", `${authed?.profileId}`);
-    data.append("firstname", `${d?.firstname ?? profile?.firstname}`);
-    data.append("lastname", `${d?.lastname ?? profile?.lastname}`);
-    data.append("mobile", `${d?.mobile ?? profile?.mobile}`);
-    data.append("position", `${d?.position ?? profile?.position}`);
+    data.append("firstname", `${d?.firstname ?? profile?.firstname ?? ""}`);
+    data.append("lastname", `${d?.lastname ?? profile?.lastname ?? ""}`);
+    data.append("mobile", `${d?.mobile ?? profile?.mobile ?? ""}`);
+    data.append("position", `${d?.position ?? profile?.position ?? ""}`);
     data.append("roleType", `${selectedRoleType?.key}`);
+    data.append("biography", `${d?.biography ?? profile?.biography ?? ""}`);
 
     if (selectedImage) {
       data.append("avatar", selectedImage);
@@ -194,7 +201,6 @@ export default function DashboardProfilePage() {
           },
         })
         .then(() => {
-
           setProfile(null);
           setSelectedImage(null);
           nav(`/dashboard/profiles`);
@@ -203,7 +209,6 @@ export default function DashboardProfilePage() {
         .catch((err: AxiosError) => {
           console.log(err.response);
         });
-
     } else {
       //Update Profile
       alert(`Update profiled ${profile?.email}`);
@@ -395,6 +400,16 @@ export default function DashboardProfilePage() {
                 />
               </div>
             </div>
+
+            {/* Bio */}
+            <Textarea
+              className="py-5"
+              defaultValue={`${profile?.biography ?? ""}`}
+              label="Description"
+              type="text"
+              {...register("biography")}
+              placeholder={`${profile?.biography ?? "Enter Biography (optional)"}`}
+            />
 
             {/* CTO */}
             <div className={`py-2`}>

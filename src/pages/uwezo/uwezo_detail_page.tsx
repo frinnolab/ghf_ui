@@ -132,16 +132,16 @@ export default function UwezoDetailPage() {
       ) : (
         <div className="w-full flex flex-col justify-center">
           {/* New Container */}
-          <div className="w-full h-[30dvh] md:h-[50dvh]">
+          <div className="w-full p-2">
             <Image
-              className={`object-fill`}
+              className={`w-screen h-screen object-cover`}
               radius="none"
               src={
                 project?.thumbnailUrl !== "" || null
                   ? project?.thumbnailUrl
                   : siteConfig?.staticAssets?.staticLogo
               }
-              width={400}
+              // width={400}
             />
           </div>
           {/* New Container End */}
@@ -190,9 +190,9 @@ export default function UwezoDetailPage() {
                     >
                       <ReactPlayer
                         controls
-                        height={300}
+                        height={1000}
                         url={d?.videoUrl}
-                        width={300}
+                        width={1000}
                       />
                     </div>
                   ))}

@@ -10,11 +10,8 @@ import {
   NavbarMenuItem,
 } from "@nextui-org/navbar";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
 import { useLocation, useNavigate } from "react-router-dom";
-import { GoArrowRight } from "react-icons/go";
-import useAuthedProfile from "@/hooks/use-auth";
+import { GoArrowRight, GoChevronDown } from "react-icons/go";
 import {
   Dropdown,
   DropdownTrigger,
@@ -28,6 +25,9 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { motion } from "motion/react";
 
+import { siteConfig } from "@/config/site";
+// import { ThemeSwitch } from "@/components/theme-switch";
+import useAuthedProfile from "@/hooks/use-auth";
 import { AuthRole } from "@/types";
 import { Profile } from "@/pages/dashboard/profiles/dash-profiles-list";
 
@@ -116,7 +116,7 @@ export const Navbar = () => {
           </Link>
         </NavbarBrand>
 
-        <div className="hidden lg:flex gap-4 justify-start ml-2">
+        <div className="hidden lg:flex gap-4 justify-start items-center ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <Link
@@ -132,6 +132,44 @@ export const Navbar = () => {
               </Link>
             </NavbarItem>
           ))}
+          <NavbarItem key={"pubs"}>
+            <Dropdown className="bg-orange-500" placement="bottom-start">
+              <DropdownTrigger>
+                <div className=" flex justify-center items-center gap-0 hover:text-orange-500">
+                  <p className="text-lg cursor-pointer">Publications</p>
+                  <GoChevronDown size={20} className=" self-center pt-1 " />
+                </div>
+              </DropdownTrigger>
+
+              <DropdownMenu
+                aria-label="Publication Actions"
+                className="p-0"
+                variant="flat"
+              >
+                <DropdownItem
+                  key="newsletter"
+                  className="h-14 gap-2"
+                  href="/newsletters"
+                >
+                  Newsletters
+                </DropdownItem>
+                <DropdownItem
+                  key="reports"
+                  className="h-14 gap-2"
+                  href="/reports"
+                >
+                  Reports
+                </DropdownItem>
+                <DropdownItem
+                  key="manuals"
+                  className="h-14 gap-2"
+                  href="/studentmanuals"
+                >
+                  Student Manuals
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarItem>
         </div>
       </NavbarContent>
 
@@ -139,9 +177,7 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem>
-          <ThemeSwitch />
-        </NavbarItem>
+        <NavbarItem>{/* <ThemeSwitch /> */}</NavbarItem>
 
         <NavbarItem className="flex gap-5">
           {authed?.profileId ? (
@@ -196,7 +232,7 @@ export const Navbar = () => {
           ) : (
             <>
               <Button
-                className="text-sm font-normal text-default-600 bg-default-100 border border-transparent hover:border-orange-500"
+                className="text-sm font-normal  bg-orange-400 border border-transparent hover:border-orange-500 hover:bg-transparent hover:text-orange-500"
                 variant="flat"
                 onClick={() => {
                   navigate("/login");
@@ -210,14 +246,14 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <ThemeSwitch />
+        {/* <ThemeSwitch /> */}
         <NavbarMenuToggle />
       </NavbarContent>
 
       <NavbarMenu>
         {/* {searchInput} */}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navItems.map((item, index) => (
+        <div className="mx-4 mt-2 flex flex-col justify-start gap-2">
+          {siteConfig.navMobileItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 // color={
@@ -233,6 +269,47 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
+
+          {/* <div className="flex flex-col justify-start items-start gap-2">
+            <NavbarItem key={"pubs"}>
+              <Dropdown className="bg-orange-500" placement="bottom-start">
+                <DropdownTrigger>
+                  <div className=" flex justify-center items-center gap-0 hover:text-orange-500">
+                    <p className="text-lg cursor-pointer">Publications</p>
+                    <GoChevronDown size={20} className=" self-center pt-1 " />
+                  </div>
+                </DropdownTrigger>
+
+                <DropdownMenu
+                  aria-label="Publication Actions"
+                  className="p-0"
+                  variant="flat"
+                >
+                  <DropdownItem
+                    key="newsletter"
+                    className="h-14 gap-2"
+                    href="/newsletters"
+                  >
+                    Newsletters
+                  </DropdownItem>
+                  <DropdownItem
+                    key="reports"
+                    className="h-14 gap-2"
+                    href="/reports"
+                  >
+                    Reports
+                  </DropdownItem>
+                  <DropdownItem
+                    key="manuals"
+                    className="h-14 gap-2"
+                    href="/studentmanuals"
+                  >
+                    Student Manuals
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </NavbarItem>
+          </div> */}
 
           <Divider />
           <div className="flex flex-col gap-3">

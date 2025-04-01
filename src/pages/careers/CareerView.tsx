@@ -48,7 +48,7 @@ const CareerView = () => {
           value: "Accepted",
         },
       ];
-    },
+    }
   );
 
   const [selectedStatus, setSelectedStatus] = useState<{
@@ -66,6 +66,10 @@ const CareerView = () => {
         key: AuthRole.Volunteer,
         value: "Volunteer",
       },
+      {
+        key: AuthRole.Intern,
+        value: "Intern",
+      },
     ];
   });
 
@@ -77,7 +81,7 @@ const CareerView = () => {
   const { register, handleSubmit } = useForm<CareerApplication>();
 
   const handleCreate: SubmitHandler<CareerApplication> = (
-    data: CareerApplication,
+    data: CareerApplication
   ) => {
     setIsloading(true);
 
@@ -145,6 +149,9 @@ const CareerView = () => {
             case CareerType.Employment:
               setSelectedRole(careerRoles[0]);
               break;
+            case CareerType.Internship:
+              setSelectedRole(careerRoles[2]);
+              break;
             default:
               setSelectedRole(careerRoles[1]);
               break;
@@ -177,6 +184,8 @@ const CareerView = () => {
         return "Employment";
       case CareerType.Volunteering:
         return "Volunteering";
+      case CareerType.Internship:
+        return "Internship";
     }
   };
 
@@ -209,7 +218,7 @@ const CareerView = () => {
         {isLoading ? (
           <>
             <Spinner
-              className=" flex justify-center "
+              className=" flex justify-center py-5"
               color="primary"
               label="Loading..."
               size="lg"

@@ -5,9 +5,9 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import { Profile } from "../dashboard/profiles/dash-profiles-list";
 import { AuthRole } from "@/types";
 import { Button } from "@nextui-org/button";
-import { Avatar, Divider } from "@nextui-org/react";
+import { Divider, Image } from "@nextui-org/react";
 import { GoArrowLeft } from "react-icons/go";
-import { siteConfig } from "@/config/site";
+// import { siteConfig } from "@/config/site";
 
 export default function AlumniView() {
   const api = `${import.meta.env.VITE_API_URL}`;
@@ -40,9 +40,11 @@ export default function AlumniView() {
             lastname: res.data?.alumniProfile?.lastname,
             email: res.data?.alumniProfile?.email,
             role: Number(res.data.alumniProfile?.roleType) ?? AuthRole.Alumni,
-            avatarUrl: res.data?.alumniProfile?.avatarUrl,
+            avatarUrl: res.data?.alumniProfile?.avatarUrl ?? null,
             position: res.data?.alumniProfile?.position,
           };
+
+          console.log(res?.data);
 
           const data: Alumni = {
             age: Number(res?.data?.age),
@@ -82,7 +84,7 @@ export default function AlumniView() {
       <div className="w-full flex flex-col">
         <div className=" w-full flex gap-10 justify-between p-10">
           <div className=" w-full space-y-3 ">
-            <h1 className=" text-3xl font-semibold ">Alumni Profile{""}</h1>
+            {/* <h1 className=" text-3xl font-semibold ">Alumni Profile{""}</h1> */}
 
             {/* Impact */}
             <div className=" space-y-3 w-full">
@@ -94,7 +96,7 @@ export default function AlumniView() {
                 </h1>
               </div>
 
-              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl ">
+              <div className="w-full text-xl p-5 bg-default-200 rounded-2xl hidden">
                 <h1 className="text-lg">Email</h1>
                 <h1 className="text-2xl">
                   {alumni?.alumniProfile?.email ?? ""}
@@ -123,15 +125,13 @@ export default function AlumniView() {
           </div>
 
           <div className="w-full flex justify-center items-center">
-            <Avatar
-              isBordered
-              radius="full"
-              className={` w-[35%] h-[50%] `}
-              src={`${
-                alumni?.alumniProfile?.avatarUrl === "" || null
-                  ? siteConfig?.staticAssets?.staticLogo
-                  : alumni?.alumniProfile?.avatarUrl
-              }`}
+            <Image
+              className={` w-full h-[80%] `}
+              src={
+                alumni?.alumniProfile?.avatarUrl !== null
+                  ? alumni?.alumniProfile?.avatarUrl
+                  : "assets/images/static/ghf_default.png"
+              }
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function AlumniView() {
         {/* Contents */}
         <div className="w-full flex flex-col gap-5 p-10">
           {/* Description */}
-          <h1 className=" text-2xl ">Impact Story</h1>
+          {/* <h1 className=" text-2xl ">Impact Story</h1> */}
           <Divider />
           {/* <p className=" text-xl text-balance p-5 bg-default-200 rounded-2xl ">
             {alumni?.story === "" || null

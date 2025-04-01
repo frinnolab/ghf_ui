@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
 import {
-  Avatar,
   Button,
   // Divider,
   Input,
@@ -18,7 +17,7 @@ import {
   ModalFooter,
   Divider,
 } from "@nextui-org/react";
-import { GoArrowRight, GoPersonFill, GoTrash } from "react-icons/go";
+import { GoArrowRight, GoTrash } from "react-icons/go";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 import * as motion from "motion/react-client";
@@ -43,9 +42,9 @@ export const Alumniformats = [
   "list",
   "bullet",
   "indent",
-  // "link",
-  // "image",
-  // "video",
+  "link",
+  "image",
+  "video",
 ];
 
 export const Alumnimodules = {
@@ -58,9 +57,9 @@ export const Alumnimodules = {
       { indent: "-1" },
       { indent: "+1" },
     ],
-    // ["image"],
-    // ["video"],
-    // ["link"],
+    ["image"],
+    ["video"],
+    ["link"],
     ["clean"],
   ],
 };
@@ -71,7 +70,7 @@ export default function AlumniList() {
   const navigate = useNavigate();
   const [alumnis, setAlumnis] = useState<Alumni[]>([]);
   const [alumni] = useState<Alumni>();
-  const [quillValue] = useState<string>("");
+  const [quillValue, setQuillValue] = useState<string>("");
   const [isAlumni, setIsAlumni] = useState<boolean>(false);
   const [isLoading, setIsloading] = useState<boolean>(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -106,13 +105,14 @@ export default function AlumniList() {
   };
 
   const onSaveAlumni = (p: Alumni) => {
+    setIsloading(true);
     const data = new FormData();
 
     data.append("age", `${p?.age}`);
     data.append("participationSchool", `${p?.participationSchool ?? ""}`);
     data.append("participationYear", `${p?.participationYear ?? ""}`);
     data.append("currenctOccupation", `${p?.currenctOccupation ?? ""}`);
-    data.append("story", `${quillValue ?? ""}`);
+    data.append("story", `${quillValue}`);
     data.append("roleType", `${AuthRole.Alumni}`);
     data.append("email", `${p?.alumniProfile?.email ?? ""}`);
     data.append("firstname", `${p?.alumniProfile?.firstname ?? ""}`);
@@ -123,8 +123,6 @@ export default function AlumniList() {
     if (selectedImage) {
       data.append("avatar", selectedImage);
     }
-
-    //console.log(JSON.stringify(data.forEach((d=>console.log(d)))));
 
     axios
       .post(`${api}/alumnis`, data, {
@@ -169,7 +167,7 @@ export default function AlumniList() {
               lastname: d?.alumniProfile?.lastname ?? "",
               email: `${d?.alumniProfile?.email ?? ""}`,
               role: Number(d?.alumniProfile.roleType) ?? AuthRole.Alumni,
-              avatarUrl: d?.alumniProfile?.avatarUrl ?? "",
+              avatarUrl: d?.alumniProfile?.avatarUrl,
               position: d?.alumniProfile?.position ?? "",
               mobile: d?.alumniProfile?.mobile ?? "",
             };
@@ -273,7 +271,7 @@ export default function AlumniList() {
               },
             }}
           >
-            <motion.p className=" text-2xl md:text-3xl text-pretty p-5 md:py-10">
+            <motion.p className=" text-2xl md:text-3xl text-black text-pretty p-5 md:py-10">
               Great Hope Foundation asked a few Alumni of UWEZO PROGRAM who are
               now in the labor market to share any Impact they can trace and the
               contribution of UWEZO PROGRAM to what they have been able to
@@ -285,137 +283,41 @@ export default function AlumniList() {
           </motion.div>
         </div>
 
-        <div
-          className={` ${alumnis === null || alumnis.length === 0 ? "hidden" : "w-full flex flex-col bg-default-200 p-5 md:px-20 gap-5 z-10"}`}
-        >
-          <div className="w-full flex">
-            <h1 className=" text-2xl font-semibold">
-              {" "}
-              UWEZO Program Alumni stories
-            </h1>
+        <div className="w-full flex justify-center py-5 relative">
+          <Button
+            className=" bg-orange-400 "
+            size="lg"
+            variant="solid"
+            onPress={onOpen}
+          >
+            {" "}
+            Add Your Story
+          </Button>
 
-            <div />
-          </div>
-
-          <div className="w-full flex justify-center flex-wrap text-center gap-5 space-y-3">
-            {isLoading ? (
-              <>
-                <Spinner
-                  className=" flex justify-center "
-                  color="primary"
-                  label="Loading Alumnis..."
-                  size="lg"
-                />
-              </>
-            ) : (
-              <>
-                {alumnis === null || alumnis?.length === 0 ? (
-                  <div className={`w-full text-center`}>
-                    <h1 className=" text-xl text-center hidden">
-                      {/* No Alumnae stories at the momment!. Please check back soon */}
-                    </h1>
-                  </div>
-                ) : (
-                  <div className="w-full flex flex-col md:flex-row  flex-wrap gap-10">
-                    {alumnis?.flatMap((d) => (
-                      <div
-                        key={d?.alumniId}
-                        className={`w-full flex justify-between bg-default-100 gap-3 p-5 rounded-xl text-end md:w-[25%]`}
-                      >
-                        <div>
-                          <Avatar
-                            defaultValue={`${(<GoPersonFill />)}`}
-                            size="lg"
-                            src={
-                              d?.alumniProfile?.avatarUrl !== "" || null
-                                ? d?.alumniProfile?.avatarUrl
-                                : ""
-                            }
-                          />
-                        </div>
-
-                        {/* Content */}
-                        <div>
-                          <div className="">
-                            <label
-                              className="text-small text-default-500"
-                              htmlFor="pname"
-                            >
-                              Fullname
-                            </label>
-                            <h1>
-                              {d?.alumniProfile?.firstname}{" "}
-                              {d?.alumniProfile?.lastname}
-                            </h1>
-                          </div>
-
-                          <div className="">
-                            <label
-                              className="text-small text-default-500"
-                              htmlFor="pAlumni"
-                            />
-                            <h1 className="text-default-500">
-                              GHF {setRoleName(Number(d?.alumniProfile?.role))}
-                            </h1>
-                          </div>
-
-                          <div className="">
-                            <label
-                              className="text-small text-default-500"
-                              htmlFor="pYear"
-                            >
-                              Participation Year
-                            </label>
-                            <h1>{d?.participationYear}</h1>
-                          </div>
-
-                          <div className="p-1">
-                            <Button
-                              className="flex items-center hover:border-transparent"
-                              color="primary"
-                              variant="light"
-                              onClick={() => {
-                                toDetail(d);
-                              }}
-                            >
-                              View Alumni <GoArrowRight size={20} />
-                            </Button>
-                          </div>
-                        </div>
-                        {/* Content End */}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="w-full flex justify-center py-5 relative">
-            <Button
-              className=" bg-orange-400 "
-              size="lg"
-              variant="solid"
-              onPress={onOpen}
-            >
-              {" "}
-              Add Your Story
-            </Button>
-
-            {/* Donate Form */}
-            <Modal
-              backdrop="blur"
-              isOpen={isOpen}
-              size="2xl"
-              onOpenChange={onOpenChange}
-            >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader>
-                      <h1>Add Alumni Story</h1>
-                    </ModalHeader>
-                    <ModalBody>
+          {/* Donate Form */}
+          <Modal
+            backdrop="blur"
+            isOpen={isOpen}
+            size="2xl"
+            onOpenChange={onOpenChange}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader>
+                    <h1>Add Alumni Story</h1>
+                  </ModalHeader>
+                  <ModalBody>
+                    {isLoading ? (
+                      <>
+                        <Spinner
+                          className=" flex justify-center "
+                          color="primary"
+                          label="Submitting Alumni..."
+                          size="lg"
+                        />
+                      </>
+                    ) : (
                       <form
                         className={` flex flex-col gap-1 p-4 space-y-1`}
                         onSubmit={handleSubmit(onAlumniSubmit)}
@@ -565,7 +467,7 @@ export default function AlumniList() {
                         {/* Editor */}
                         <div className="w-full space-y-1">
                           <label className="text-default-500" htmlFor="story">
-                            In 100 words how did you benefit with the program
+                            Add your story
                           </label>
                           {/* <Textarea
                     defaultValue={`${alumni?.story ?? ""}`}
@@ -580,21 +482,16 @@ export default function AlumniList() {
                             placeholder={`${"Enter story description"}`}
                             style={{
                               border: "none",
-                              height: "10dvh",
+                              height: "15dvh",
                               width: "80dvh",
-                              overflow: "hidden",
+                              overflowY: "scroll",
                               overflowX: "hidden",
                             }}
                             theme="snow"
-                            value={quillValue.substring(0, 110)}
-                            // onChange={(e) => {
-                            //   if (e.length === 105) {
-                            //     onClose();
-                            //     alert(`Maximum character length reached.`);
-                            //   } else {
-                            //     setQuillValue(e);
-                            //   }
-                            // }}
+                            value={quillValue}
+                            onChange={(e) => {
+                              setQuillValue(e);
+                            }}
                           />
 
                           {/* <ReactQuill theme="snow" value={quillValue} onChange={setQuillValue}/> */}
@@ -654,14 +551,130 @@ export default function AlumniList() {
                           </Button>
                         </ModalFooter>
                       </form>
-                    </ModalBody>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-            {/* Donate Form End */}
+                    )}
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+          {/* Donate Form End */}
+        </div>
+
+        <div
+          className={` ${alumnis === null || alumnis.length === 0 ? "hidden" : "w-full flex flex-col bg-default-200 px-5 md:px-20 gap-5 z-10"}`}
+        >
+          <div className="w-full flex">
+            <h1 className=" text-3xl md:text-4xl text-black hover:text-orange-500 uppercase font-semibold">
+              {" "}
+              UWEZO Program Alumni stories
+            </h1>
+
+            <div />
           </div>
 
+          <div className="w-full flex justify-center flex-wrap text-center gap-5 space-y-3">
+            {isLoading ? (
+              <>
+                <Spinner
+                  className=" flex justify-center "
+                  color="primary"
+                  label="Loading Alumnis..."
+                  size="lg"
+                />
+              </>
+            ) : (
+              <>
+                {alumnis === null || alumnis?.length === 0 ? (
+                  <div className={`w-full text-center`}>
+                    <h1 className=" text-xl text-center hidden">
+                      {/* No Alumnae stories at the momment!. Please check back soon */}
+                    </h1>
+                  </div>
+                ) : (
+                  <div className="w-full flex flex-col md:flex-row  flex-wrap gap-10">
+                    {alumnis?.flatMap((d) => (
+                      <div
+                        key={d?.alumniId}
+                        className={`w-full flex flex-col bg-default-100 gap-3 rounded-xl text-end md:w-[25%]`}
+                      >
+                        {/* <div>
+                          <Avatar
+                            defaultValue={`${(<GoPersonFill />)}`}
+                            size="lg"
+                            src={
+                              d?.alumniProfile?.avatarUrl !== "" || null
+                                ? d?.alumniProfile?.avatarUrl
+                                : ""
+                            }
+                          />
+                        </div> */}
+
+                        <Image
+                          // isZoomed
+                          className={`w-screen h-[30dvh] object-cover rounded-b-none`}
+                          src={
+                            d?.alumniProfile?.avatarUrl !== null
+                              ? d?.alumniProfile?.avatarUrl
+                              : "assets/images/static/ghf_default.png"
+                          }
+                        />
+
+                        {/* Content */}
+                        <div className="p-0">
+                          <div className=" px-5">
+                            <label
+                              className="text-small text-default-500"
+                              htmlFor="pname"
+                            >
+                              Fullname
+                            </label>
+                            <h1>
+                              {d?.alumniProfile?.firstname}{" "}
+                              {d?.alumniProfile?.lastname}
+                            </h1>
+                          </div>
+
+                          <div className="hidden px-5">
+                            <label
+                              className="text-small text-default-500"
+                              htmlFor="pAlumni"
+                            />
+                            <h1 className="text-default-500">
+                              GHF {setRoleName(Number(d?.alumniProfile?.role))}
+                            </h1>
+                          </div>
+
+                          <div className=" px-5">
+                            <label
+                              className="text-small text-default-500"
+                              htmlFor="pYear"
+                            >
+                              Participation Year
+                            </label>
+                            <h1>{d?.participationYear}</h1>
+                          </div>
+
+                          <div className="w-full flex">
+                            <Button
+                              className="w-full text-sm rounded-t-none border-t-1 border-t-orange-500 p-5 font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                              // color="primary"
+                              // variant="light"
+                              onClick={() => {
+                                toDetail(d);
+                              }}
+                            >
+                              View Alumni <GoArrowRight size={20} />
+                            </Button>
+                          </div>
+                        </div>
+                        {/* Content End */}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
           {/* <Divider /> */}
         </div>
       </section>

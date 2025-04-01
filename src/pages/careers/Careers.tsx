@@ -26,7 +26,7 @@ import {
 } from "../dashboard/careers/dash-careers";
 
 import DefaultLayout from "@/layouts/default";
-import { title } from "@/components/primitives";
+// import { title } from "@/components/primitives";
 import { AuthRole } from "@/types";
 
 // import { GoTrash } from "react-icons/go";
@@ -142,6 +142,8 @@ export default function CareersPage() {
         return "Employment";
       case CareerType.Volunteering:
         return "Volunteering";
+      case CareerType.Internship:
+        return "Internship";
     }
   };
 
@@ -199,7 +201,7 @@ export default function CareersPage() {
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
-              <div className="hidden text-primary md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+              <div className="hidden text-black hover:text-orange-500 md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">CAREERS</h1>
               </div>
             </div>
@@ -219,8 +221,10 @@ export default function CareersPage() {
         {/* Main Actions */}
         <div className="w-full bg-default-200 z-10 p-10 space-y-5">
           <div className="w-full flex flex-col gap-5 space-y-5">
-            <h1 className={title()}>Join us</h1>
-            <p className={` text-2xl text-balance`}>
+            <h1 className=" text-3xl md:text-4xl text-black uppercase font-semibold">
+              Join us
+            </h1>
+            <p className={` text-2xl md:text-3xl text-black text-balance`}>
               Great Hope Foundation, yearly works with a pool of volunteers
               countrywide in implementing UWEZO PROGRAM, and some few succeed in
               joining Great Hope Foundation team as employees. Volunteers that
@@ -253,7 +257,7 @@ export default function CareersPage() {
                     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                     <div
                       key={`${ca?.careerId}`}
-                      className="w-full p-5 bg-default-100 rounded-lg space-y-3 hover:border-transparent"
+                      className="w-full p-5 flex flex-col justify-between bg-default-100 rounded-lg space-y-3 hover:border-transparent"
                       onClick={() => {
                         nav(`/careers/${ca?.careerId}`, {
                           state: `${ca?.careerId}`,
@@ -261,20 +265,20 @@ export default function CareersPage() {
                       }}
                     >
                       <div className="w-full space-y-2">
-                        <h2 className="text-xl font-semibold">
+                        <h2 className="text-xl md:text-2xl uppercase font-semibold">
                           {ca?.position}
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-medium text-black hover:text-orange-400">
                           {careerTypeText(Number(ca?.careerType))}
                         </p>
                       </div>
                       <div className="w-full space-y-2">
-                        <p className="text-sm">{ca?.description}</p>
+                        <p className=" text-lg truncate">{ca?.description}</p>
                       </div>
                       <div className="w-full flex justify-end">
                         <Button
-                          color="primary"
-                          variant="solid"
+                          className="text-sm font-normal  bg-orange-400 border border-transparent hover:border-orange-500 hover:bg-transparent hover:text-orange-500"
+                          variant="flat"
                           onClick={() => {
                             nav(`/careers/${ca?.careerId}`, {
                               state: `${ca?.careerId}`,
@@ -294,7 +298,10 @@ export default function CareersPage() {
 
           {/* Career Constant form */}
 
-          <div className="w-full flex justify-center relative">
+          <div
+            // className="w-full flex justify-center relative"
+            className="hidden"
+          >
             <Button color="primary" variant="solid" onPress={onOpen}>
               {" "}
               Apply as Volunteer

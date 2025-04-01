@@ -406,8 +406,8 @@ export default function DashProjectPage() {
                   <div className="w-full flex items-center p-5 justify-center">
                     <Image
                       radius="none"
-                      className="w-[50dvw] h-[50dvh] object-fill"
-                      // width={100}
+                      // className="w-[50dvw] h-[50dvh] object-fill"
+                      width={300}
                       src={URL.createObjectURL(selectedThumbImage)}
                     />
                   </div>
@@ -417,8 +417,8 @@ export default function DashProjectPage() {
                       <div className="w-full flex items-center justify-center">
                         <Image
                           radius="none"
-                          className="w-[50dvw] h-[50dvh] object-fill"
-                          // width={100}
+                          // className="w-[50dvw] h-[50dvh] object-fill"
+                          width={300}
                           src={
                             project?.thumbnailUrl ??
                             siteConfig.staticAssets.staticLogo
@@ -428,8 +428,8 @@ export default function DashProjectPage() {
                     ) : (
                       <Image
                         radius="none"
-                        className="w-[50dvw] h-[50dvh] object-fill"
-                        // width={100}
+                        // className="w-[50dvw] h-[50dvh] object-fill"
+                        width={300}
                         src={siteConfig.staticAssets.staticLogo}
                       />
                     )}
@@ -614,7 +614,7 @@ export default function DashProjectPage() {
           {/* Form End */}
 
           {/* Assets */}
-          <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
+          <div className="w-full hidden gap-5 overflow-hidden h-[70vh] p-3">
             <div className={`w-full flex justify-between items-center`}>
               {/* <h1>Impact Images ({impactAssets?.length ?? 0})</h1> */}
               <div className="flex flex-col">

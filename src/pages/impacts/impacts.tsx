@@ -69,7 +69,7 @@ const ImpactList = () => {
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
-              <div className="text-primary hidden md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
+              <div className="text-black hover:text-orange-400 hidden md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
                 <h1 className=" text-2xl md:text-4xl font-semibold">IMPACT</h1>
               </div>
             </div>
@@ -113,7 +113,9 @@ const ImpactList = () => {
           {/* <h1 className={title()}>Impact</h1> */}
           {/* Impacts Content */}
           <div className="w-full flex flex-col p-10 md:px-20 md:py-10 gap-5 ">
-            <h1 className=" text-2xl  font-semibold ">Community Impact</h1>
+            <h1 className=" text-3xl md:text-4xl text-black hover:text-orange-500 uppercase  font-semibold ">
+              Community Impact
+            </h1>
 
             {isLoading ? (
               <>
@@ -140,30 +142,41 @@ const ImpactList = () => {
                         className={`w-full md:w-[30%] cursor-default flex flex-col rounded-2xl bg-default-100`}
                       >
                         <Image
+                          // isZoomed
+                          className=" rounded-t-2xl rounded-b-none "
+                          radius="none"
                           src={`${mp?.assetUrl ?? siteConfig?.staticAssets?.staticLogo}`}
                         />
-                        <div className={`p-3 flex flex-col gap-1`}>
-                          <h1 className={`text-2xl`}>{mp?.title}</h1>
+                        <div className={` flex flex-col gap-1`}>
+                          <h1
+                            className={` p-5 text-2xl md:text-3xl font-medium truncate`}
+                          >
+                            {mp?.title}
+                          </h1>
 
-                          <span className={`flex items-center gap-3`}>
-                            <FaUniversity className="text-blue-500" />
-                            <p className={`text-md`}>{mp?.schoolsTotal ?? 0}</p>
-                          </span>
-                          <span className={`items-center gap-3 hidden`}>
-                            <FaMapMarkedAlt className="text-green-500" />
-                            <p className={`text-md`}>{mp?.schoolRegion}</p>
-                          </span>
+                          <div className="px-5">
+                            <span className={`flex items-center gap-3`}>
+                              <FaUniversity className="text-blue-500" />
+                              <p className={`text-md`}>
+                                {mp?.schoolsTotal ?? 0}
+                              </p>
+                            </span>
+                            <span className={`items-center gap-3 hidden`}>
+                              <FaMapMarkedAlt className="text-green-500" />
+                              <p className={`text-md`}>{mp?.schoolRegion}</p>
+                            </span>
 
-                          <span className={`flex items-center gap-3`}>
-                            <FaPeopleGroup className="text-orange-500" />
-                            <p className={`text-md`}>{mp?.studentsTotal}</p>
-                          </span>
+                            <span className={`flex items-center gap-3`}>
+                              <FaPeopleGroup className="text-orange-500" />
+                              <p className={`text-md`}>{mp?.studentsTotal}</p>
+                            </span>
+                          </div>
 
                           <div className="p-1">
                             <Button
-                              className="flex items-center hover:border-transparent"
-                              color="primary"
-                              variant="light"
+                              className="text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                              // color="primary"
+                              // variant="light"
                               onClick={() => {
                                 toDetail(mp);
                               }}

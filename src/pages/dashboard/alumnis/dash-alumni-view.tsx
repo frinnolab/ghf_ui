@@ -115,12 +115,6 @@ export default function DashAlumniView() {
       data.append("avatar", selectedImage);
     }
 
-    // console.log(d);
-
-    // console.log(selectedImage);
-
-    // console.log(alumniProfileId);
-
     axios
       .post(`${api}/profiles/${alumniProfileId}`, data, {
         headers: {
@@ -157,7 +151,7 @@ export default function DashAlumniView() {
       isPublished: isAlumniPublished,
     };
 
-    alert(`Alumni ${isAlumniPublished ? "Published" : "UnPublished"}`);
+    // alert(`Alumni ${isAlumniPublished ? "Published" : "UnPublished"}`);
 
     setIsPublished(isAlumniPublished);
 
@@ -493,7 +487,7 @@ export default function DashAlumniView() {
                 {/* Editor */}
                 <div className="w-full space-y-1 ">
                   <label className="text-default-500" htmlFor="story">
-                    In 100 words how did you benefit with the program
+                    Add story
                   </label>
 
                   <ReactQuill
@@ -502,19 +496,15 @@ export default function DashAlumniView() {
                     placeholder={`${"Enter story description"}`}
                     style={{
                       border: "none",
-                      height: "15dvh",
+                      height: "25dvh",
                       width: "100dvh",
-                      overflow: "hidden",
+                      overflowY: "scroll",
                       overflowX: "hidden",
                     }}
                     theme="snow"
                     value={quillValue}
                     onChange={(e) => {
-                      if (e.length === 105) {
-                        alert(`Maximum character length reached.`);
-                      } else {
-                        setQuillValue(e);
-                      }
+                      setQuillValue(e);
                     }}
                   />
                 </div>
@@ -552,9 +542,9 @@ export const Alumniformats = [
   "list",
   "bullet",
   "indent",
-  // "link",
-  // "image",
-  // "video",
+  "link",
+  "image",
+  "video",
 ];
 
 export const Alumnimodules = {
@@ -567,9 +557,9 @@ export const Alumnimodules = {
       { indent: "-1" },
       { indent: "+1" },
     ],
-    // ["image"],
-    // ["video"],
-    // ["link"],
+    ["image"],
+    ["video"],
+    ["link"],
     ["clean"],
   ],
 };

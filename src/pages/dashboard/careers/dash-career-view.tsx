@@ -181,6 +181,10 @@ function DashCareerView() {
         key: CareerType.Volunteering,
         value: "Volunteering",
       },
+      {
+        key: CareerType.Internship,
+        value: "Internship",
+      },
     ];
   });
 
@@ -318,7 +322,6 @@ function DashCareerView() {
     };
 
     //console.log(data);
-    
 
     axios
       .put(`${api}/careers/applications/${cap?.careerAppId}`, data, {
@@ -458,8 +461,10 @@ function DashCareerView() {
               mobile: app.mobile,
               careerRoleType: app.careerRoleType,
               careerStatus: app.careerStatus,
+              cvUrl: app.cvUrl ?? null,
             })
           );
+
           setCareerApps(appData);
 
           mapStatusType(appData);
@@ -487,32 +492,33 @@ function DashCareerView() {
         return "Employee";
       case AuthRole.Volunteer:
         return "Volunteer";
+      case AuthRole.Intern:
+        return "Intern";
     }
   };
 
   const handleDownloadCV = (ca: CareerApplication) => {
     console.log(ca);
     axios
-    .get(`${api}/careers/applications/${ca?.careerAppId}/download`, {
-      headers: {
-        // Accept: "application/json",
-        Authorization: `Bearer ${authed?.token}`,
-        "Content-Disposition": "attachment;",
-        "Content-Type": "application/octet-stream",
-      },
-      responseType: "blob",
-    })
-    .then((res: AxiosResponse) => {
-      if (res) {
-        fileDownload(res?.data, "", res.headers["content-type"]);
-      }
-    })
-    .catch((err: AxiosError) => {
-      console.warn(err.response);
+      .get(`${api}/careers/applications/${ca?.careerAppId}/download`, {
+        headers: {
+          // Accept: "application/json",
+          Authorization: `Bearer ${authed?.token}`,
+          "Content-Disposition": "attachment;",
+          "Content-Type": "application/octet-stream",
+        },
+        responseType: "blob",
+      })
+      .then((res: AxiosResponse) => {
+        if (res) {
+          fileDownload(res?.data, "", res.headers["content-type"]);
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.warn(err.response);
 
-      window.location.reload();
-    });
-
+        window.location.reload();
+      });
   };
 
   useEffect(() => {
@@ -599,7 +605,7 @@ function DashCareerView() {
                   <div className="w-full space-y-3">
                     <label htmlFor="requirements">Requirements</label>
                     <ReactQuill
-                      formats={Cformats.filter((p) => p )}
+                      formats={Cformats.filter((p) => p)}
                       modules={Cmodules}
                       placeholder={`${quillValue ?? "Enter Requirements"}`}
                       theme="snow"
@@ -720,16 +726,22 @@ function DashCareerView() {
                         </TableCell>
                         <TableCell
                           onClick={() => {
-                            if(isEdit){
+                            if (isEdit) {
                               handleDownloadCV(ca);
-                            }else{
-                              alert(`Enable edit mode to download CV`)
+                            } else {
+                              alert(`Enable edit mode to download CV`);
                             }
                           }}
                         >
-                          <span className=" text-lg hover:text-primary-400">
-                            <GoDownload />
-                          </span>
+                          {ca?.cvUrl === null ? (
+                            <>
+                              <p>No CV attached</p>
+                            </>
+                          ) : (
+                            <span className=" text-lg hover:text-primary-400">
+                              <GoDownload />
+                            </span>
+                          )}
                         </TableCell>
                         <TableCell>
                           {/* {careerStatusText(Number(ca?.careerStatus))} */}

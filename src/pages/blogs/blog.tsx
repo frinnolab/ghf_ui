@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Image, Spinner, Tab, Tabs } from "@nextui-org/react";
-import { GoArrowRight, GoArrowUpRight } from "react-icons/go";
+import { GoArrowRight } from "react-icons/go";
 
 import { Blog } from "../dashboard/blog/dash-blogs";
 
@@ -49,14 +49,14 @@ export default function BlogPage() {
             return [data];
           });
 
-          setBlogs(datas);
+          setBlogs(datas.filter((d) => d?.isArchived === false));
 
           setArchivedBlogs(datas.filter((d) => d?.isArchived === true));
 
           setIsloading(false);
         })
         .catch((err: AxiosError) => {
-          console.error(err.response);
+          console.error(err.message);
         });
     }
   }, [blogs]);
@@ -69,7 +69,9 @@ export default function BlogPage() {
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
               <div className="hidden text-primary md:flex flex-col shadow-2xl space-y-5 font-semibold border border-transparent p-5 rounded-2xl bg-default-50/70 absolute top-[100%] right-10">
-                <h1 className=" text-2xl md:text-4xl font-semibold">BLOG</h1>
+                <h1 className=" text-3xl md:text-4xl text-black hover:text-orange-500 font-semibold">
+                  BLOG
+                </h1>
               </div>
             </div>
           </div>
@@ -94,7 +96,9 @@ export default function BlogPage() {
         </div> */}
 
         <div className="w-full flex flex-col p-5 md:p-10 gap-5 z-10 bg-default-200">
-          <h1 className=" text-xl md:text-2xl  font-semibold ">Blog News</h1>
+          <h1 className=" text-3xl md:text-4xl text-black hover:text-orange-500 uppercase font-semibold">
+            Blog News
+          </h1>
 
           {/* Blog Content */}
 
@@ -121,10 +125,10 @@ export default function BlogPage() {
                     <Tabs
                       fullWidth
                       aria-label="Options"
-                      color="primary"
+                      color="warning"
                       radius="sm"
                       size="lg"
-                      variant="underlined"
+                      variant="solid"
                     >
                       <Tab key="blogs" title="Blogs">
                         <div className="w-full flex justify-start gap-5 md:gap-10 flex-wrap">
@@ -135,7 +139,7 @@ export default function BlogPage() {
                             >
                               <div className="w-full">
                                 <Image
-                                  className="w-screen h-[30vh] object-cover"
+                                  className="w-screen h-[30vh] object-cover rounded-b-none"
                                   src={
                                     b?.thumbnailUrl !== "" || null
                                       ? b?.thumbnailUrl
@@ -144,7 +148,7 @@ export default function BlogPage() {
                                 />
                               </div>
                               <div className="p-5">
-                                <h1 className="text-2xl truncate font-semibold">
+                                <h1 className="text-2xl md:text-3xl text-black hover:text-orange-500 truncate font-semibold">
                                   {b?.title}
                                 </h1>
 
@@ -153,9 +157,9 @@ export default function BlogPage() {
 
                               <div className="p-1">
                                 <Button
-                                  className="flex items-center hover:border-transparent"
-                                  color="primary"
-                                  variant="light"
+                                  className="text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                                  // color="primary"
+                                  // variant="light"
                                   onClick={() => {
                                     toDetail(b);
                                   }}
@@ -177,7 +181,7 @@ export default function BlogPage() {
                             >
                               <div className="w-full">
                                 <Image
-                                  className="w-screen h-[30vh] object-cover"
+                                  className="w-screen h-[30vh] object-cover rounded-b-none"
                                   src={
                                     b?.thumbnailUrl !== "" || null
                                       ? b?.thumbnailUrl
@@ -186,7 +190,7 @@ export default function BlogPage() {
                                 />
                               </div>
                               <div className="p-5">
-                                <h1 className="text-2xl truncate font-semibold">
+                                <h1 className="text-2xl md:text-3xl text-black hover:text-orange-500 truncate font-semibold">
                                   {b?.title}
                                 </h1>
 
@@ -195,9 +199,9 @@ export default function BlogPage() {
 
                               <div className="p-1">
                                 <Button
-                                  className="flex items-center:border-transparent"
-                                  color="primary"
-                                  variant="light"
+                                  className="text-sm font-normal  text-orange-500 bg-transparent hover:bg-orange-500  hover:text-black"
+                                  // color="primary"
+                                  // variant="light"
                                   onClick={() => {
                                     toDetail(b);
                                   }}
