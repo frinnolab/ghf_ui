@@ -105,7 +105,7 @@ export default function PublicationsNewsLetters() {
 
           const data: Publication[] = Array.from(res?.data).flatMap(
             (d: any) => {
-              console.log(d);
+              //console.log(d);
 
               const resData: Publication = {
                 publishId: `${d?.publishId}`,
@@ -123,7 +123,7 @@ export default function PublicationsNewsLetters() {
               ...data.filter(
                 (d) =>
                   Number(d?.publishType) === PublishTypeEnum.Newsletter &&
-                  d?.assetUrl !== null,
+                  d?.assetUrl !== null
               ),
             ];
           });
@@ -208,7 +208,7 @@ export default function PublicationsNewsLetters() {
                           </h1>
 
                           <motion.div
-                            className="flex justify-center"
+                            className="flex justify-center p-5"
                             whileHover={{
                               scale: [null, 1, 1.05],
                               zIndex: 100,
@@ -240,10 +240,10 @@ export default function PublicationsNewsLetters() {
                             <div />
                           </div> */}
 
-                          <div className="w-full p-1  justify-between">
+                          <div className="w-full  justify-between">
                             {/* <div /> */}
                             <Button
-                              className="w-full text-sm font-normal  bg-orange-500 hover:text-white  text-black"
+                              className="w-full text-sm font-normal bg-transparent rounded-t-none border-t-1 border-t-orange-500 hover:bg-orange-500 hover:text-black  text-orange-500 p-3"
                               // color="primary"
                               // variant="light"
                               onClick={() => {
@@ -252,7 +252,7 @@ export default function PublicationsNewsLetters() {
                               }}
                             >
                               {" "}
-                              View Newsletter <GoArrowRight size={20} />{" "}
+                              View Newsletter{" "}
                             </Button>{" "}
                           </div>
                         </div>

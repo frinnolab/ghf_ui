@@ -119,7 +119,7 @@ export default function PublicationsManuals() {
               ...data.filter(
                 (d) =>
                   Number(d?.publishType) ===
-                    PublishTypeEnum["Student Manual"] && d?.assetUrl !== null,
+                    PublishTypeEnum["Student Manual"] && d?.assetUrl !== null
               ),
             ];
           });
@@ -236,10 +236,10 @@ export default function PublicationsManuals() {
                             <div />
                           </div> */}
 
-                          <div className="w-full p-1  justify-between">
-                            <div />
+                          <div className="w-full  justify-between">
+                            {/* <div /> */}
                             <Button
-                              className="w-full text-sm font-normal  bg-orange-500 hover:text-white  text-black"
+                              className="w-full text-sm font-normal bg-transparent rounded-t-none border-t-1 border-t-orange-500 hover:bg-orange-500 hover:text-black  text-orange-500 p-3"
                               // color="primary"
                               // variant="light"
                               onClick={() => {
@@ -248,7 +248,7 @@ export default function PublicationsManuals() {
                               }}
                             >
                               {" "}
-                              View Manual <GoArrowRight size={20} />{" "}
+                              View Manual{" "}
                             </Button>{" "}
                           </div>
                         </div>

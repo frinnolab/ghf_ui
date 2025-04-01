@@ -1101,12 +1101,12 @@ export default function HomePage() {
             ) : (
               <div className={`w-full flex flex-col gap-3`}>
                 <motion.div
-                  className={`w-full ${blogs?.length === 0 ? "hidden" : "  flex flex-col md:flex-row md:justify-end items-center gap-5"}`}
+                  className={`w-full ${blogs?.length === 0 ? "hidden" : "  flex flex-col md:flex-row md:justify-start items-center gap-5"}`}
                 >
                   {blogs?.map((p) => (
                     <motion.div
                       key={p?.blogId}
-                      className={` w-full md:w-[32%] rounded-xl bg-white flex flex-col justify-between`}
+                      className={` w-full md:w-[32%] rounded-xl bg-default-200 flex flex-col justify-between`}
                       transition={{
                         duration: 0.3,
                         ease: "easeOut",
