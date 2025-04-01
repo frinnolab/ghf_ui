@@ -168,8 +168,10 @@ export default function DonationPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4">
-        <div className="w-full flex flex-col items-center gap-5 md:p-10 md:min-h-[100dvh] relative">
-          <motion.div className={`w-full absolute top-[-10%] saturate-[100%]`}>
+        <div className="w-full flex flex-col items-center gap-5 md:p-10 h-[30dvh] md:min-h-[100dvh] relative">
+          <motion.div
+            className={`w-full absolute top-[-35%] md:top-[-10%] saturate-[100%]`}
+          >
             <Image
               alt="About Bg"
               radius="none"
