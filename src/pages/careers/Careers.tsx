@@ -197,7 +197,7 @@ export default function CareersPage() {
   return (
     <DefaultLayout>
       <section className="w-full flex flex-col gap-5 cursor-default">
-        <div className="h-[20dvh] md:h-[50dvh] w-full flex flex-col justify-center">
+        <div className="h-[30dvh] md:h-[50dvh] w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
@@ -208,7 +208,7 @@ export default function CareersPage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[-50%] filter saturate-[90%]">
+          <div className="w-full absolute md:top-[-50%] filter saturate-[90%]">
             <Image
               alt="Careers Bg"
               className=" object-fill "
