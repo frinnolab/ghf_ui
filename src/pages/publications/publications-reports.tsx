@@ -118,7 +118,9 @@ export default function PublicationsReports() {
           setPubs(() => {
             return [
               ...data.filter(
-                (d) => Number(d?.publishType) === PublishTypeEnum.Report
+                (d) =>
+                  Number(d?.publishType) === PublishTypeEnum.Report &&
+                  d?.assetUrl !== null,
               ),
             ];
           });
@@ -193,7 +195,7 @@ export default function PublicationsReports() {
                     {pubs?.flatMap((p) => (
                       <div
                         key={p?.publishId}
-                        className="w-full md:w-[16%] flex flex-col bg-white rounded-xl"
+                        className="w-full md:w-[32%] flex flex-col bg-white rounded-xl"
                       >
                         {/* content */}
 

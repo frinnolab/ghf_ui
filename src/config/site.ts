@@ -88,7 +88,7 @@ export const siteConfig = {
     },
     {
       label: "Student Center",
-      href: "/studentmanuals",
+      href: "/student-center",
     },
     {
       label: "Donate",

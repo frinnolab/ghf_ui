@@ -14,7 +14,7 @@ import {
 } from "@nextui-org/react";
 import {
   GoArrowLeft,
-  GoDownload,
+  // GoDownload,
   GoEye,
   GoFile,
   GoPencil,
@@ -23,7 +23,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import fileDownload from "js-file-download";
+// import fileDownload from "js-file-download";
 
 import { Qformats, Qmodules } from "../blog/dash-blog-create";
 
@@ -179,60 +179,66 @@ export default function DashPublicationsView() {
   };
 
   const handleAssetUpload = () => {
-    setIsloading(true);
-    setIsEdit(false);
-
-    const asset = new FormData();
-
-    if (publication) {
-      if (selectedImage === null) {
-        alert("No file chosen");
-      } else {
-        asset.append("_method", "POST");
-        asset.append("title", `${assetTitleRef?.current?.value ?? ""}`);
-        asset.append("publishId", `${publication?.publishId}`);
-        asset.append("type", selectedImage?.type);
-        if (selectedImage) {
-          asset.append("doc", selectedImage);
-        }
-
-        axios
-          .post(`${api}/publications/assets`, asset, {
-            headers: {
-              Authorization: `Bearer ${authed?.token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((res: AxiosResponse) => {
-            const datas: PublicationAsset[] = Array.from(res?.data).flatMap(
-              (d: any) => {
-                const data: PublicationAsset = {
-                  assetUrl: d?.assetUrl,
-                  publishId: d?.publishId,
-                  assetId: d?.assetId,
-                };
-
-                return [data];
-              }
-            );
-
-            setPubAssets([...datas]);
-            setSelectedImage(null);
-            // setIsloading(false);
-            window.location.reload();
-          })
-          .catch((err: AxiosError) => {
-            console.warn(err?.message);
-
-            setSelectedImage(null);
-
-            setIsloading(false);
-
-            window.location.reload();
-          });
-      }
+    if (pubAssets && pubAssets?.length > 0) {
+      alert(
+        `Document already exists, delete current before uploading a new one.!`
+      );
     } else {
-      alert("Create Publication before adding asset.");
+      setIsloading(true);
+      setIsEdit(false);
+
+      const asset = new FormData();
+
+      if (publication) {
+        if (selectedImage === null) {
+          alert("No file chosen");
+        } else {
+          asset.append("_method", "POST");
+          asset.append("title", `${assetTitleRef?.current?.value ?? ""}`);
+          asset.append("publishId", `${publication?.publishId}`);
+          asset.append("type", selectedImage?.type);
+          if (selectedImage) {
+            asset.append("doc", selectedImage);
+          }
+
+          axios
+            .post(`${api}/publications/assets`, asset, {
+              headers: {
+                Authorization: `Bearer ${authed?.token}`,
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((res: AxiosResponse) => {
+              const datas: PublicationAsset[] = Array.from(res?.data).flatMap(
+                (d: any) => {
+                  const data: PublicationAsset = {
+                    assetUrl: d?.assetUrl,
+                    publishId: d?.publishId,
+                    assetId: d?.assetId,
+                  };
+
+                  return [data];
+                }
+              );
+
+              setPubAssets([...datas]);
+              setSelectedImage(null);
+              // setIsloading(false);
+              window.location.reload();
+            })
+            .catch((err: AxiosError) => {
+              console.warn(err?.message);
+
+              setSelectedImage(null);
+
+              setIsloading(false);
+
+              window.location.reload();
+            });
+        }
+      } else {
+        alert("Create Publication before adding asset.");
+      }
     }
   };
 
@@ -261,30 +267,33 @@ export default function DashPublicationsView() {
     }
   };
 
-  const downloadPubAsset = (assetId: string) => {
+  const downloadPubAsset = (p: PublicationAsset) => {
+    console.log(p);
+    
     if (!isEdit) {
       alert("Enable Edit mode to download Asset(S)");
     } else {
-      axios
-        .get(`${api}/publications/assets/${pubId}/${assetId}`, {
-          headers: {
-            // Accept: "application/json",
-            Authorization: `Bearer ${authed?.token}`,
-            "Content-Disposition": "attachment;",
-            "Content-Type": "application/octet-stream",
-          },
-          responseType: "blob",
-        })
-        .then((res: AxiosResponse) => {
-          if (res) {
-            fileDownload(res?.data, "", res.headers["content-type"]);
-          }
-        })
-        .catch((err: AxiosError) => {
-          console.warn(err.response);
+      window.open(`${p?.assetUrl}`, "_blank");
+      // axios
+      //   .get(`${api}/publications/assets/${pubId}/${assetId}`, {
+      //     headers: {
+      //       // Accept: "application/json",
+      //       Authorization: `Bearer ${authed?.token}`,
+      //       "Content-Disposition": "attachment;",
+      //       "Content-Type": "application/octet-stream",
+      //     },
+      //     responseType: "blob",
+      //   })
+      //   .then((res: AxiosResponse) => {
+      //     if (res) {
+      //       fileDownload(res?.data, "", res.headers["content-type"]);
+      //     }
+      //   })
+      //   .catch((err: AxiosError) => {
+      //     console.warn(err.response);
 
-          window.location.reload();
-        });
+      //     window.location.reload();
+      //   });
     }
   };
 
@@ -339,6 +348,7 @@ export default function DashPublicationsView() {
       axios
         .get(`${api}/publications/assets/${publication?.publishId}`)
         .then((res: AxiosResponse) => {
+          //console.log(res?.data);
           const datas: PublicationAsset[] = Array.from(res?.data).flatMap(
             (d: any) => {
               const data: PublicationAsset = {
@@ -360,7 +370,7 @@ export default function DashPublicationsView() {
           console.warn(err?.response);
         });
     }
-  }, []);
+  }, [publication]);
 
   return (
     <div className="w-full">
@@ -488,14 +498,16 @@ export default function DashPublicationsView() {
                 {/* Actions */}
                 <div className="w-full space-y-3 flex items-center justify-end gap-5">
                   <div className="flex items-center gap-5">
-                    <Button
-                      className={`${publication?.publishType === PublishTypeEnum?.Newsletter ? "" : "hidden"}`}
-                      color={!isEdit ? "default" : "primary"}
-                      disabled={!isEdit ? true : false}
-                      onClick={handlePublishToSubs}
-                    >
-                      {"Publish Newsletter to Subscribers"}
-                    </Button>
+                    <div hidden>
+                      <Button
+                        className={`${publication?.publishType === PublishTypeEnum?.Newsletter ? "" : "hidden"}`}
+                        color={!isEdit ? "default" : "primary"}
+                        disabled={!isEdit ? true : false}
+                        onClick={handlePublishToSubs}
+                      >
+                        {"Publish Newsletter to Subscribers"}
+                      </Button>
+                    </div>
 
                     <Button
                       color={!isEdit ? "default" : "primary"}
@@ -514,12 +526,14 @@ export default function DashPublicationsView() {
               <div className="w-full flex flex-col gap-5 overflow-hidden h-[70vh] p-3">
                 <div className={`w-full flex justify-between items-center`}>
                   <div className="flex flex-col gap-3">
-                    <Input
-                      ref={assetTitleRef}
-                      disabled={publication === null}
-                      placeholder={`Asset Title`}
-                      type="text"
-                    />
+                    <div hidden>
+                      <Input
+                        ref={assetTitleRef}
+                        disabled={publication === null}
+                        placeholder={`Asset Title`}
+                        type="text"
+                      />
+                    </div>
 
                     <div className="p-2 flex items-center">
                       <input
@@ -568,26 +582,27 @@ export default function DashPublicationsView() {
                       {pubAssets?.flatMap((d: PublicationAsset) => (
                         <div
                           key={d?.assetId}
-                          className={`shadow rounded-xl p-2 flex flex-col justify-between items-center gap-1 P-2`}
+                          className={` bg-white  rounded-xl p-2 flex flex-col justify-between items-center gap-1 P-2`}
                         >
                           {/* <Image width={150} src={d?.assetUrl} /> */}
 
                           <GoFile size={20} />
 
-                          <h1>{d?.title}</h1>
+                          <h1>{publication?.title}</h1>
 
                           <div className="flex justify-between items-center">
                             <span className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">
-                              <GoDownload
+                              <GoEye
                                 className=" text-primary-500"
                                 size={20}
                                 onClick={() => {
-                                  downloadPubAsset(`${d?.assetId}`);
+                                  downloadPubAsset(d);
                                 }}
                               />
                             </span>
 
                             <span className="flex items-center p-2 hover:bg-default-400 hover:rounded-full">
+                              {/* {d?.assetId} */}
                               <GoTrash
                                 className=" text-danger-500"
                                 size={20}

@@ -118,7 +118,8 @@ export default function PublicationsManuals() {
             return [
               ...data.filter(
                 (d) =>
-                  Number(d?.publishType) === PublishTypeEnum["Student Manual"]
+                  Number(d?.publishType) ===
+                    PublishTypeEnum["Student Manual"] && d?.assetUrl !== null,
               ),
             ];
           });
@@ -193,7 +194,7 @@ export default function PublicationsManuals() {
                     {pubs?.flatMap((p) => (
                       <div
                         key={p?.publishId}
-                        className="w-full md:w-[16%] flex flex-col bg-white rounded-xl"
+                        className="w-full md:w-[32%] flex flex-col bg-white rounded-xl"
                       >
                         {/* content */}
 

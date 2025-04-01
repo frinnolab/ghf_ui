@@ -163,9 +163,9 @@ export const Navbar = () => {
                 <DropdownItem
                   key="manuals"
                   className="h-14 gap-2"
-                  href="/studentmanuals"
+                  href="/student-center"
                 >
-                  Student Manuals
+                  Student Center
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>

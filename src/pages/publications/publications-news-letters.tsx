@@ -105,7 +105,7 @@ export default function PublicationsNewsLetters() {
 
           const data: Publication[] = Array.from(res?.data).flatMap(
             (d: any) => {
-              // console.log(d);
+              console.log(d);
 
               const resData: Publication = {
                 publishId: `${d?.publishId}`,
@@ -121,7 +121,9 @@ export default function PublicationsNewsLetters() {
           setPubs(() => {
             return [
               ...data.filter(
-                (d) => Number(d?.publishType) === PublishTypeEnum.Newsletter
+                (d) =>
+                  Number(d?.publishType) === PublishTypeEnum.Newsletter &&
+                  d?.assetUrl !== null,
               ),
             ];
           });
@@ -192,11 +194,11 @@ export default function PublicationsNewsLetters() {
                     </h1>
                   </>
                 ) : (
-                  <div className="w-full flex flex-col md:flex-row md:flex-wrap gap-3">
+                  <div className="w-full flex flex-col md:flex-row md:flex-wrap gap-5">
                     {pubs?.flatMap((p) => (
                       <div
                         key={p?.publishId}
-                        className="w-full md:w-[16%] flex flex-col bg-white rounded-xl"
+                        className="w-full md:w-[32%] flex flex-col bg-white rounded-xl"
                       >
                         {/* content */}
 

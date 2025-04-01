@@ -72,7 +72,7 @@ function App() {
       {/* <Route element={<BlogPage />} path="/careers" /> */}
       <Route element={<PublicationsNewsLetters />} path="/newsletters" />
       <Route element={<PublicationsReports />} path="/reports" />
-      <Route element={<PublicationsManuals />} path="/studentmanuals" />
+      <Route element={<PublicationsManuals />} path="/student-center" />
       <Route element={<PublicationsView />} path="/publications/:id" />
       <Route element={<AlumniList />} path="/alumni" />
       <Route element={<AlumniView />} path="/alumni/:id" />
