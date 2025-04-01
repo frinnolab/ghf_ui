@@ -65,7 +65,9 @@ export default function DocsPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 cursor-default">
         <div className="w-full flex flex-col items-center gap-5 md:p-10 h-[30dvh] md:h-[80dvh] relative">
-          <motion.div className={`w-full absolute top-[-30%] saturate-[100%]`}>
+          <motion.div
+            className={`w-full absolute top-[-40%] md:top-[-30%] saturate-[100%]`}
+          >
             <Image
               alt="About Bg"
               className=" object-fill"
