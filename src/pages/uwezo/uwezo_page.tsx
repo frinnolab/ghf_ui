@@ -69,7 +69,7 @@ export default function UwezoPage() {
   return (
     <DefaultLayout>
       <section className="w-full flex flex-col items-center justify-center py-2 md:py-3">
-        <div className="h-[10dvh] md:h-[50dvh] w-full flex flex-col justify-center">
+        <div className="h-[20dvh] md:h-[50dvh] w-full flex flex-col justify-center">
           {/* Header Text */}
           <div className="w-full flex flex-col gap-5 z-30 absolute text-end p-5">
             <div className="w-full flex justify-end">
@@ -82,7 +82,7 @@ export default function UwezoPage() {
           </div>
           {/* Header Text End*/}
 
-          <div className="w-full absolute top-[8%] md:top-[-3%] filter saturate-[80%]">
+          <div className="w-full absolute top-[10%] md:top-[-3%] filter saturate-[80%]">
             <Image
               alt="Header img"
               radius="none"
